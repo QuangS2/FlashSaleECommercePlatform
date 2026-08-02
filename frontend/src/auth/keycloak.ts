@@ -1,8 +1,9 @@
 import Keycloak from 'keycloak-js';
 
 const getKeycloakUrl = () => {
-  if (import.meta.env.VITE_KEYCLOAK_URL) {
-    return import.meta.env.VITE_KEYCLOAK_URL;
+  const metaEnv = (import.meta as any).env;
+  if (metaEnv && metaEnv.VITE_KEYCLOAK_URL) {
+    return metaEnv.VITE_KEYCLOAK_URL;
   }
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
     return `${window.location.protocol}//${window.location.hostname}:8180`;
