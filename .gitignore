@@ -1,0 +1,93 @@
+# =========================================================================
+# GITIGNORE CHUẨN ĐỒ ÁN: CHỈ GIỮ NGUYÊN NỘI DUNG THUẦN CODE & SETTING
+# =========================================================================
+
+# -------------------------------------------------------------------------
+# Build Outputs & Binary Files (Java & Spring Boot)
+# -------------------------------------------------------------------------
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+**/*.zip
+**/*.tar.gz
+**/*.rar
+**/hs_err_pid*
+**/replay_pid*
+
+# -------------------------------------------------------------------------
+# Node.js & React Dependencies & Build Outputs
+# -------------------------------------------------------------------------
+**/node_modules/
+**/dist/
+**/build/
+**/.output/
+**/.vite/
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# -------------------------------------------------------------------------
+# IDEs & Code Editors Configuration (VSCode, IntelliJ IDEA, Eclipse)
+# -------------------------------------------------------------------------
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.settings/
+.project
+.classpath
+.factorypath
+
+# -------------------------------------------------------------------------
+# Operating System & Temporary Files
+# -------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+**/scratch/
+**/.system_generated/
+
+# -------------------------------------------------------------------------
+# Non-Code Documents & Office Files (Tách biệt báo cáo Word/PDF khỏi mã nguồn)
+# -------------------------------------------------------------------------
+**/*.docx
+**/*.pdf
+**/*.pptx
+**/*.xlsx
+
+# -------------------------------------------------------------------------
+# Local Environment Variables & Credentials (Bảo mật tuyệt đối)
+# -------------------------------------------------------------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+*.p12
+
+# -------------------------------------------------------------------------
+# Docker Local Data Volumes (Dữ liệu database local phát sinh)
+# -------------------------------------------------------------------------
+**/data/mysql/
+**/data/mongo/
+**/data/redis/
+**/mysql_data/
+**/mongo_data/
+**/redis_data/
