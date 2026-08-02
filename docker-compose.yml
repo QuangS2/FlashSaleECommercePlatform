@@ -28,7 +28,7 @@ services:
         max-size: "10m"
         max-file: "3"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -160,6 +160,167 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  # =========================================================================
+  # APPLICATION SERVICES (SPRING BOOT MICROSERVICES & REACT FRONTEND)
+  # =========================================================================
+
+  # 6. Eureka Discovery Server (Port 8761)
+  eureka-server:
+    build:
+      context: ./backend/eureka-server
+      dockerfile: Dockerfile
+    image: ghcr.io/quangs2/flashsale-eureka-server:latest
+    container_name: ecommerce-eureka
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # 7. Spring Cloud API Gateway (Port 8080)
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    image: ghcr.io/quangs2/flashsale-api-gateway:latest
+    container_name: ecommerce-api-gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+      - keycloak
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # 8. Product Service (Port 8081)
+  product-service:
+    build:
+      context: ./backend/product-service
+      dockerfile: Dockerfile
+    image: ghcr.io/quangs2/flashsale-product-service:latest
+    container_name: ecommerce-product-service
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - mongodb
+      - redis
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # 9. Inventory Service (Port 8082)
+  inventory-service:
+    build:
+      context: ./backend/inventory-service
+      dockerfile: Dockerfile
+    image: ghcr.io/quangs2/flashsale-inventory-service:latest
+    container_name: ecommerce-inventory-service
+    restart: always
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+      - mysql-db
+      - redis
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # 10. Order Service (Port 8083)
+  order-service:
+    build:
+      context: ./backend/order-service
+      dockerfile: Dockerfile
+    image: ghcr.io/quangs2/flashsale-order-service:latest
+    container_name: ecommerce-order-service
+    restart: always
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka-server
+      - mysql-db
+      - kafka
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # 11. Payment Service (Port 8084)
+  payment-service:
+    build:
+      context: ./backend/payment-service
+      dockerfile: Dockerfile
+    image: ghcr.io/quangs2/flashsale-payment-service:latest
+    container_name: ecommerce-payment-service
+    restart: always
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+      - mysql-db
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # 12. Notification Service (Port 8085)
+  notification-service:
+    build:
+      context: ./backend/notification-service
+      dockerfile: Dockerfile
+    image: ghcr.io/quangs2/flashsale-notification-service:latest
+    container_name: ecommerce-notification-service
+    restart: always
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+      - kafka
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # 13. Frontend React SPA (Port 3000)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: ghcr.io/quangs2/flashsale-frontend:latest
+    container_name: ecommerce-frontend-web
+    restart: always
+    ports:
+      - "3000:80"
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
 volumes:
   mysql_data:
