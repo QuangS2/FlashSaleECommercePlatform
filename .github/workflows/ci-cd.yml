@@ -84,12 +84,54 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build & Push Eureka Server Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/eureka-server
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-eureka-server:latest
+
       - name: Build & Push API Gateway Image
         uses: docker/build-push-action@v5
         with:
           context: ./backend/api-gateway
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-api-gateway:latest
+
+      - name: Build & Push Product Service Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/product-service
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-product-service:latest
+
+      - name: Build & Push Inventory Service Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/inventory-service
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-inventory-service:latest
+
+      - name: Build & Push Order Service Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/order-service
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-order-service:latest
+
+      - name: Build & Push Payment Service Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/payment-service
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-payment-service:latest
+
+      - name: Build & Push Notification Service Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/notification-service
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-notification-service:latest
 
       - name: Build & Push Frontend Image
         uses: docker/build-push-action@v5
@@ -106,11 +148,16 @@ jobs:
     needs: docker-build-push
     if: github.ref == 'refs/heads/main'
     runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: read
 
     steps:
       - name: Deploy application on Ubuntu Server
         run: |
           cd /opt/ecommerce-system
-          docker compose pull
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker compose pull || true
+          docker compose build
           docker compose up -d --remove-orphans
           docker image prune -f
