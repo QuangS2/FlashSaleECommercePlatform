@@ -9,7 +9,7 @@ services:
     container_name: ecommerce-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
       MYSQL_DATABASE: ecommerce_db
     ports:
       - "3306:3306"
@@ -17,6 +17,21 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1024M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # -------------------------------------------------------------------------
   # 2. MongoDB 7.0 (Product Catalog Document Database)
@@ -31,6 +46,16 @@ services:
       - mongo_data:/data/db
     networks:
       - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # -------------------------------------------------------------------------
   # 3. Redis 7.0 (Cache & Redisson Distributed Lock)
@@ -46,6 +71,21 @@ services:
       - redis_data:/data
     networks:
       - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # -------------------------------------------------------------------------
   # 4. Apache Kafka & Zookeeper (Async Order Message Queue)
@@ -58,6 +98,16 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:
       - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 384M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -74,6 +124,16 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 768M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # -------------------------------------------------------------------------
   # 5. Keycloak IAM Server (OAuth2 / OIDC / PKCE Authentication)
@@ -83,13 +143,23 @@ services:
     container_name: ecommerce-keycloak
     command: start-dev
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: adminpassword
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-adminpassword}
       KC_HTTP_PORT: 8180
     ports:
       - "8180:8180"
     networks:
       - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1024M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   mysql_data:
