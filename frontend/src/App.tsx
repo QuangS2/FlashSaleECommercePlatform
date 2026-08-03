@@ -1,176 +1,183 @@
 import React, { useState } from 'react';
-import keycloak from './auth/keycloak';
+import { Header } from './components/Header';
+import { FlashSaleSection } from './components/FlashSaleSection';
+import { ProductCatalog } from './components/ProductCatalog';
+import { CartDrawer } from './components/CartDrawer';
+import { CheckoutModal } from './components/CheckoutModal';
+import { ProductDetailModal } from './components/ProductDetailModal';
+import { Product } from './types';
+import { useCartStore } from './store/useCartStore';
+import { CheckCircle2, Truck, ShieldCheck, RotateCcw, Headphones } from 'lucide-react';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'flashsale' | 'catalog'>('flashsale');
+  const [activeCategory, setActiveCategory] = useState<string>('Tất cả');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+  const [lastCompletedOrder, setLastCompletedOrder] = useState<string | null>(null);
 
-  const handleLogin = () => {
-    keycloak.login();
+  const { addItem } = useCartStore();
+
+  const handleQuickView = (product: Product) => {
+    setSelectedProduct(product);
   };
 
-  const handleLogout = () => {
-    keycloak.logout();
+  const handleBuyNow = (product: Product) => {
+    addItem(product, 1);
+    setIsCheckoutOpen(true);
+  };
+
+  const handleOrderSuccess = (orderId: string) => {
+    setIsCheckoutOpen(false);
+    setLastCompletedOrder(orderId);
   };
 
   return (
-    <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif', color: '#0f172a' }}>
-      {/* Top Header Bar */}
-      <header style={{ backgroundColor: '#0f172a', color: '#ffffff', padding: '12px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ backgroundColor: '#e11d48', padding: '6px 12px', borderRadius: '4px', fontWeight: 'bold', fontSize: '18px', letterSpacing: '0.5px' }}>
-            ⚡ FLASH SALE
-          </div>
-          <span style={{ fontSize: '15px', color: '#94a3b8' }}>Hệ thống Thương mại Điện tử Tải cao</span>
-        </div>
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white">
+      {/* Top Main Navigation Header */}
+      <Header
+        activeCategory={activeCategory}
+        onSelectCategory={(cat) => setActiveCategory(cat)}
+        onSearch={(term) => setSearchTerm(term)}
+      />
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {keycloak.authenticated ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '14px', color: '#cbd5e1' }}>
-                👤 {keycloak.tokenParsed?.preferred_username || 'Khách hàng'}
-              </span>
-              <button 
-                onClick={handleLogout}
-                style={{ backgroundColor: '#334155', color: '#ffffff', border: '1px solid #475569', padding: '6px 14px', borderRadius: '4px', fontSize: '13px', cursor: 'pointer' }}
-              >
-                Đăng xuất
-              </button>
-            </div>
-          ) : (
-            <button 
-              onClick={handleLogin}
-              style={{ backgroundColor: '#e11d48', color: '#ffffff', border: 'none', padding: '8px 18px', borderRadius: '4px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
-            >
-              Đăng nhập (Keycloak PKCE)
-            </button>
-          )}
-        </div>
-      </header>
-
-      {/* Navigation Banner */}
-      <div style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', padding: '0 24px' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', gap: '24px' }}>
-          <button 
-            onClick={() => setActiveTab('flashsale')}
-            style={{ 
-              padding: '14px 16px', 
-              border: 'none', 
-              background: 'none', 
-              fontSize: '15px', 
-              fontWeight: activeTab === 'flashsale' ? 600 : 400,
-              color: activeTab === 'flashsale' ? '#e11d48' : '#64748b',
-              borderBottom: activeTab === 'flashsale' ? '3px solid #e11d48' : '3px solid transparent',
-              cursor: 'pointer'
-            }}
-          >
-            🔥 Khung Giờ Flash Sale (09:00 - 12:00)
-          </button>
-          <button 
-            onClick={() => setActiveTab('catalog')}
-            style={{ 
-              padding: '14px 16px', 
-              border: 'none', 
-              background: 'none', 
-              fontSize: '15px', 
-              fontWeight: activeTab === 'catalog' ? 600 : 400,
-              color: activeTab === 'catalog' ? '#e11d48' : '#64748b',
-              borderBottom: activeTab === 'catalog' ? '3px solid #e11d48' : '3px solid transparent',
-              cursor: 'pointer'
-            }}
-          >
-            📦 Danh Mục Sản Phẩm
-          </button>
-        </div>
-      </div>
-
-      {/* Main Container */}
-      <main style={{ maxWidth: '1200px', margin: '24px auto', padding: '0 16px' }}>
+      {/* Main Page Body Container */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
         
-        {/* Flash Sale Banner Block */}
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '6px', border: '1px solid #e2e8f0', padding: '20px', marginBottom: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <h2 style={{ fontSize: '20px', margin: 0, color: '#0f172a' }}>SẢN PHẨM GIÁ SỐC ĐANG MỞ BÁN</h2>
-              <span style={{ backgroundColor: '#fff1f2', color: '#e11d48', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>
-                Giới hạn 1 sản phẩm / tài khoản
-              </span>
+        {/* Flash Sale Banner & Product Grid */}
+        <FlashSaleSection
+          onQuickView={handleQuickView}
+          onBuyNow={handleBuyNow}
+        />
+
+        {/* Standard Catalog Products Section */}
+        <ProductCatalog
+          activeCategory={activeCategory}
+          searchTerm={searchTerm}
+          onQuickView={handleQuickView}
+          onBuyNow={handleBuyNow}
+        />
+
+        {/* Customer Promise Bar - Cam kết khách hàng (chuẩn E-commerce) */}
+        <section className="bg-white border border-slate-200 rounded-md p-5 shadow-sm grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-100 text-rose-600 p-2.5 rounded-md border border-slate-200">
+              <Truck className="w-5 h-5" />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '14px' }}>
-              <span>Kết thúc trong:</span>
-              <span style={{ backgroundColor: '#0f172a', color: '#ffffff', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>01</span> :
-              <span style={{ backgroundColor: '#0f172a', color: '#ffffff', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>42</span> :
-              <span style={{ backgroundColor: '#0f172a', color: '#ffffff', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }}>18</span>
+            <div>
+              <h4 className="text-xs font-bold text-slate-800">Giao hàng toàn quốc</h4>
+              <p className="text-[11px] text-slate-500">Miễn phí ship từ 300.000đ</p>
             </div>
           </div>
 
-          {/* Product Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
-            
-            {/* Product Card 1 */}
-            <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ backgroundColor: '#f1f5f9', height: '160px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '14px', marginBottom: '12px' }}>
-                  📱 iPhone 15 Pro Max 256GB
-                </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#1e293b', margin: '0 0 8px 0', lineHeight: 1.4 }}>
-                  iPhone 15 Pro Max 256GB - Chính Hãng VN/A
-                </h3>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#e11d48' }}>24.990.000 đ</span>
-                  <span style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'line-through' }}>29.990.000 đ</span>
-                </div>
-              </div>
-
-              <div>
-                <div style={{ backgroundColor: '#f1f5f9', borderRadius: '4px', height: '14px', overflow: 'hidden', marginBottom: '12px', position: 'relative' }}>
-                  <div style={{ backgroundColor: '#e11d48', width: '75%', height: '100%' }}></div>
-                  <span style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, fontSize: '10px', color: '#ffffff', textAlign: 'center', lineHeight: '14px', fontWeight: 600 }}>
-                    ĐÃ BÁN 75/100
-                  </span>
-                </div>
-                <button 
-                  onClick={handleLogin}
-                  style={{ width: '100%', backgroundColor: '#0f172a', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}
-                >
-                  MUA NGAY (FLASH SALE)
-                </button>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-100 text-rose-600 p-2.5 rounded-md border border-slate-200">
+              <ShieldCheck className="w-5 h-5" />
             </div>
-
-            {/* Product Card 2 */}
-            <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ backgroundColor: '#f1f5f9', height: '160px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '14px', marginBottom: '12px' }}>
-                  💻 MacBook Pro M3 14"
-                </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#1e293b', margin: '0 0 8px 0', lineHeight: 1.4 }}>
-                  MacBook Pro 14" M3 (8GB RAM / 512GB SSD)
-                </h3>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#e11d48' }}>35.490.000 đ</span>
-                  <span style={{ fontSize: '13px', color: '#94a3b8', textDecoration: 'line-through' }}>39.990.000 đ</span>
-                </div>
-              </div>
-
-              <div>
-                <div style={{ backgroundColor: '#f1f5f9', borderRadius: '4px', height: '14px', overflow: 'hidden', marginBottom: '12px', position: 'relative' }}>
-                  <div style={{ backgroundColor: '#e11d48', width: '40%', height: '100%' }}></div>
-                  <span style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, fontSize: '10px', color: '#ffffff', textAlign: 'center', lineHeight: '14px', fontWeight: 600 }}>
-                    ĐÃ BÁN 20/50
-                  </span>
-                </div>
-                <button 
-                  onClick={handleLogin}
-                  style={{ width: '100%', backgroundColor: '#0f172a', color: '#ffffff', border: 'none', padding: '10px', borderRadius: '4px', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}
-                >
-                  MUA NGAY (FLASH SALE)
-                </button>
-              </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-800">100% chính hãng</h4>
+              <p className="text-[11px] text-slate-500">Cam kết hàng nhập khẩu chính ngạch</p>
             </div>
+          </div>
 
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-100 text-rose-600 p-2.5 rounded-md border border-slate-200">
+              <RotateCcw className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-800">Đổi trả trong 30 ngày</h4>
+              <p className="text-[11px] text-slate-500">Lỗi 1 đổi 1 trong 30 ngày đầu</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-100 text-rose-600 p-2.5 rounded-md border border-slate-200">
+              <Headphones className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-800">Hỗ trợ 24/7</h4>
+              <p className="text-[11px] text-slate-500">Tư vấn nhiệt tình, chu đáo</p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      {/* Footer - Chuẩn E-commerce */}
+      <footer className="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h4 className="font-bold text-slate-200 text-sm mb-3">VỀ CHÚNG TÔI</h4>
+            <p className="text-slate-400 leading-relaxed">
+              Flash Sale - Nền tảng mua sắm trực tuyến với hàng nghìn sản phẩm chính hãng, giá ưu đãi hấp dẫn từ các thương hiệu hàng đầu.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-200 text-sm mb-3">HỖ TRỢ KHÁCH HÀNG</h4>
+            <ul className="space-y-1.5 text-slate-400">
+              <li className="hover:text-slate-200 cursor-pointer transition-colors">Hướng dẫn mua hàng</li>
+              <li className="hover:text-slate-200 cursor-pointer transition-colors">Chính sách đổi trả</li>
+              <li className="hover:text-slate-200 cursor-pointer transition-colors">Chính sách bảo hành</li>
+              <li className="hover:text-slate-200 cursor-pointer transition-colors">Câu hỏi thường gặp (FAQ)</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-200 text-sm mb-3">LIÊN HỆ</h4>
+            <ul className="space-y-1.5 text-slate-400">
+              <li>Hotline: <span className="text-rose-400 font-semibold">1900 6868</span></li>
+              <li>Email: support@flashsale.vn</li>
+              <li>Thời gian làm việc: 8:00 - 22:00 hàng ngày</li>
+            </ul>
           </div>
         </div>
-      </main>
+
+        <div className="max-w-7xl mx-auto px-4 mt-6 pt-4 border-t border-slate-800 text-center text-slate-500">
+          <p>© 2024 Flash Sale. Tất cả các quyền được bảo lưu.</p>
+        </div>
+      </footer>
+
+      {/* Slide-over Cart Drawer */}
+      <CartDrawer
+        onCheckout={() => setIsCheckoutOpen(true)}
+      />
+
+      {/* Order Checkout Modal */}
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        onOrderSuccess={handleOrderSuccess}
+      />
+
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        onBuyNow={handleBuyNow}
+      />
+
+      {/* Success Order Toast Modal */}
+      {lastCompletedOrder && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white max-w-md w-full rounded-md shadow-2xl p-6 text-center border border-slate-200">
+            <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-3" />
+            <h3 className="text-lg font-bold text-slate-900 mb-1">ĐẶT HÀNG THÀNH CÔNG!</h3>
+            <p className="text-xs text-slate-600 mb-4">
+              Mã đơn hàng của bạn là: <strong className="text-rose-600 bg-rose-50 px-2 py-0.5 rounded font-mono text-sm">{lastCompletedOrder}</strong>
+            </p>
+            <p className="text-xs text-slate-500 bg-slate-50 p-3 rounded-md border border-slate-200 mb-6">
+              Đơn hàng đang được xử lý. Bạn sẽ nhận được thông báo khi đơn hàng sẵn sàng giao.
+            </p>
+            <button
+              onClick={() => setLastCompletedOrder(null)}
+              className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs py-2.5 rounded-md transition-colors"
+            >
+              TIẾP TỤC MUA SẮM
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
