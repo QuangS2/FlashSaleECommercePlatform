@@ -175,6 +175,10 @@ services:
     restart: always
     ports:
       - "8761:8761"
+    environment:
+      - OTEL_SERVICE_NAME=ecommerce-eureka-server
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_METRICS_EXPORTER=none
     networks:
       - ecommerce-net
     deploy:
@@ -192,6 +196,10 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    environment:
+      - OTEL_SERVICE_NAME=ecommerce-api-gateway
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_METRICS_EXPORTER=none
     depends_on:
       - eureka-server
       - keycloak
@@ -212,6 +220,10 @@ services:
     restart: always
     ports:
       - "8081:8081"
+    environment:
+      - OTEL_SERVICE_NAME=ecommerce-product-service
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_METRICS_EXPORTER=none
     depends_on:
       - eureka-server
       - mongodb
@@ -233,6 +245,10 @@ services:
     restart: always
     ports:
       - "8082:8082"
+    environment:
+      - OTEL_SERVICE_NAME=ecommerce-inventory-service
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_METRICS_EXPORTER=none
     depends_on:
       - eureka-server
       - mysql-db
@@ -254,6 +270,10 @@ services:
     restart: always
     ports:
       - "8083:8083"
+    environment:
+      - OTEL_SERVICE_NAME=ecommerce-order-service
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_METRICS_EXPORTER=none
     depends_on:
       - eureka-server
       - mysql-db
@@ -275,6 +295,10 @@ services:
     restart: always
     ports:
       - "8084:8084"
+    environment:
+      - OTEL_SERVICE_NAME=ecommerce-payment-service
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_METRICS_EXPORTER=none
     depends_on:
       - eureka-server
       - mysql-db
@@ -295,6 +319,10 @@ services:
     restart: always
     ports:
       - "8085:8085"
+    environment:
+      - OTEL_SERVICE_NAME=ecommerce-notification-service
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_METRICS_EXPORTER=none
     depends_on:
       - eureka-server
       - kafka
@@ -321,6 +349,17 @@ services:
       resources:
         limits:
           memory: 256M
+
+  # 14. Jaeger All-in-one (Observability)
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: ecommerce-jaeger
+    restart: always
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+    networks:
+      - ecommerce-net
 
 volumes:
   mysql_data:
