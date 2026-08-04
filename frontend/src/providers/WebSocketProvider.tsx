@@ -20,9 +20,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const updateProductStock = useFlashSaleStore((state) => state.updateProductStock);
 
   useEffect(() => {
+    let stockSubscription: any = null;
+
     if (isConnected) {
       // Subscribe to public flash sale stock updates
-      const stockSubscription = subscribe('/topic/flashsale-stock', (message) => {
+      stockSubscription = subscribe('/topic/flashsale-stock', (message) => {
         try {
           const data = JSON.parse(message.body);
           if (data.productId && data.remainingStock !== undefined) {
@@ -32,13 +34,13 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           console.error('Failed to parse stock update message', err);
         }
       });
-
-      return () => {
-        if (stockSubscription) {
-          stockSubscription.unsubscribe();
-        }
-      };
     }
+
+    return () => {
+      if (stockSubscription) {
+        stockSubscription.unsubscribe();
+      }
+    };
   }, [isConnected, subscribe, updateProductStock]);
 
   return (
