@@ -7,12 +7,9 @@ services:
   mysql-db:
     image: mysql:8.0
     container_name: ecommerce-mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
       MYSQL_DATABASE: ecommerce_db
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -39,9 +36,6 @@ services:
   mongodb:
     image: mongo:7.0
     container_name: ecommerce-mongo
-    restart: always
-    ports:
-      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
@@ -63,9 +57,6 @@ services:
   redis:
     image: redis:7.0-alpine
     container_name: ecommerce-redis
-    restart: always
-    ports:
-      - "6379:6379"
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
@@ -93,7 +84,6 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: ecommerce-zookeeper
-    restart: always
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:
@@ -112,11 +102,8 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: ecommerce-kafka
-    restart: always
     depends_on:
       - zookeeper
-    ports:
-      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -146,10 +133,16 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-adminpassword}
       KC_HTTP_PORT: 8180
-    ports:
-      - "8180:8180"
+      KC_PROXY_HEADERS: xforwarded
+      KC_HOSTNAME: auth.flashale.quangs2.cloud
     networks:
       - ecommerce-net
+      - shared-infra-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ecommerce-auth.rule=Host(`auth.flashale.quangs2.cloud`)"
+      - "traefik.http.services.ecommerce-auth.loadbalancer.server.port=8180"
+      - "traefik.docker.network=shared-infra-net"
     deploy:
       resources:
         limits:
@@ -172,9 +165,6 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/quangs2/flashsale-eureka-server:latest
     container_name: ecommerce-eureka
-    restart: always
-    ports:
-      - "8761:8761"
     environment:
       - OTEL_SERVICE_NAME=ecommerce-eureka-server
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -193,9 +183,6 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/quangs2/flashsale-api-gateway:latest
     container_name: ecommerce-api-gateway
-    restart: always
-    ports:
-      - "8080:8080"
     environment:
       - OTEL_SERVICE_NAME=ecommerce-api-gateway
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -205,6 +192,12 @@ services:
       - keycloak
     networks:
       - ecommerce-net
+      - shared-infra-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ecommerce-api.rule=Host(`flashale-api.quangs2.cloud`)"
+      - "traefik.http.services.ecommerce-api.loadbalancer.server.port=8080"
+      - "traefik.docker.network=shared-infra-net"
     deploy:
       resources:
         limits:
@@ -217,9 +210,6 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/quangs2/flashsale-product-service:latest
     container_name: ecommerce-product-service
-    restart: always
-    ports:
-      - "8081:8081"
     environment:
       - OTEL_SERVICE_NAME=ecommerce-product-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -242,9 +232,6 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/quangs2/flashsale-inventory-service:latest
     container_name: ecommerce-inventory-service
-    restart: always
-    ports:
-      - "8082:8082"
     environment:
       - OTEL_SERVICE_NAME=ecommerce-inventory-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -267,9 +254,6 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/quangs2/flashsale-order-service:latest
     container_name: ecommerce-order-service
-    restart: always
-    ports:
-      - "8083:8083"
     environment:
       - OTEL_SERVICE_NAME=ecommerce-order-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -292,9 +276,6 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/quangs2/flashsale-payment-service:latest
     container_name: ecommerce-payment-service
-    restart: always
-    ports:
-      - "8084:8084"
     environment:
       - OTEL_SERVICE_NAME=ecommerce-payment-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -316,9 +297,6 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/quangs2/flashsale-notification-service:latest
     container_name: ecommerce-notification-service
-    restart: always
-    ports:
-      - "8085:8085"
     environment:
       - OTEL_SERVICE_NAME=ecommerce-notification-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -340,11 +318,14 @@ services:
       dockerfile: Dockerfile
     image: ghcr.io/quangs2/flashsale-frontend:latest
     container_name: ecommerce-frontend-web
-    restart: always
-    ports:
-      - "3000:80"
     networks:
       - ecommerce-net
+      - shared-infra-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ecommerce-web.rule=Host(`flashale.quangs2.cloud`)"
+      - "traefik.http.services.ecommerce-web.loadbalancer.server.port=80"
+      - "traefik.docker.network=shared-infra-net"
     deploy:
       resources:
         limits:
@@ -354,10 +335,6 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:latest
     container_name: ecommerce-jaeger
-    restart: always
-    ports:
-      - "16686:16686"
-      - "4317:4317"
     networks:
       - ecommerce-net
 
@@ -369,3 +346,5 @@ volumes:
 networks:
   ecommerce-net:
     driver: bridge
+  shared-infra-net:
+    external: true
