@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: product-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://root:mongopassword@localhost:27017/ecommerce_db?authSource=admin}
 
 eureka:
   client:

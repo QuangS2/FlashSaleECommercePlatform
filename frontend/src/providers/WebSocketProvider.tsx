@@ -12,7 +12,7 @@ export const useWebSocketContext = () => useContext(WebSocketContext);
 
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isConnected, subscribe } = useWebSocket({
-    url: 'http://localhost:8085/ws', // Hardcoded for Week 4 demo
+    url: import.meta.env.VITE_WS_URL || 'ws://localhost:8085/ws',
     onConnect: () => console.log('Connected to Real-time Notification Service'),
     onDisconnect: () => console.log('Disconnected from Real-time Notification Service'),
   });

@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: notification-service
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost:9092}
 
 eureka:
   client:
