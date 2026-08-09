@@ -4,6 +4,7 @@ import { FlashSaleSection } from './components/FlashSaleSection';
 import { ProductCatalog } from './components/ProductCatalog';
 import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
+import { QueueModal } from './components/QueueModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { Product } from './types';
 import { useCartStore } from './store/useCartStore';
@@ -149,6 +150,11 @@ export function App() {
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         onOrderSuccess={handleOrderSuccess}
+      />
+
+      {/* Queue Waiting Room Modal */}
+      <QueueModal
+        onSuccessRedirect={handleOrderSuccess}
       />
 
       {/* Product Detail Modal */}

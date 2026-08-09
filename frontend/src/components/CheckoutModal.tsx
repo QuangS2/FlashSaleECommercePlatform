@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, ShieldAlert, CreditCard, Truck, Wallet } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
+import { useOrderQueueStore } from '../store/useOrderQueueStore';
 import keycloak from '../auth/keycloak';
 
 interface CheckoutModalProps {
@@ -11,6 +12,8 @@ interface CheckoutModalProps {
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onOrderSuccess }) => {
   const { items, getSubtotalPrice, getDiscountAmount, getFinalPrice, clearCart } = useCartStore();
+  const setQueueOpen = useOrderQueueStore(state => state.setQueueOpen);
+  const setQueueStatus = useOrderQueueStore(state => state.setQueueStatus);
 
   const [formData, setFormData] = useState({
     fullName: keycloak.tokenParsed?.name || '',
@@ -33,13 +36,30 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate order placement via API Gateway
+    // MÔ PHỎNG: Kiểm tra xem có sản phẩm Flash Sale không (hoặc ép luồng Flash Sale để demo)
+    const hasFlashSale = items.some(item => item.product.isFlashSale) || true; // Ép true để test QueueModal
+
     setTimeout(() => {
       setIsSubmitting(false);
+      onClose(); // Đóng form checkout
+      
       const generatedOrderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
       clearCart();
-      onOrderSuccess(generatedOrderId);
-    }, 1200);
+
+      if (hasFlashSale) {
+        // 1. Bật Modal Hàng chờ
+        setQueueOpen(true);
+        setQueueStatus('WAITING');
+        
+        // 2. MÔ PHỎNG: Nhận tín hiệu WebSocket 'SUCCESS' từ backend sau 3.5 giây
+        setTimeout(() => {
+          setQueueStatus('SUCCESS', generatedOrderId);
+        }, 3500);
+      } else {
+        // Luồng mua hàng bình thường (không phải Flash sale)
+        onOrderSuccess(generatedOrderId);
+      }
+    }, 800);
   };
 
   return (
