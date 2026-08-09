@@ -1,6 +1,7 @@
 import React, { useEffect, createContext, useContext } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useFlashSaleStore } from '../store/useFlashSaleStore';
+import toast from 'react-hot-toast';
 
 interface WebSocketContextType {
   isConnected: boolean;
@@ -21,6 +22,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   useEffect(() => {
     let stockSubscription: any = null;
+    let personalSubscription: any = null;
 
     if (isConnected) {
       // Subscribe to public flash sale stock updates
@@ -34,11 +36,40 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           console.error('Failed to parse stock update message', err);
         }
       });
+
+      // Subscribe to personal order notifications
+      personalSubscription = subscribe('/user/queue/notifications', (message) => {
+        try {
+          const data = JSON.parse(message.body);
+          const msgText = data.message || data.content || 'Bạn có thông báo mới';
+          
+          if (data.status === 'SUCCESS' || data.type === 'SUCCESS') {
+            toast.success(msgText);
+          } else if (data.status === 'ERROR' || data.type === 'ERROR') {
+            toast.error(msgText);
+          } else {
+            toast(msgText, {
+              icon: 'ℹ️',
+              style: {
+                background: '#f8fafc',
+                color: '#334155',
+                borderColor: '#e2e8f0',
+              },
+            });
+          }
+        } catch (err) {
+          // Fallback if not JSON
+          toast(message.body, { icon: '🔔' });
+        }
+      });
     }
 
     return () => {
       if (stockSubscription) {
         stockSubscription.unsubscribe();
+      }
+      if (personalSubscription) {
+        personalSubscription.unsubscribe();
       }
     };
   }, [isConnected, subscribe, updateProductStock]);

@@ -8,6 +8,7 @@ import { ProductDetailModal } from './components/ProductDetailModal';
 import { Product } from './types';
 import { useCartStore } from './store/useCartStore';
 import { CheckCircle2, Truck, ShieldCheck, RotateCcw, Headphones } from 'lucide-react';
+import { Toaster } from 'react-hot-toast';
 
 export function App() {
   const [activeCategory, setActiveCategory] = useState<string>('Tất cả');
@@ -178,6 +179,15 @@ export function App() {
           </div>
         </div>
       )}
+
+      {/* Global Notification Toaster */}
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          className: 'text-sm font-medium shadow-lg rounded-md border border-slate-100',
+          duration: 4000,
+        }} 
+      />
     </div>
   );
 }
