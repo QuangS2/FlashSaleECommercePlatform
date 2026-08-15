@@ -32,14 +32,25 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
   };
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // MÔ PHỎNG: Kiểm tra xem có sản phẩm Flash Sale không (hoặc ép luồng Flash Sale để demo)
-    const hasFlashSale = items.some(item => item.product.isFlashSale) || true; // Ép true để test QueueModal
+    const hasFlashSale = items.some(item => item.product.isFlashSale);
 
-    setTimeout(() => {
+    try {
+      // Gọi API trừ tồn kho cho từng sản phẩm (Tuần tự hoặc Promise.all)
+      // Trong thực tế sẽ có 1 API Checkout tổng, nhưng ở đây ta test Redisson Lock qua API deduct
+      for (const item of items) {
+        // Sử dụng Vite Proxy: /api/v1/... sẽ tự động route tới API Gateway (8080) -> Inventory Service (8082)
+        const res = await fetch(`/api/v1/inventory/deduct?productId=${item.product.id}&quantity=${item.quantity}`, {
+          method: 'POST'
+        });
+        if (!res.ok) {
+          throw new Error(`Sản phẩm ${item.product.name} đã hết hàng hoặc không đủ số lượng!`);
+        }
+      }
+
       setIsSubmitting(false);
       onClose(); // Đóng form checkout
       
@@ -47,19 +58,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
       clearCart();
 
       if (hasFlashSale) {
-        // 1. Bật Modal Hàng chờ
+        // Bật Modal Hàng chờ
         setQueueOpen(true);
         setQueueStatus('WAITING');
         
-        // 2. MÔ PHỎNG: Nhận tín hiệu WebSocket 'SUCCESS' từ backend sau 3.5 giây
+        // MÔ PHỎNG: Nhận tín hiệu WebSocket 'SUCCESS' từ backend sau 3.5 giây
         setTimeout(() => {
           setQueueStatus('SUCCESS', generatedOrderId);
         }, 3500);
       } else {
-        // Luồng mua hàng bình thường (không phải Flash sale)
         onOrderSuccess(generatedOrderId);
       }
-    }, 800);
+    } catch (error: any) {
+      setIsSubmitting(false);
+      alert(error.message); // Hiển thị lỗi hết hàng
+    }
   };
 
   return (

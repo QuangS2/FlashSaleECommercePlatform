@@ -187,6 +187,8 @@ services:
       - OTEL_SERVICE_NAME=ecommerce-api-gateway
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_METRICS_EXPORTER=none
+      - EUREKA_SERVER=http://eureka-server:8761/eureka/
+      - KEYCLOAK_URL=http://keycloak:8180
     depends_on:
       - eureka-server
       - keycloak
@@ -214,6 +216,9 @@ services:
       - OTEL_SERVICE_NAME=ecommerce-product-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_METRICS_EXPORTER=none
+      - EUREKA_SERVER=http://eureka-server:8761/eureka/
+      - MONGODB_URI=mongodb://mongodb:27017/ecommerce_product
+      - REDIS_HOST=redis
     depends_on:
       - eureka-server
       - mongodb
@@ -236,6 +241,10 @@ services:
       - OTEL_SERVICE_NAME=ecommerce-inventory-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_METRICS_EXPORTER=none
+      - EUREKA_SERVER=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ecommerce_db?useSSL=false&allowPublicKeyRetrieval=true
+      - REDIS_HOST=redis
+      - KAFKA_HOST=kafka:9092
     depends_on:
       - eureka-server
       - mysql-db
@@ -258,6 +267,9 @@ services:
       - OTEL_SERVICE_NAME=ecommerce-order-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_METRICS_EXPORTER=none
+      - EUREKA_SERVER=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ecommerce_db?useSSL=false&allowPublicKeyRetrieval=true
+      - KAFKA_HOST=kafka:9092
     depends_on:
       - eureka-server
       - mysql-db
@@ -280,6 +292,9 @@ services:
       - OTEL_SERVICE_NAME=ecommerce-payment-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_METRICS_EXPORTER=none
+      - EUREKA_SERVER=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ecommerce_db?useSSL=false&allowPublicKeyRetrieval=true
+      - KAFKA_HOST=kafka:9092
     depends_on:
       - eureka-server
       - mysql-db
@@ -301,6 +316,8 @@ services:
       - OTEL_SERVICE_NAME=ecommerce-notification-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_METRICS_EXPORTER=none
+      - EUREKA_SERVER=http://eureka-server:8761/eureka/
+      - KAFKA_HOST=kafka:9092
     depends_on:
       - eureka-server
       - kafka
@@ -316,6 +333,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_KEYCLOAK_URL: http://auth.flashale.quangs2.cloud
     image: ghcr.io/quangs2/flashsale-frontend:latest
     container_name: ecommerce-frontend-web
     networks:
