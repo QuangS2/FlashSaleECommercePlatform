@@ -4,10 +4,22 @@ server:
 spring:
   application:
     name: notification-service
+
   kafka:
     bootstrap-servers: ${KAFKA_HOST:localhost:9092}
+    consumer:
+      group-id: notification-service-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
 
 eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+mock:
+  simulator:
+    enabled: false
+

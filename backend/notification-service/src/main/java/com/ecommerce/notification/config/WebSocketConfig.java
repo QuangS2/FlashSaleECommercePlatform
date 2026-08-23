@@ -12,6 +12,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
+        // Kích hoạt Simple Broker cho cả Broadcast Topic và Private Queue
         config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/app");
         config.setUserDestinationPrefix("/user");
@@ -19,7 +20,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")
+        // Đăng ký STOMP Endpoints hỗ trợ SockJS & CORS
+        registry.addEndpoint("/ws", "/ws-notification")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
     }

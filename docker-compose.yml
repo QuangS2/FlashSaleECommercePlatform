@@ -10,6 +10,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
       MYSQL_DATABASE: ecommerce_db
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -36,6 +38,8 @@ services:
   mongodb:
     image: mongo:7.0
     container_name: ecommerce-mongo
+    ports:
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
@@ -58,6 +62,8 @@ services:
     image: redis:7.0-alpine
     container_name: ecommerce-redis
     command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -104,11 +110,20 @@ services:
     container_name: ecommerce-kafka
     depends_on:
       - zookeeper
+    ports:
+      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     networks:
       - ecommerce-net
     deploy:
@@ -121,6 +136,34 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 9092 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka-init-topics:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: ecommerce-kafka-init-topics
+    depends_on:
+      - kafka
+    networks:
+      - ecommerce-net
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      echo 'Chờ Kafka Broker sẵn sàng...'
+      cub kafka-ready -b kafka:29092 1 30
+
+      echo 'Khởi tạo các Production Kafka Topics với 3 Partitions...'
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic order-events --partitions 3 --replication-factor 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic inventory-events --partitions 3 --replication-factor 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic payment-events --partitions 3 --replication-factor 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic notification-events --partitions 3 --replication-factor 1
+
+      echo 'Danh sách Topics đã khởi tạo:'
+      kafka-topics --bootstrap-server kafka:29092 --list
+      "
 
   # -------------------------------------------------------------------------
   # 5. Keycloak IAM Server (OAuth2 / OIDC / PKCE Authentication)
@@ -232,7 +275,7 @@ services:
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ecommerce_db?useSSL=false&allowPublicKeyRetrieval=true
       - REDIS_HOST=redis
-      - KAFKA_HOST=kafka:9092
+      - KAFKA_HOST=kafka:29092
     depends_on:
       - eureka-server
       - mysql-db
@@ -254,7 +297,7 @@ services:
       - OTEL_METRICS_EXPORTER=none
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ecommerce_db?useSSL=false&allowPublicKeyRetrieval=true
-      - KAFKA_HOST=kafka:9092
+      - KAFKA_HOST=kafka:29092
     depends_on:
       - eureka-server
       - mysql-db
@@ -276,7 +319,7 @@ services:
       - OTEL_METRICS_EXPORTER=none
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ecommerce_db?useSSL=false&allowPublicKeyRetrieval=true
-      - KAFKA_HOST=kafka:9092
+      - KAFKA_HOST=kafka:29092
     depends_on:
       - eureka-server
       - mysql-db
@@ -296,7 +339,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_METRICS_EXPORTER=none
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
-      - KAFKA_HOST=kafka:9092
+      - KAFKA_HOST=kafka:29092
     depends_on:
       - eureka-server
       - kafka

@@ -4,6 +4,7 @@ import com.ecommerce.inventory.model.Inventory;
 import com.ecommerce.inventory.repository.InventoryRepository;
 import com.ecommerce.inventory.service.InventoryService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@Disabled("Integration test requiring live Redis and MySQL containers")
 public class ConcurrencyLockTest {
 
     @Autowired
