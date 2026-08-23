@@ -21,10 +21,11 @@ public class FallbackControllerTest {
     }
 
     @Test
-    @DisplayName("Test 1: GET /fallback/products - Returns 503 and product-service degraded response")
+    @DisplayName("Test 1: GET /fallback/products - Returns 503 and extracts exception header")
     public void testProductFallback() {
         webTestClient.get()
                 .uri("/fallback/products")
+                .header("Execution-Exception-Type", "TimeoutException: 3000ms exceeded")
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.SERVICE_UNAVAILABLE)
                 .expectBody(FallbackResponse.class)
@@ -32,12 +33,29 @@ public class FallbackControllerTest {
                     assertThat(response.getService()).isEqualTo("product-service");
                     assertThat(response.getStatus()).isEqualTo(503);
                     assertThat(response.getRetryAfterSeconds()).isEqualTo(10);
+                    assertThat(response.getExceptionType()).isEqualTo("TimeoutException: 3000ms exceeded");
                     assertThat(response.getMessage()).contains("Dịch vụ sản phẩm");
                 });
     }
 
     @Test
-    @DisplayName("Test 2: GET /fallback/orders - Returns 503 and order-service overload response")
+    @DisplayName("Test 2: GET /fallback/flashsale-cached - Returns 200 OK and emergency catalog")
+    public void testFlashsaleCachedFallback() {
+        webTestClient.get()
+                .uri("/fallback/flashsale-cached")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(FallbackResponse.class)
+                .value(response -> {
+                    assertThat(response.getStatus()).isEqualTo(200);
+                    assertThat(response.getError()).isEqualTo("GRACEFUL_DEGRADATION");
+                    assertThat(response.getService()).isEqualTo("product-service");
+                    assertThat(response.getData()).isNotNull();
+                });
+    }
+
+    @Test
+    @DisplayName("Test 3: GET /fallback/orders - Returns 503 and order overload response")
     public void testOrderFallback() {
         webTestClient.get()
                 .uri("/fallback/orders")
@@ -53,7 +71,7 @@ public class FallbackControllerTest {
     }
 
     @Test
-    @DisplayName("Test 3: GET /fallback/inventory - Returns 503 and inventory-service unreachable response")
+    @DisplayName("Test 4: GET /fallback/inventory - Returns 503 and inventory-service response")
     public void testInventoryFallback() {
         webTestClient.get()
                 .uri("/fallback/inventory")
@@ -68,7 +86,7 @@ public class FallbackControllerTest {
     }
 
     @Test
-    @DisplayName("Test 4: GET /fallback/payments - Returns 503 and payment warning response")
+    @DisplayName("Test 5: GET /fallback/payments - Returns 503 and payment warning response")
     public void testPaymentFallback() {
         webTestClient.get()
                 .uri("/fallback/payments")
@@ -84,7 +102,7 @@ public class FallbackControllerTest {
     }
 
     @Test
-    @DisplayName("Test 5: GET /fallback/default - Returns 503 and gateway timeout response")
+    @DisplayName("Test 6: GET /fallback/default - Returns 503 and gateway timeout response")
     public void testDefaultFallback() {
         webTestClient.get()
                 .uri("/fallback/default")

@@ -17,7 +17,10 @@ public class FallbackResponse {
     private String error;
     private String service;
     private String message;
+    private String exceptionType;
     private int retryAfterSeconds;
+    private Object data;
+
     @Builder.Default
     private Instant timestamp = Instant.now();
 
@@ -28,6 +31,19 @@ public class FallbackResponse {
                 .service(service)
                 .message(message)
                 .retryAfterSeconds(retryAfterSeconds)
+                .timestamp(Instant.now())
+                .build();
+    }
+
+    public static FallbackResponse of(int status, String error, String service, String message, String exceptionType, int retryAfterSeconds, Object data) {
+        return FallbackResponse.builder()
+                .status(status)
+                .error(error)
+                .service(service)
+                .message(message)
+                .exceptionType(exceptionType)
+                .retryAfterSeconds(retryAfterSeconds)
+                .data(data)
                 .timestamp(Instant.now())
                 .build();
     }

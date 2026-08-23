@@ -27,6 +27,16 @@ spring:
               args:
                 name: productCircuitBreaker
                 fallbackUri: forward:/fallback/products
+            - name: Retry
+              args:
+                retries: 3
+                statuses: BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                methods: GET
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
+                  factor: 2
+                  basedOnPreviousValue: false
 
         - id: inventory-service
           uri: lb://INVENTORY-SERVICE
@@ -37,6 +47,16 @@ spring:
               args:
                 name: inventoryCircuitBreaker
                 fallbackUri: forward:/fallback/inventory
+            - name: Retry
+              args:
+                retries: 2
+                statuses: BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT
+                methods: GET
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 300ms
+                  factor: 2
+                  basedOnPreviousValue: false
 
         - id: order-service
           uri: lb://ORDER-SERVICE
