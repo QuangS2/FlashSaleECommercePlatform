@@ -41,6 +41,13 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
+        <!-- Spring Kafka for Topic & Admin Configuration -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Testing Dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
