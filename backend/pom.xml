@@ -24,6 +24,7 @@
     </properties>
 
     <modules>
+        <module>common-dto</module>
         <module>eureka-server</module>
         <module>api-gateway</module>
         <module>product-service</module>
@@ -35,6 +36,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.ecommerce</groupId>
+                <artifactId>common-dto</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
