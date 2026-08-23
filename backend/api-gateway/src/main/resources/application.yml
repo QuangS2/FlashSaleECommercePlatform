@@ -81,7 +81,7 @@ spring:
         - id: notification-service
           uri: lb://NOTIFICATION-SERVICE
           predicates:
-            - Path=/ws-notification/**, /api/v1/notifications/**
+            - Path=/ws-notification/**, /ws/**, /api/v1/notifications/**
 
   security:
     oauth2:
