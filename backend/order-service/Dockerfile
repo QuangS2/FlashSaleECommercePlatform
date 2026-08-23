@@ -1,9 +1,7 @@
 # Stage 1: Build JAR file
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
-COPY pom.xml .
-COPY common-dto ./common-dto
-COPY order-service ./order-service
+COPY . .
 RUN mvn clean package -pl order-service -am -DskipTests
 
 # Stage 2: OpenTelemetry Agent Downloader
