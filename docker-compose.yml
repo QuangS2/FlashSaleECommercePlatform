@@ -209,6 +209,8 @@ services:
       - OTEL_SERVICE_NAME=ecommerce-eureka-server
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_METRICS_EXPORTER=none
+    ports:
+      - "8761:8761"
     networks:
       - ecommerce-net
     deploy:
@@ -259,6 +261,8 @@ services:
       - eureka-server
       - mongodb
       - redis
+    ports:
+      - "8081:8081"
     networks:
       - ecommerce-net
     deploy:
@@ -282,6 +286,8 @@ services:
       - eureka-server
       - mysql-db
       - redis
+    ports:
+      - "8082:8082"
     networks:
       - ecommerce-net
     deploy:
@@ -304,6 +310,8 @@ services:
       - eureka-server
       - mysql-db
       - kafka
+    ports:
+      - "8083:8083"
     networks:
       - ecommerce-net
     deploy:
@@ -325,6 +333,8 @@ services:
     depends_on:
       - eureka-server
       - mysql-db
+    ports:
+      - "8084:8084"
     networks:
       - ecommerce-net
     deploy:
@@ -345,6 +355,8 @@ services:
     depends_on:
       - eureka-server
       - kafka
+    ports:
+      - "8085:8085"
     networks:
       - ecommerce-net
     deploy:
