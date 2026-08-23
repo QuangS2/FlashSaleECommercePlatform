@@ -63,7 +63,7 @@ services:
     container_name: ecommerce-redis
     command: redis-server --appendonly yes
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -111,7 +111,7 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
+      - "9094:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -183,7 +183,7 @@ services:
       - shared-infra-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ecommerce-auth.rule=Host(`auth.flashale.quangs2.cloud`)"
+      - "traefik.http.routers.ecommerce-auth.rule=Host(`auth.flashale.quangs2.cloud`) || Host(`auth.flashsale.quangs2.cloud`)"
       - "traefik.http.services.ecommerce-auth.loadbalancer.server.port=8180"
       - "traefik.docker.network=shared-infra-net"
     deploy:
@@ -226,6 +226,8 @@ services:
       - OTEL_METRICS_EXPORTER=none
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
       - KEYCLOAK_URL=http://keycloak:8180
+    ports:
+      - "8888:8080"
     depends_on:
       - eureka-server
       - keycloak
@@ -234,7 +236,7 @@ services:
       - shared-infra-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ecommerce-api.rule=Host(`flashale-api.quangs2.cloud`)"
+      - "traefik.http.routers.ecommerce-api.rule=Host(`flashale-api.quangs2.cloud`) || Host(`flashsale-api.quangs2.cloud`)"
       - "traefik.http.services.ecommerce-api.loadbalancer.server.port=8080"
       - "traefik.docker.network=shared-infra-net"
     deploy:
@@ -354,12 +356,14 @@ services:
   frontend:
     image: ghcr.io/quangs2/flashsale-frontend:latest
     container_name: ecommerce-frontend-web
+    ports:
+      - "3000:80"
     networks:
       - ecommerce-net
       - shared-infra-net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ecommerce-web.rule=Host(`flashale.quangs2.cloud`)"
+      - "traefik.http.routers.ecommerce-web.rule=Host(`flashale.quangs2.cloud`) || Host(`flashsale.quangs2.cloud`)"
       - "traefik.http.services.ecommerce-web.loadbalancer.server.port=80"
       - "traefik.docker.network=shared-infra-net"
     deploy:
