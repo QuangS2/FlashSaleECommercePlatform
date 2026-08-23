@@ -41,7 +41,7 @@ public class CommonKafkaProducerConfig {
         props.put(ProducerConfig.LINGER_MS_CONFIG, 5);       // 5 ms linger delay
 
         // 5. Jackson Type info config
-        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+        props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, true);
 
         return props;
     }

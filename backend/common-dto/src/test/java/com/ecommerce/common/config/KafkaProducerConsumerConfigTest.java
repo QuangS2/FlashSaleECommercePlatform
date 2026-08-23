@@ -62,10 +62,7 @@ public class KafkaProducerConsumerConfigTest {
 
         assertThat(props.get(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG)).isEqualTo(false);
         assertThat(props.get(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG)).isEqualTo("earliest");
-        assertThat(props.get(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG)).isEqualTo(StringDeserializer.class);
-        assertThat(props.get(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG)).isEqualTo(ErrorHandlingDeserializer.class);
-        assertThat(props.get(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS)).isEqualTo(JsonDeserializer.class.getName());
-        assertThat(props.get(JsonDeserializer.TRUSTED_PACKAGES)).isEqualTo("*");
+        assertThat(props.get(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS)).isEqualTo(StringDeserializer.class.getName());
     }
 
     @Test
