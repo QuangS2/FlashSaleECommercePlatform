@@ -16,28 +16,36 @@ jobs:
       matrix:
         include:
           - service: eureka-server
-            context: backend/eureka-server
+            context: backend
+            file: backend/eureka-server/Dockerfile
             image: flashsale-eureka-server
           - service: api-gateway
-            context: backend/api-gateway
+            context: backend
+            file: backend/api-gateway/Dockerfile
             image: flashsale-api-gateway
           - service: product-service
-            context: backend/product-service
+            context: backend
+            file: backend/product-service/Dockerfile
             image: flashsale-product-service
           - service: inventory-service
-            context: backend/inventory-service
+            context: backend
+            file: backend/inventory-service/Dockerfile
             image: flashsale-inventory-service
           - service: order-service
-            context: backend/order-service
+            context: backend
+            file: backend/order-service/Dockerfile
             image: flashsale-order-service
           - service: payment-service
-            context: backend/payment-service
+            context: backend
+            file: backend/payment-service/Dockerfile
             image: flashsale-payment-service
           - service: notification-service
-            context: backend/notification-service
+            context: backend
+            file: backend/notification-service/Dockerfile
             image: flashsale-notification-service
           - service: frontend
             context: frontend
+            file: frontend/Dockerfile
             image: flashsale-frontend
             build_args: VITE_KEYCLOAK_URL=http://auth.flashale.quangs2.cloud
     
@@ -69,6 +77,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
