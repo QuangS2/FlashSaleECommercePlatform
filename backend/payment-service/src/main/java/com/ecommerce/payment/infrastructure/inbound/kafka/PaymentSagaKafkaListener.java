@@ -1,9 +1,9 @@
-package com.ecommerce.payment.listener;
+package com.ecommerce.payment.infrastructure.inbound.kafka;
 
 import com.ecommerce.common.config.KafkaTopicConstants;
 import com.ecommerce.common.event.EventType;
 import com.ecommerce.common.event.inventory.InventoryReservedEvent;
-import com.ecommerce.payment.service.PaymentService;
+import com.ecommerce.payment.application.port.in.PaymentUseCase;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class PaymentSagaEventListener {
+public class PaymentSagaKafkaListener {
 
-    private static final Logger log = LoggerFactory.getLogger(PaymentSagaEventListener.class);
+    private static final Logger log = LoggerFactory.getLogger(PaymentSagaKafkaListener.class);
 
-    private final PaymentService paymentService;
+    private final PaymentUseCase paymentUseCase;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(
@@ -35,12 +35,11 @@ public class PaymentSagaEventListener {
 
             if (EventType.INVENTORY_RESERVED.name().equals(eventTypeStr)) {
                 InventoryReservedEvent event = objectMapper.treeToValue(payloadNode, InventoryReservedEvent.class);
-                log.info("[PAYMENT SAGA LISTENER] Tiếp nhận sự kiện INVENTORY_RESERVED cho đơn hàng [{}] -> Kích hoạt thanh toán",
-                        event.getOrderId());
-                paymentService.handleInventoryReserved(event);
+                log.info("[PAYMENT SAGA LISTENER] Tiếp nhận sự kiện INVENTORY_RESERVED cho đơn hàng [{}]", event.getOrderId());
+                paymentUseCase.handleInventoryReserved(event);
             }
         } catch (Exception e) {
-            log.error("[PAYMENT LISTENER ERROR] Lỗi khi xử lý sự kiện từ topic inventory-events: {}", e.getMessage(), e);
+            log.error("[PAYMENT LISTENER ERROR] Lỗi xử lý sự kiện từ topic inventory-events: {}", e.getMessage(), e);
         } finally {
             if (ack != null) {
                 ack.acknowledge();

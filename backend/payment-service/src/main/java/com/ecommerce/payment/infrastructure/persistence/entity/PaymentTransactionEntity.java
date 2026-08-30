@@ -1,6 +1,7 @@
-package com.ecommerce.payment.model;
+package com.ecommerce.payment.infrastructure.persistence.entity;
 
 import com.ecommerce.common.event.payment.PaymentStatus;
+import com.ecommerce.payment.domain.entity.PaymentTransaction;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentTransaction {
+public class PaymentTransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,15 +62,50 @@ public class PaymentTransaction {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-        if (this.status == null) {
-            this.status = PaymentStatus.PENDING;
+        if (this.createdAt == null) {
+            this.createdAt = Instant.now();
+        }
+        if (this.updatedAt == null) {
+            this.updatedAt = Instant.now();
         }
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = Instant.now();
+    }
+
+    public static PaymentTransactionEntity fromDomain(PaymentTransaction txn) {
+        return PaymentTransactionEntity.builder()
+                .id(txn.getId())
+                .paymentId(txn.getPaymentId())
+                .orderId(txn.getOrderId())
+                .userId(txn.getUserId())
+                .amount(txn.getAmount())
+                .paymentMethod(txn.getPaymentMethod())
+                .status(txn.getStatus())
+                .transactionRef(txn.getTransactionRef())
+                .failureReason(txn.getFailureReason())
+                .paidAt(txn.getPaidAt())
+                .createdAt(txn.getCreatedAt())
+                .updatedAt(txn.getUpdatedAt())
+                .build();
+    }
+
+    public PaymentTransaction toDomain() {
+        return PaymentTransaction.builder()
+                .id(this.id)
+                .paymentId(this.paymentId)
+                .orderId(this.orderId)
+                .userId(this.userId)
+                .amount(this.amount)
+                .paymentMethod(this.paymentMethod)
+                .status(this.status)
+                .transactionRef(this.transactionRef)
+                .failureReason(this.failureReason)
+                .paidAt(this.paidAt)
+                .createdAt(this.createdAt)
+                .updatedAt(this.updatedAt)
+                .build();
     }
 }
