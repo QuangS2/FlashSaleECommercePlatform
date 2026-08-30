@@ -1,7 +1,7 @@
 package com.ecommerce.payment.dto;
 
 import com.ecommerce.common.event.payment.PaymentStatus;
-import com.ecommerce.payment.model.PaymentTransaction;
+import com.ecommerce.payment.domain.entity.PaymentTransaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
