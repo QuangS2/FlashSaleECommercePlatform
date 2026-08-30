@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import { ProductCard } from './ProductCard';
-import { useCartStore } from '../store/useCartStore';
+import { Product } from '../types';
 
 // Mock useCartStore
 vi.mock('../store/useCartStore', () => ({
@@ -11,11 +11,10 @@ vi.mock('../store/useCartStore', () => ({
   }),
 }));
 
-const mockProduct = {
+const mockProduct: Product = {
   id: 'p1',
   name: 'Sản phẩm test',
   description: 'Test',
-  categoryId: 'c1',
   category: 'Test',
   originalPrice: 100000,
   salePrice: 90000,
@@ -23,16 +22,14 @@ const mockProduct = {
   stockCount: 10,
   soldCount: 0,
   rating: 4.5,
-  reviewCount: 10,
   imageUrl: 'img.jpg',
-  brand: 'Brand',
-  isFlashSale: false
+  isFlashSale: false,
 };
 
 describe('ProductCard', () => {
   it('render sản phẩm đầy đủ thông tin', () => {
     render(<ProductCard product={mockProduct} />);
-    
+
     expect(screen.getByText('Sản phẩm test')).toBeInTheDocument();
     // 90000 -> 90.000
     expect(screen.getByText(/90.000/)).toBeInTheDocument();
@@ -42,9 +39,9 @@ describe('ProductCard', () => {
   it('vô hiệu hóa nút bấm khi hết hàng', () => {
     const outOfStockProduct = { ...mockProduct, stockCount: 0 };
     render(<ProductCard product={outOfStockProduct} />);
-    
+
     expect(screen.getByText('Tạm hết hàng')).toBeInTheDocument();
-    
+
     const buyButton = screen.getByText('HẾT HÀNG');
     expect(buyButton.closest('button')).toBeDisabled();
   });
