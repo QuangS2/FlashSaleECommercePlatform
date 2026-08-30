@@ -54,7 +54,7 @@ jobs:
       - name: Install & Build React SPA
         run: |
           cd frontend
-          npm ci || npm install
+          npm install
           npm run build
 
   # =========================================================================
