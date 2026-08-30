@@ -1,4 +1,4 @@
-package com.ecommerce.order.listener;
+package com.ecommerce.order.infrastructure.inbound.kafka;
 
 import com.ecommerce.common.config.KafkaTopicConstants;
 import com.ecommerce.common.event.EventType;
@@ -6,7 +6,7 @@ import com.ecommerce.common.event.inventory.InventoryReservationFailedEvent;
 import com.ecommerce.common.event.inventory.InventoryReservedEvent;
 import com.ecommerce.common.event.payment.PaymentCompletedEvent;
 import com.ecommerce.common.event.payment.PaymentFailedEvent;
-import com.ecommerce.order.service.OrderService;
+import com.ecommerce.order.application.port.in.OrderUseCase;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +18,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class OrderSagaEventListener {
+public class OrderSagaKafkaListener {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderSagaEventListener.class);
+    private static final Logger log = LoggerFactory.getLogger(OrderSagaKafkaListener.class);
 
-    private final OrderService orderService;
+    private final OrderUseCase orderUseCase;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(
@@ -38,10 +38,10 @@ public class OrderSagaEventListener {
 
             if (EventType.INVENTORY_RESERVED.name().equals(eventTypeStr)) {
                 InventoryReservedEvent event = objectMapper.treeToValue(payloadNode, InventoryReservedEvent.class);
-                orderService.handleInventoryReserved(event);
+                orderUseCase.handleInventoryReserved(event);
             } else if (EventType.INVENTORY_RESERVATION_FAILED.name().equals(eventTypeStr)) {
                 InventoryReservationFailedEvent event = objectMapper.treeToValue(payloadNode, InventoryReservationFailedEvent.class);
-                orderService.handleInventoryReservationFailed(event);
+                orderUseCase.handleInventoryReservationFailed(event);
             }
         } catch (Exception e) {
             log.error("[ORDER LISTENER ERROR] Lỗi khi xử lý sự kiện từ topic inventory-events: {}", e.getMessage(), e);
@@ -65,10 +65,10 @@ public class OrderSagaEventListener {
 
             if (EventType.PAYMENT_COMPLETED.name().equals(eventTypeStr)) {
                 PaymentCompletedEvent event = objectMapper.treeToValue(payloadNode, PaymentCompletedEvent.class);
-                orderService.handlePaymentCompleted(event);
+                orderUseCase.handlePaymentCompleted(event);
             } else if (EventType.PAYMENT_FAILED.name().equals(eventTypeStr)) {
                 PaymentFailedEvent event = objectMapper.treeToValue(payloadNode, PaymentFailedEvent.class);
-                orderService.handlePaymentFailed(event);
+                orderUseCase.handlePaymentFailed(event);
             }
         } catch (Exception e) {
             log.error("[ORDER LISTENER ERROR] Lỗi khi xử lý sự kiện từ topic payment-events: {}", e.getMessage(), e);
