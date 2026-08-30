@@ -1,6 +1,6 @@
 package com.ecommerce.inventory.dto;
 
-import com.ecommerce.inventory.model.Inventory;
+import com.ecommerce.inventory.domain.entity.Inventory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
