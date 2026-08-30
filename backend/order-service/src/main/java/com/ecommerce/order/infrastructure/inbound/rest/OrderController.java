@@ -1,8 +1,8 @@
-package com.ecommerce.order.controller;
+package com.ecommerce.order.infrastructure.inbound.rest;
 
+import com.ecommerce.order.application.port.in.OrderUseCase;
 import com.ecommerce.order.dto.CreateOrderRequest;
 import com.ecommerce.order.dto.OrderResponse;
-import com.ecommerce.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,14 +17,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderService orderService;
+    private final OrderUseCase orderUseCase;
 
     /**
      * Tiếp nhận đơn hàng Flash Sale (Non-blocking: HTTP 202 Accepted).
      */
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest request) {
-        OrderResponse response = orderService.createOrder(request);
+        OrderResponse response = orderUseCase.createOrder(request);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
@@ -33,7 +33,7 @@ public class OrderController {
      */
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> getOrderByOrderId(@PathVariable String orderId) {
-        OrderResponse response = orderService.getOrderByOrderId(orderId);
+        OrderResponse response = orderUseCase.getOrderByOrderId(orderId);
         return ResponseEntity.ok(response);
     }
 
@@ -42,7 +42,7 @@ public class OrderController {
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<OrderResponse>> getOrdersByUserId(@PathVariable String userId) {
-        List<OrderResponse> orders = orderService.getOrdersByUserId(userId);
+        List<OrderResponse> orders = orderUseCase.getOrdersByUserId(userId);
         return ResponseEntity.ok(orders);
     }
 
@@ -54,7 +54,7 @@ public class OrderController {
         return ResponseEntity.ok(Map.of(
                 "status", "UP",
                 "service", "order-service",
-                "architecture", "Event-Driven Saga Choreography",
+                "architecture", "Hexagonal Architecture (DDD) & Event-Driven Saga Choreography",
                 "database", "MySQL 8.0"
         ));
     }

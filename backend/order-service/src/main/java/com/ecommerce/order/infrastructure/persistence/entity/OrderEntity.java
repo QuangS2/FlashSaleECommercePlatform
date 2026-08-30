@@ -1,6 +1,7 @@
-package com.ecommerce.order.model;
+package com.ecommerce.order.infrastructure.persistence.entity;
 
 import com.ecommerce.common.event.order.OrderStatus;
+import com.ecommerce.order.domain.entity.Order;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Order {
+public class OrderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,17 +65,42 @@ public class Order {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-        if (this.status == null) {
-            this.status = OrderStatus.PENDING;
-        }
+    // Mapper methods
+    public static OrderEntity fromDomain(Order order) {
+        return OrderEntity.builder()
+                .id(order.getId())
+                .orderId(order.getOrderId())
+                .userId(order.getUserId())
+                .userEmail(order.getUserEmail())
+                .productId(order.getProductId())
+                .productTitle(order.getProductTitle())
+                .quantity(order.getQuantity())
+                .unitPrice(order.getUnitPrice())
+                .totalAmount(order.getTotalAmount())
+                .status(order.getStatus())
+                .paymentId(order.getPaymentId())
+                .cancelReason(order.getCancelReason())
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
+                .build();
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = Instant.now();
+    public Order toDomain() {
+        return Order.builder()
+                .id(this.id)
+                .orderId(this.orderId)
+                .userId(this.userId)
+                .userEmail(this.userEmail)
+                .productId(this.productId)
+                .productTitle(this.productTitle)
+                .quantity(this.quantity)
+                .unitPrice(this.unitPrice)
+                .totalAmount(this.totalAmount)
+                .status(this.status)
+                .paymentId(this.paymentId)
+                .cancelReason(this.cancelReason)
+                .createdAt(this.createdAt)
+                .updatedAt(this.updatedAt)
+                .build();
     }
 }
