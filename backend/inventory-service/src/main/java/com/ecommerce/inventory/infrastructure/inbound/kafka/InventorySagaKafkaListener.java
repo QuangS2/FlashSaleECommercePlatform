@@ -1,10 +1,10 @@
-package com.ecommerce.inventory.listener;
+package com.ecommerce.inventory.infrastructure.inbound.kafka;
 
 import com.ecommerce.common.config.KafkaTopicConstants;
 import com.ecommerce.common.event.EventType;
 import com.ecommerce.common.event.order.OrderCancelledEvent;
 import com.ecommerce.common.event.order.OrderCreatedEvent;
-import com.ecommerce.inventory.service.InventoryService;
+import com.ecommerce.inventory.application.port.in.InventoryUseCase;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class InventorySagaEventListener {
+public class InventorySagaKafkaListener {
 
-    private static final Logger log = LoggerFactory.getLogger(InventorySagaEventListener.class);
+    private static final Logger log = LoggerFactory.getLogger(InventorySagaKafkaListener.class);
 
-    private final InventoryService inventoryService;
+    private final InventoryUseCase inventoryUseCase;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(
@@ -38,12 +38,12 @@ public class InventorySagaEventListener {
                 OrderCreatedEvent event = objectMapper.treeToValue(payloadNode, OrderCreatedEvent.class);
                 log.info("[INVENTORY SAGA LISTENER] Tiếp nhận sự kiện ORDER_CREATED cho đơn hàng [{}] (Sản phẩm: {}, Số lượng: {})",
                         event.getOrderId(), event.getProductId(), event.getQuantity());
-                inventoryService.reserveStock(event.getOrderId(), event.getProductId(), event.getQuantity());
+                inventoryUseCase.reserveStock(event.getOrderId(), event.getProductId(), event.getQuantity());
             } else if (EventType.ORDER_CANCELLED.name().equals(eventTypeStr)) {
                 OrderCancelledEvent event = objectMapper.treeToValue(payloadNode, OrderCancelledEvent.class);
                 log.info("[INVENTORY SAGA LISTENER] Tiếp nhận sự kiện bù trừ ORDER_CANCELLED cho đơn hàng [{}] (Hoàn lại {} sản phẩm [{}])",
                         event.getOrderId(), event.getQuantity(), event.getProductId());
-                inventoryService.restoreStock(event.getOrderId(), event.getProductId(), event.getQuantity(), event.getReason());
+                inventoryUseCase.restoreStock(event.getOrderId(), event.getProductId(), event.getQuantity(), event.getReason());
             }
         } catch (Exception e) {
             log.error("[INVENTORY LISTENER ERROR] Lỗi xử lý sự kiện từ topic order-events: {}", e.getMessage(), e);
