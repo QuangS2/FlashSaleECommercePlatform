@@ -154,7 +154,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 mb-4">
         <div>
           <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <Filter className="w-5 h-5 text-rose-600" />
+            <Filter className="w-5 h-5 text-blue-600" />
             <span>DANH MỤC SẢN PHẨM {activeCategory !== 'Tất cả' && `- ${activeCategory.toUpperCase()}`}</span>
           </h2>
           <p className="text-xs text-slate-500">
@@ -170,7 +170,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="text-xs bg-slate-50 border border-slate-300 text-slate-700 rounded-md px-3 py-1.5 focus:outline-none focus:border-rose-500"
+            className="text-xs bg-white border border-slate-300 text-slate-700 rounded-[4px] px-3 py-2 focus:outline-none focus:border-[#1A94FF] focus:ring-1 focus:ring-[#1A94FF]"
           >
             <option value="featured">Nổi bật nhất</option>
             <option value="price-asc">Giá: Thấp đến Cao</option>
@@ -181,7 +181,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
       {/* Grid of Catalog Products */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {filtered.map((product) => (
             <ProductCard
               key={product.id}
@@ -192,7 +192,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-slate-500 bg-slate-50 rounded-md">
+        <div className="text-center py-12 text-slate-500 bg-slate-50 rounded border border-dashed border-slate-300">
           <p className="font-semibold text-slate-700">Không tìm thấy sản phẩm nào phù hợp.</p>
           <p className="text-xs text-slate-400 mt-1">Thử thay đổi từ khóa tìm kiếm hoặc chọn danh mục khác.</p>
         </div>

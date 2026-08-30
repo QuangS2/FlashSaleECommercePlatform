@@ -41,7 +41,7 @@ export const QueueModal: React.FC<QueueModalProps> = ({ onSuccessRedirect }) => 
       case 'ERROR':
         return (
           <>
-            <XCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
+            <XCircle className="w-16 h-16 text-[#FF424E] mx-auto mb-4" />
             <h3 className="text-lg font-bold text-slate-900 mb-2 uppercase tracking-wide">
               ĐẶT HÀNG THẤT BẠI
             </h3>
@@ -62,8 +62,8 @@ export const QueueModal: React.FC<QueueModalProps> = ({ onSuccessRedirect }) => 
         return (
           <>
             <div className="relative w-16 h-16 mx-auto mb-5">
-              <Loader2 className="w-16 h-16 text-rose-600 animate-spin opacity-20 absolute top-0 left-0" />
-              <Hourglass className="w-8 h-8 text-rose-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+              <Loader2 className="w-16 h-16 text-[#1A94FF] animate-spin opacity-20 absolute top-0 left-0" />
+              <Hourglass className="w-8 h-8 text-[#1A94FF] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2 uppercase tracking-wide">
               ĐANG XẾP HÀNG CHỜ...
@@ -74,7 +74,7 @@ export const QueueModal: React.FC<QueueModalProps> = ({ onSuccessRedirect }) => 
             
             {/* Fake progress bar */}
             <div className="w-full h-1.5 bg-slate-100 rounded-full mt-6 overflow-hidden">
-              <div className="h-full bg-rose-500 rounded-full w-2/3 animate-pulse" />
+              <div className="h-full bg-[#1A94FF] rounded-full w-2/3 animate-pulse" />
             </div>
           </>
         );

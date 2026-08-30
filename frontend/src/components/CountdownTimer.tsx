@@ -37,18 +37,18 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetHours = 2,
 
   return (
     <div className="flex items-center gap-2 font-mono select-none">
-      <Clock className="w-4 h-4 text-rose-500 animate-pulse" />
-      <span className="text-xs font-semibold text-slate-600 hidden sm:inline">KẾT THÚC TRONG:</span>
+      <Clock className="w-4 h-4 text-white animate-pulse" />
+      <span className="text-xs font-semibold text-white hidden sm:inline">KẾT THÚC TRONG:</span>
       <div className="flex items-center gap-1 text-xs font-bold">
-        <span className="bg-slate-900 text-white px-2 py-1 rounded-md shadow-inner">
+        <span className="bg-white text-[#1A94FF] px-2 py-1 rounded shadow-sm">
           {pad(timeLeft.hours)}
         </span>
-        <span className="text-slate-700 font-bold">:</span>
-        <span className="bg-slate-900 text-white px-2 py-1 rounded-md shadow-inner">
+        <span className="text-white font-bold">:</span>
+        <span className="bg-white text-[#1A94FF] px-2 py-1 rounded shadow-sm">
           {pad(timeLeft.minutes)}
         </span>
-        <span className="text-slate-700 font-bold">:</span>
-        <span className="bg-rose-600 text-white px-2 py-1 rounded-md shadow-inner">
+        <span className="text-white font-bold">:</span>
+        <span className="bg-yellow-400 text-slate-900 px-2 py-1 rounded shadow-sm">
           {pad(timeLeft.seconds)}
         </span>
       </div>

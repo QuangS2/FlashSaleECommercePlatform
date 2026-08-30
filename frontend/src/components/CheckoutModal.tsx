@@ -82,7 +82,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
         {/* Header */}
         <div className="bg-slate-900 text-white p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-rose-500" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
             <h2 className="text-base font-bold">XÁC NHẬN VÀ THANH TOÁN ĐƠN HÀNG</h2>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
@@ -97,7 +97,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             {/* Left Column: Shipping Address */}
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-200">
-                <Truck className="w-4 h-4 text-rose-600" />
+                <Truck className="w-4 h-4 text-[#1A94FF]" />
                 <span>Thông tin giao hàng</span>
               </h3>
 
@@ -110,7 +110,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   required
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  className="w-full text-xs p-2.5 border border-slate-300 rounded-md focus:outline-none focus:border-rose-500"
+                  className="w-full text-xs p-2.5 border border-slate-300 rounded-md focus:outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -123,7 +123,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   required
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full text-xs p-2.5 border border-slate-300 rounded-md focus:outline-none focus:border-rose-500"
+                  className="w-full text-xs p-2.5 border border-slate-300 rounded-md focus:outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -136,7 +136,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   required
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full text-xs p-2.5 border border-slate-300 rounded-md focus:outline-none focus:border-rose-500"
+                  className="w-full text-xs p-2.5 border border-slate-300 rounded-md focus:outline-none focus:border-blue-500"
                 />
               </div>
 
@@ -149,7 +149,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   required
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="w-full text-xs p-2.5 border border-slate-300 rounded-md focus:outline-none focus:border-rose-500"
+                  className="w-full text-xs p-2.5 border border-slate-300 rounded-md focus:outline-none focus:border-blue-500"
                 />
               </div>
             </div>
@@ -157,7 +157,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             {/* Right Column: Payment Method & Summary */}
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-slate-200">
-                <CreditCard className="w-4 h-4 text-rose-600" />
+                <CreditCard className="w-4 h-4 text-[#1A94FF]" />
                 <span>Phương thức thanh toán</span>
               </h3>
 
@@ -166,7 +166,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   onClick={() => setFormData({ ...formData, paymentMethod: 'COD' })}
                   className={`flex items-center gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
                     formData.paymentMethod === 'COD'
-                      ? 'border-rose-600 bg-rose-50/50 text-rose-900 font-semibold'
+                      ? 'border-[#1A94FF] bg-blue-50/50 text-blue-900 font-semibold'
                       : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                   }`}
                 >
@@ -175,7 +175,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     name="payment"
                     checked={formData.paymentMethod === 'COD'}
                     onChange={() => {}}
-                    className="text-rose-600 focus:ring-rose-500"
+                    className="text-[#1A94FF] focus:ring-blue-500"
                   />
                   <Truck className="w-4 h-4 text-slate-600" />
                   <span className="text-xs">Thanh toán khi nhận hàng (COD)</span>
@@ -185,7 +185,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   onClick={() => setFormData({ ...formData, paymentMethod: 'VNPAY' })}
                   className={`flex items-center gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
                     formData.paymentMethod === 'VNPAY'
-                      ? 'border-rose-600 bg-rose-50/50 text-rose-900 font-semibold'
+                      ? 'border-[#1A94FF] bg-blue-50/50 text-blue-900 font-semibold'
                       : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                   }`}
                 >
@@ -194,7 +194,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     name="payment"
                     checked={formData.paymentMethod === 'VNPAY'}
                     onChange={() => {}}
-                    className="text-rose-600 focus:ring-rose-500"
+                    className="text-[#1A94FF] focus:ring-blue-500"
                   />
                   <CreditCard className="w-4 h-4 text-slate-600" />
                   <span className="text-xs">Cổng VNPAY / Thẻ ATM Nội địa & QR Code</span>
@@ -204,7 +204,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   onClick={() => setFormData({ ...formData, paymentMethod: 'KEYCLOAK_WALLET' })}
                   className={`flex items-center gap-3 p-3 rounded-md border cursor-pointer transition-colors ${
                     formData.paymentMethod === 'KEYCLOAK_WALLET'
-                      ? 'border-rose-600 bg-rose-50/50 text-rose-900 font-semibold'
+                      ? 'border-[#1A94FF] bg-blue-50/50 text-blue-900 font-semibold'
                       : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                   }`}
                 >
@@ -213,7 +213,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                     name="payment"
                     checked={formData.paymentMethod === 'KEYCLOAK_WALLET'}
                     onChange={() => {}}
-                    className="text-rose-600 focus:ring-rose-500"
+                    className="text-[#1A94FF] focus:ring-blue-500"
                   />
                   <Wallet className="w-4 h-4 text-slate-600" />
                   <span className="text-xs">Ví điện tử Nội bộ (Ví Keycloak OAuth2)</span>
@@ -238,7 +238,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                 </div>
                 <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-2 border-t border-slate-200">
                   <span>Tổng cộng cần trả:</span>
-                  <span className="text-rose-600 text-base">{formatVND(getFinalPrice())}</span>
+                  <span className="text-[#FF424E] text-base">{formatVND(getFinalPrice())}</span>
                 </div>
               </div>
 
@@ -263,7 +263,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-6 py-2.5 rounded-md shadow transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="bg-[#1A94FF] hover:bg-[#0074DA] text-white text-xs font-bold px-6 py-2.5 rounded-md shadow transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
