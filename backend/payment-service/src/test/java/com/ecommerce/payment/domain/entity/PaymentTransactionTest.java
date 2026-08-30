@@ -14,6 +14,7 @@ class PaymentTransactionTest {
         PaymentTransaction txn = PaymentTransaction.create("order_123", "user_123", new BigDecimal("500.00"), "MOMO");
 
         assertNotNull(txn.getPaymentId());
+        assertFalse(txn.getPaymentId().trim().isEmpty()); // Kill mutant: replaced return value with ""
         assertEquals("order_123", txn.getOrderId());
         assertEquals("user_123", txn.getUserId());
         assertEquals(new BigDecimal("500.00"), txn.getAmount());

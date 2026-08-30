@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, activeCategory, onSele
         {/* Brand Logo */}
         <div className="flex items-center gap-2 cursor-pointer select-none shrink-0">
           <div className="bg-white text-[#1A94FF] p-1.5 rounded-md font-extrabold text-2xl tracking-tight flex items-center gap-1">
-            <span>TIKI</span>
+            <span>FLSALE</span>
           </div>
           <span className="text-xs text-blue-100 hidden sm:block border-l border-blue-400 pl-3 leading-snug">
             Tốt & Nhanh

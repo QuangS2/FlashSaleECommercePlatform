@@ -109,7 +109,7 @@ export function App() {
       <footer className="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <h4 className="font-bold text-slate-200 text-sm mb-3">VỀ TIKI/ECOMMERCE</h4>
+            <h4 className="font-bold text-slate-200 text-sm mb-3">VỀ FLSALE</h4>
             <p className="text-slate-400 leading-relaxed max-w-sm">
               Nền tảng mua sắm trực tuyến với hàng nghìn sản phẩm chính hãng, giá ưu đãi hấp dẫn từ các thương hiệu hàng đầu. Trải nghiệm mua sắm mượt mà, tiện lợi.
             </p>
