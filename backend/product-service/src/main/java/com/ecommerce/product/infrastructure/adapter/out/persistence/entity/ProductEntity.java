@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Document(value = "product")
 @Data
@@ -18,8 +19,15 @@ public class ProductEntity {
     @Id
     private String id;
     private String name;
+    private String category;
     private String description;
     private BigDecimal price;
     private BigDecimal discountPrice;
+    private Integer discountPercent;
     private String imageUrl;
+    private Double rating;
+    private Integer soldCount;
+    private Integer stockCount;
+    private Map<String, String> specs;
+    private Boolean isFlashSale;
 }

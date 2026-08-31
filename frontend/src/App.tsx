@@ -11,6 +11,7 @@ import { UserProfileDrawer } from './components/UserProfileDrawer';
 import { Product } from './types';
 import { useCartStore } from './store/useCartStore';
 import { useAuthStore } from './store/useAuthStore';
+import { useFlashSaleStore } from './store/useFlashSaleStore';
 import { CheckCircle2, Truck, ShieldCheck, RotateCcw, Headphones } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
@@ -24,10 +25,12 @@ export function App() {
 
   const { addItem } = useCartStore();
   const { initializeAuth } = useAuthStore();
+  const loadLiveProducts = useFlashSaleStore(state => state.loadLiveProducts);
 
   useEffect(() => {
     initializeAuth();
-  }, [initializeAuth]);
+    loadLiveProducts();
+  }, [initializeAuth, loadLiveProducts]);
 
   const handleQuickView = (product: Product) => {
     setSelectedProduct(product);

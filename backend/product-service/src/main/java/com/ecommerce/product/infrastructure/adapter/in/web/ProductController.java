@@ -20,10 +20,27 @@ public class ProductController {
     private final ProductUseCase productUseCase;
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        List<ProductResponse> responses = productUseCase.getAllProducts().stream()
+    public ResponseEntity<List<ProductResponse>> getAllProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String search) {
+        List<Product> products = productUseCase.getAllProducts();
+
+        List<ProductResponse> responses = products.stream()
+                .filter(p -> {
+                    if (category != null && !category.equalsIgnoreCase("Tất cả") && !category.equalsIgnoreCase(p.getCategory())) {
+                        return false;
+                    }
+                    if (search != null && !search.trim().isEmpty()) {
+                        String s = search.toLowerCase().trim();
+                        boolean matchName = p.getName() != null && p.getName().toLowerCase().contains(s);
+                        boolean matchCat = p.getCategory() != null && p.getCategory().toLowerCase().contains(s);
+                        return matchName || matchCat;
+                    }
+                    return true;
+                })
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(responses);
     }
 
@@ -39,12 +56,19 @@ public class ProductController {
     public ProductResponse createProduct(@RequestBody CreateProductRequest request) {
         Product product = Product.builder()
                 .name(request.getName())
+                .category(request.getCategory())
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .discountPrice(request.getDiscountPrice())
+                .discountPercent(request.getDiscountPercent())
                 .imageUrl(request.getImageUrl())
+                .rating(request.getRating())
+                .soldCount(request.getSoldCount())
+                .stockCount(request.getStockCount())
+                .specs(request.getSpecs())
+                .isFlashSale(request.getIsFlashSale())
                 .build();
-        
+
         Product savedProduct = productUseCase.createProduct(product);
         return mapToResponse(savedProduct);
     }
@@ -53,10 +77,17 @@ public class ProductController {
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
+                .category(product.getCategory())
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .discountPrice(product.getDiscountPrice())
+                .discountPercent(product.getDiscountPercent())
                 .imageUrl(product.getImageUrl())
+                .rating(product.getRating())
+                .soldCount(product.getSoldCount())
+                .stockCount(product.getStockCount())
+                .specs(product.getSpecs())
+                .isFlashSale(product.getIsFlashSale())
                 .build();
     }
 }

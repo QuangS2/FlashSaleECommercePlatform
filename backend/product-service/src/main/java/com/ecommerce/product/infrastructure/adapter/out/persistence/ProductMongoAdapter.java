@@ -40,10 +40,17 @@ public class ProductMongoAdapter implements ProductRepositoryPort {
         return Product.builder()
                 .id(entity.getId())
                 .name(entity.getName())
+                .category(entity.getCategory())
                 .description(entity.getDescription())
                 .price(entity.getPrice())
                 .discountPrice(entity.getDiscountPrice())
+                .discountPercent(entity.getDiscountPercent())
                 .imageUrl(entity.getImageUrl())
+                .rating(entity.getRating())
+                .soldCount(entity.getSoldCount())
+                .stockCount(entity.getStockCount())
+                .specs(entity.getSpecs())
+                .isFlashSale(entity.getIsFlashSale())
                 .build();
     }
 
@@ -51,10 +58,17 @@ public class ProductMongoAdapter implements ProductRepositoryPort {
         return ProductEntity.builder()
                 .id(domain.getId())
                 .name(domain.getName())
+                .category(domain.getCategory())
                 .description(domain.getDescription())
                 .price(domain.getPrice())
                 .discountPrice(domain.getDiscountPrice())
+                .discountPercent(domain.getDiscountPercent())
                 .imageUrl(domain.getImageUrl())
+                .rating(domain.getRating())
+                .soldCount(domain.getSoldCount())
+                .stockCount(domain.getStockCount())
+                .specs(domain.getSpecs())
+                .isFlashSale(domain.getIsFlashSale())
                 .build();
     }
 }
