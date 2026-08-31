@@ -12,7 +12,7 @@ interface CheckoutModalProps {
 }
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onOrderSuccess }) => {
-  const { items, getSubtotalPrice, getDiscountAmount, getFinalPrice, clearCart } = useCartStore();
+  const { items, getSubtotalPrice, getDiscountAmount, getFinalPrice, clearCart, closeCart } = useCartStore();
   const setQueueOpen = useOrderQueueStore((state) => state.setQueueOpen);
   const setQueueStatus = useOrderQueueStore((state) => state.setQueueStatus);
 
@@ -65,6 +65,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
       setIsSubmitting(false);
       onClose(); // Đóng form checkout
       clearCart();
+      closeCart();
 
       if (hasFlashSale) {
         // Bật Modal Hàng chờ thời gian thực và lắng nghe kết quả Saga
