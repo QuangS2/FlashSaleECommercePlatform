@@ -166,8 +166,9 @@ jobs:
       - name: Deploy application on Ubuntu Server
         run: |
           cd /opt/ecommerce-system
+          git fetch origin main
+          git reset --hard origin/main
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker compose pull || true
-          docker compose build
-          docker compose up -d --remove-orphans
+          docker compose pull
+          docker compose up -d --force-recreate --remove-orphans
           docker image prune -f
