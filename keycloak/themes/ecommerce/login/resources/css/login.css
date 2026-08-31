@@ -1,0 +1,266 @@
+/* ==========================================================================
+   FLSALE E-COMMERCE - CUSTOM KEYCLOAK LOGIN THEME
+   Brand Color Palette:
+   - Primary: #1A94FF (Tiki/Shopee Modern Blue)
+   - Primary Hover: #0074DA
+   - Background: #F4F6F9
+   - Surface: #FFFFFF
+   - Border: #E2E8F0
+   - Text Primary: #0F172A
+   - Text Secondary: #64748B
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #F0F6FF 0%, #F8FAFC 50%, #EEF2F6 100%) !important;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0F172A;
+}
+
+.login-pf page-login,
+.login-pf {
+  background: transparent !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Card Container */
+.card-pf {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
+  max-width: 440px !important;
+  width: 100% !important;
+  padding: 32px 36px !important;
+  margin: 0 auto !important;
+}
+
+/* Header & Brand Logo */
+#kc-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+#kc-header-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 0;
+}
+
+#kc-header-wrapper::before {
+  content: "FLSALE";
+  display: inline-block;
+  background: #1A94FF;
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  padding: 6px 14px;
+  border-radius: 6px;
+}
+
+#kc-header-wrapper::after {
+  content: "Tốt & Nhanh";
+  display: inline-block;
+  color: #1A94FF;
+  font-weight: 600;
+  font-size: 14px;
+  border-left: 2px solid #BAE0FF;
+  padding-left: 10px;
+}
+
+/* Page Title */
+#kc-page-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #0F172A !important;
+  text-align: center !important;
+  margin-bottom: 20px !important;
+  letter-spacing: -0.3px;
+}
+
+/* Form Groups & Labels */
+.form-group {
+  margin-bottom: 18px !important;
+}
+
+label.control-label,
+label {
+  display: block;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin-bottom: 6px !important;
+}
+
+/* Form Inputs */
+.form-control,
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100% !important;
+  height: 42px !important;
+  padding: 8px 14px !important;
+  font-size: 14px !important;
+  color: #0F172A !important;
+  background-color: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: none !important;
+}
+
+.form-control:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+  border-color: #1A94FF !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(26, 148, 255, 0.18) !important;
+}
+
+/* Primary Button (Log In) */
+.btn-primary,
+#kc-login {
+  width: 100% !important;
+  height: 44px !important;
+  background: #1A94FF !important;
+  border: none !important;
+  border-radius: 6px !important;
+  color: #FFFFFF !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(26, 148, 255, 0.2) !important;
+  margin-top: 8px !important;
+}
+
+.btn-primary:hover,
+#kc-login:hover {
+  background: #0074DA !important;
+  box-shadow: 0 4px 12px rgba(26, 148, 255, 0.35) !important;
+}
+
+.btn-primary:active,
+#kc-login:active {
+  transform: translateY(1px) !important;
+}
+
+/* Checkbox & Remember Me */
+.checkbox label {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #64748B !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer;
+}
+
+.checkbox input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  accent-color: #1A94FF !important;
+  cursor: pointer;
+}
+
+/* Links (Forgot Password, Register, Back to App) */
+a,
+#kc-registration a,
+#kc-form-options a,
+#kc-info-wrapper a {
+  color: #1A94FF !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease !important;
+}
+
+a:hover,
+#kc-registration a:hover,
+#kc-form-options a:hover,
+#kc-info-wrapper a:hover {
+  color: #0074DA !important;
+  text-decoration: underline !important;
+}
+
+/* Helper Info & Registration Box */
+#kc-info {
+  margin-top: 20px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #F1F5F9 !important;
+  text-align: center !important;
+  font-size: 13px !important;
+  color: #64748B !important;
+}
+
+#kc-info-wrapper {
+  font-size: 13px !important;
+}
+
+/* Alerts and Feedback Messages */
+.alert {
+  border-radius: 6px !important;
+  padding: 10px 14px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  margin-bottom: 16px !important;
+}
+
+.alert-error {
+  background-color: #FEF2F2 !important;
+  border: 1px solid #FECACA !important;
+  color: #DC2626 !important;
+}
+
+.alert-warning {
+  background-color: #FFFBEB !important;
+  border: 1px solid #FDE68A !important;
+  color: #D97706 !important;
+}
+
+.alert-success {
+  background-color: #F0FDF4 !important;
+  border: 1px solid #BBF7D0 !important;
+  color: #16A34A !important;
+}
+
+.alert-info {
+  background-color: #EFF6FF !important;
+  border: 1px solid #BFDBFE !important;
+  color: #2563EB !important;
+}
+
+/* Demo Credentials Hint Container */
+#kc-content-wrapper::after {
+  content: "💡 Tài khoản trải nghiệm nhanh:\A • Khách hàng: customer / password\A • Quản trị viên: admin / adminpassword";
+  white-space: pre-wrap;
+  display: block;
+  background: #F0F7FF;
+  border: 1px dashed #BAE0FF;
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #0369A1;
+  font-weight: 500;
+}
