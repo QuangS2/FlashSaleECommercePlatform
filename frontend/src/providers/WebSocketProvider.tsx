@@ -11,9 +11,19 @@ const WebSocketContext = createContext<WebSocketContextType>({ isConnected: fals
 
 export const useWebSocketContext = () => useContext(WebSocketContext);
 
+const getWebSocketUrl = (): string => {
+  if (import.meta.env.VITE_WS_URL) {
+    return import.meta.env.VITE_WS_URL;
+  }
+  if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    return `${window.location.origin}/ws`;
+  }
+  return 'http://localhost:8085/ws';
+};
+
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isConnected, subscribe } = useWebSocket({
-    url: import.meta.env.VITE_WS_URL || 'ws://localhost:8085/ws',
+    url: getWebSocketUrl(),
     onConnect: () => console.log('Connected to Real-time Notification Service'),
     onDisconnect: () => console.log('Disconnected from Real-time Notification Service'),
   });
