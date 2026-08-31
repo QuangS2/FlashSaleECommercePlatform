@@ -51,7 +51,7 @@ describe('Header Component', () => {
     (keycloak as any).authenticated = false;
     render(<Header activeCategory="Tất cả" onSelectCategory={vi.fn()} />);
 
-    const userCard = screen.getByTitle('Đăng nhập với Keycloak IAM');
+    const userCard = screen.getByText('Đăng nhập / Đăng ký');
     fireEvent.click(userCard);
 
     expect(keycloak.login).toHaveBeenCalled();
@@ -75,5 +75,21 @@ describe('Header Component', () => {
     fireEvent.click(logoutBtn);
 
     expect(keycloak.logout).toHaveBeenCalled();
+  });
+
+  it('gọi onOpenOrderHistory khi click vào nút Đơn mua', () => {
+    const onOpenSpy = vi.fn();
+    render(
+      <Header
+        activeCategory="Tất cả"
+        onSelectCategory={vi.fn()}
+        onOpenOrderHistory={onOpenSpy}
+      />
+    );
+
+    const orderBtn = screen.getByTitle('Xem lịch sử đơn hàng của tôi');
+    fireEvent.click(orderBtn);
+
+    expect(onOpenSpy).toHaveBeenCalled();
   });
 });

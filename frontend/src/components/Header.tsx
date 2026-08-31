@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu } from 'lucide-react';
+import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu, ReceiptText } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import keycloak from '../auth/keycloak';
 
@@ -7,12 +7,14 @@ interface HeaderProps {
   onSearch?: (term: string) => void;
   activeCategory: string;
   onSelectCategory: (category: string) => void;
+  onOpenOrderHistory?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onSearch,
   activeCategory,
   onSelectCategory,
+  onOpenOrderHistory,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { toggleCart, getTotalCount } = useCartStore();
@@ -74,7 +76,13 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Main Header Content */}
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
         {/* Brand Logo */}
-        <div className="flex items-center gap-2 cursor-pointer select-none shrink-0">
+        <div
+          onClick={() => {
+            if (onSelectCategory) onSelectCategory('Tất cả');
+            if (onSearch) onSearch('');
+          }}
+          className="flex items-center gap-2 cursor-pointer select-none shrink-0"
+        >
           <div className="bg-white text-[#1A94FF] p-1.5 rounded-md font-extrabold text-2xl tracking-tight flex items-center gap-1">
             <span>FLSALE</span>
           </div>
@@ -83,13 +91,13 @@ export const Header: React.FC<HeaderProps> = ({
           </span>
         </div>
 
-        {/* Search Bar */}
+        {/* Global Search Bar */}
         <form onSubmit={handleSearchSubmit} className="flex-1 max-w-2xl relative flex items-center">
           <input
             type="text"
-            placeholder="Tìm sản phẩm, danh mục hay thương hiệu mong muốn..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Tìm sản phẩm, danh mục hay thương hiệu mong muốn..."
             className="w-full bg-white text-slate-800 placeholder-slate-400 text-sm px-4 py-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 transition-shadow shadow-sm"
           />
           <button
@@ -101,22 +109,21 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </form>
 
-        {/* User Actions: Account & Cart */}
-        <div className="flex items-center gap-3">
-          {/* User Account / Keycloak Login */}
+        {/* User Account, Order History & Cart */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* User Profile / Login */}
           <div
             onClick={handleAccountClick}
-            className="flex items-center gap-2 cursor-pointer hover:bg-blue-600/60 px-3 py-1.5 rounded-md transition-colors select-none group"
-            title={isUserLoggedIn ? 'Tài khoản của tôi' : 'Đăng nhập với Keycloak IAM'}
+            className="flex items-center gap-2 cursor-pointer hover:bg-blue-600/50 px-2.5 py-1.5 rounded-md transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white border border-white/30">
+            <div className="bg-white/20 p-1.5 rounded-full">
               <User className="w-4 h-4" />
             </div>
-            <div className="text-left hidden md:block">
-              <div className="text-[11px] text-blue-100 leading-tight">
-                {isUserLoggedIn ? 'Xin chào,' : 'Tài khoản'}
+            <div className="text-xs text-left hidden lg:block leading-tight">
+              <div className="text-blue-100 text-[10px]">
+                {isUserLoggedIn ? 'Xin chào' : 'Đăng nhập / Đăng ký'}
               </div>
-              <div className="text-xs font-semibold leading-tight flex items-center gap-1">
+              <div className="font-semibold truncate max-w-[120px]">
                 <span>{displayName}</span>
               </div>
             </div>
@@ -130,6 +137,18 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             )}
           </div>
+
+          {/* Order History Button */}
+          {onOpenOrderHistory && (
+            <button
+              onClick={onOpenOrderHistory}
+              className="flex items-center gap-1.5 bg-[#0074DA] hover:bg-blue-800 px-3 py-2 rounded-md transition-colors shadow-sm text-xs font-semibold"
+              title="Xem lịch sử đơn hàng của tôi"
+            >
+              <ReceiptText className="w-4 h-4 text-blue-100" />
+              <span className="hidden md:inline">Đơn mua</span>
+            </button>
+          )}
 
           {/* Cart Icon & Badge */}
           <button
