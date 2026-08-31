@@ -29,11 +29,23 @@ vi.mock('./hooks/useWebSocket', () => ({
   }),
 }));
 
+import { useAuthStore } from './store/useAuthStore';
+
 describe('App Main Component Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     useCartStore.getState().clearCart();
     useOrderQueueStore.getState().resetQueue();
+    useAuthStore.setState({
+      isAuthenticated: true,
+      user: {
+        sub: 'customer_1001',
+        name: 'Lê Văn Khách',
+        username: 'customer',
+        email: 'customer@ecommerce.vn',
+        roles: ['ROLE_CUSTOMER'],
+      },
+    });
 
     vi.spyOn(productService, 'fetchProducts').mockResolvedValue([
       {

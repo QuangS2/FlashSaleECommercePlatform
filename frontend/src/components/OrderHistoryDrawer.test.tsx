@@ -15,9 +15,21 @@ vi.mock('../auth/keycloak', () => ({
   },
 }));
 
+import { useAuthStore } from '../store/useAuthStore';
+
 describe('OrderHistoryDrawer Component', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    useAuthStore.setState({
+      isAuthenticated: true,
+      user: {
+        sub: 'test_user_id',
+        name: 'Test Customer',
+        username: 'customer',
+        email: 'customer@ecommerce.vn',
+        roles: ['ROLE_CUSTOMER'],
+      },
+    });
   });
 
   afterEach(() => {

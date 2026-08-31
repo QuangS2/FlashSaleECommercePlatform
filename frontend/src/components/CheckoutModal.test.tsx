@@ -12,8 +12,20 @@ vi.mock('../auth/keycloak', () => ({
   },
 }));
 
+import { useAuthStore } from '../store/useAuthStore';
+
 describe('CheckoutModal', () => {
   beforeEach(() => {
+    useAuthStore.setState({
+      isAuthenticated: true,
+      user: {
+        sub: 'user_1',
+        name: 'Test User',
+        username: 'testuser',
+        email: 'test@ecommerce.vn',
+        roles: ['ROLE_CUSTOMER'],
+      },
+    });
     useCartStore.setState({
       items: [
         {

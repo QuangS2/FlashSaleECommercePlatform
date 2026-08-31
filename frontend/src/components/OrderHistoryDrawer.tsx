@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { X, Package, Clock, CheckCircle2, AlertCircle, RefreshCw, ChevronRight, ShoppingBag } from 'lucide-react';
+import { X, Package, Clock, CheckCircle2, AlertCircle, RefreshCw, ChevronRight, ShoppingBag, ShieldAlert } from 'lucide-react';
 import { orderService, OrderDetailResponse } from '../services/orderService';
-import keycloak from '../auth/keycloak';
+import { useAuthStore } from '../store/useAuthStore';
 
 interface OrderHistoryDrawerProps {
   isOpen: boolean;
@@ -18,40 +18,33 @@ export const OrderHistoryDrawer: React.FC<OrderHistoryDrawerProps> = ({
   const [loading, setLoading] = useState(false);
   const [filterTab, setFilterTab] = useState<'ALL' | 'PENDING' | 'COMPLETED' | 'CANCELLED'>('ALL');
 
-  const userId = keycloak.tokenParsed?.sub || 'customer_demo_user';
+  const { isAuthenticated, user, openLoginModal } = useAuthStore();
+  const userId = user?.sub || user?.username || '';
 
   const loadOrders = async () => {
     setLoading(true);
     try {
-      const data = await orderService.getUserOrders(userId);
-      if (data && data.length > 0) {
-        setOrders(data);
+      if (isAuthenticated && userId) {
+        // Tài khoản đã đăng nhập -> Lấy danh sách đơn hàng thực tế từ MySQL CSDL
+        const data = await orderService.getUserOrders(userId);
+        setOrders(data || []);
       } else {
-        // Mock demo orders nếu chưa có đơn hàng nào
-        setOrders([
-          {
-            orderId: 'ORD-20260831-889021',
-            status: 'COMPLETED',
-            userId: userId,
-            productId: 'fs-101',
-            productTitle: 'Điện thoại iPhone 15 Pro Max 256GB',
-            quantity: 1,
-            unitPrice: 28990000,
-            totalPrice: 28990000,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            orderId: 'ORD-20260831-774102',
-            status: 'PENDING',
-            userId: userId,
-            productId: 'cat-1',
-            productTitle: 'Laptop Apple MacBook Air M2',
-            quantity: 1,
-            unitPrice: 24490000,
-            totalPrice: 24490000,
-            createdAt: new Date(Date.now() - 3600000).toISOString(),
-          },
-        ]);
+        // Khách vãng lai (Guest) -> Chỉ lấy các mã đơn hàng mà khách đã đặt trong phiên này
+        const storedGuestOrderIds = localStorage.getItem('flsale_guest_order_ids');
+        if (storedGuestOrderIds) {
+          const ids: string[] = JSON.parse(storedGuestOrderIds);
+          const guestOrders: OrderDetailResponse[] = [];
+          for (const id of ids) {
+            const detail = await orderService.getOrderById(id);
+            if (detail) {
+              guestOrders.push(detail);
+            }
+          }
+          setOrders(guestOrders);
+        } else {
+          // Chưa có đơn hàng nào -> Danh sách hoàn toàn trống (Không mock dữ liệu giả)
+          setOrders([]);
+        }
       }
     } catch {
       setOrders([]);
@@ -132,6 +125,22 @@ export const OrderHistoryDrawer: React.FC<OrderHistoryDrawerProps> = ({
           </div>
         </div>
 
+        {/* Guest Session Notice */}
+        {!isAuthenticated && (
+          <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 flex items-center justify-between text-xs text-amber-800">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Đang xem đơn phiên duyệt web khách.</span>
+            </div>
+            <button
+              onClick={openLoginModal}
+              className="font-bold text-[#1A94FF] hover:underline shrink-0"
+            >
+              Đăng nhập
+            </button>
+          </div>
+        )}
+
         {/* Filter Tabs */}
         <div className="flex border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
           {(['ALL', 'PENDING', 'COMPLETED', 'CANCELLED'] as const).map((tab) => {
@@ -168,7 +177,11 @@ export const OrderHistoryDrawer: React.FC<OrderHistoryDrawerProps> = ({
             <div className="py-16 text-center text-xs text-slate-500 flex flex-col items-center gap-2 bg-white rounded border border-slate-200 p-6">
               <ShoppingBag className="w-10 h-10 text-slate-300 stroke-1" />
               <span className="font-semibold text-slate-700">Chưa có đơn hàng nào</span>
-              <span className="text-[11px] text-slate-400">Các đơn hàng bạn mua sẽ xuất hiện tại đây.</span>
+              <span className="text-[11px] text-slate-400 text-center">
+                {isAuthenticated
+                  ? 'Tài khoản của bạn chưa có đơn hàng nào. Hãy mua sắm các deal Flash Sale hot!'
+                  : 'Các đơn hàng bạn mua sẽ xuất hiện tại đây hoặc được gửi qua Email xác nhận.'}
+              </span>
             </div>
           ) : (
             filteredOrders.map((order) => (
