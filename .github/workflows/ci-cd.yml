@@ -33,10 +33,14 @@ jobs:
           cd backend
           mvn clean package -DskipTests
 
-      - name: Upload Backend JAR Artifacts
+      - name: Download OpenTelemetry Java Agent
+        run: |
+          curl -sSL -o backend/opentelemetry-javaagent.jar https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+
+      - name: Upload Backend Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: backend-jars
+          name: backend-artifacts
           path: |
             backend/eureka-server/target/*.jar
             backend/api-gateway/target/*.jar
@@ -45,6 +49,7 @@ jobs:
             backend/order-service/target/*.jar
             backend/payment-service/target/*.jar
             backend/notification-service/target/*.jar
+            backend/opentelemetry-javaagent.jar
           retention-days: 1
 
   # =========================================================================
@@ -58,10 +63,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
@@ -87,10 +92,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download Backend JAR Artifacts
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Download Backend Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: backend-jars
+          name: backend-artifacts
           path: backend
 
       - name: Lowercase Repository Owner Name for Docker Tag
@@ -105,7 +113,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build & Push Eureka Server Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/eureka-server/Dockerfile
@@ -113,7 +121,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-eureka-server:latest
 
       - name: Build & Push API Gateway Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/api-gateway/Dockerfile
@@ -121,7 +129,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-api-gateway:latest
 
       - name: Build & Push Product Service Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/product-service/Dockerfile
@@ -129,7 +137,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-product-service:latest
 
       - name: Build & Push Inventory Service Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/inventory-service/Dockerfile
@@ -137,7 +145,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-inventory-service:latest
 
       - name: Build & Push Order Service Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/order-service/Dockerfile
@@ -145,7 +153,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-order-service:latest
 
       - name: Build & Push Payment Service Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/payment-service/Dockerfile
@@ -153,7 +161,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-payment-service:latest
 
       - name: Build & Push Notification Service Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/notification-service/Dockerfile
@@ -161,7 +169,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-notification-service:latest
 
       - name: Build & Push Frontend Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
