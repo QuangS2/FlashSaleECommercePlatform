@@ -6,11 +6,8 @@ import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { QueueModal } from './components/QueueModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
-import { AuthModal } from './components/AuthModal';
-import { UserProfileDrawer } from './components/UserProfileDrawer';
 import { Product } from './types';
 import { useCartStore } from './store/useCartStore';
-import { useAuthStore } from './store/useAuthStore';
 import { useFlashSaleStore } from './store/useFlashSaleStore';
 import { CheckCircle2, Truck, ShieldCheck, RotateCcw, Headphones } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
@@ -20,17 +17,14 @@ export function App() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
-  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [lastCompletedOrder, setLastCompletedOrder] = useState<string | null>(null);
 
   const { addItem } = useCartStore();
-  const { initializeAuth } = useAuthStore();
-  const loadLiveProducts = useFlashSaleStore(state => state.loadLiveProducts);
+  const loadLiveProducts = useFlashSaleStore((state) => state.loadLiveProducts);
 
   useEffect(() => {
-    initializeAuth();
     loadLiveProducts();
-  }, [initializeAuth, loadLiveProducts]);
+  }, [loadLiveProducts]);
 
   const handleQuickView = (product: Product) => {
     setSelectedProduct(product);
@@ -53,7 +47,6 @@ export function App() {
         activeCategory={activeCategory}
         onSelectCategory={(cat) => setActiveCategory(cat)}
         onSearch={(term) => setSearchTerm(term)}
-        onOpenProfile={() => setIsProfileOpen(true)}
       />
 
       {/* Main Page Body Container */}
@@ -73,115 +66,111 @@ export function App() {
         />
 
         {/* Customer Promise Bar - Cam kết khách hàng (chuẩn E-commerce Tiki/Shopee) */}
-        <section className="bg-white border border-slate-200 rounded-md p-5 shadow-sm grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <section className="mt-8 bg-white border border-slate-200 rounded-md p-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-slate-700 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="bg-slate-50 text-blue-600 p-2.5 rounded-md border border-slate-100">
-              <Truck className="w-5 h-5" />
+            <div className="p-3 bg-blue-50 text-[#1A94FF] rounded-md shrink-0">
+              <Truck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-800">Giao hàng toàn quốc</h4>
-              <p className="text-[11px] text-slate-500">Miễn phí ship từ 300.000đ</p>
+              <h4 className="text-xs font-bold uppercase tracking-wide text-slate-800">Giao Hàng Siêu Tốc 2H</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5">Nhận hàng nhanh chóng trong ngày</p>
             </div>
           </div>
-
           <div className="flex items-center gap-3">
-            <div className="bg-slate-50 text-blue-600 p-2.5 rounded-md border border-slate-100">
-              <ShieldCheck className="w-5 h-5" />
+            <div className="p-3 bg-blue-50 text-[#1A94FF] rounded-md shrink-0">
+              <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-800">100% chính hãng</h4>
-              <p className="text-[11px] text-slate-500">Cam kết hàng nhập khẩu chính ngạch</p>
+              <h4 className="text-xs font-bold uppercase tracking-wide text-slate-800">100% Hàng Chính Hãng</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5">Hoàn tiền 200% nếu phát hiện giả</p>
             </div>
           </div>
-
           <div className="flex items-center gap-3">
-            <div className="bg-slate-50 text-blue-600 p-2.5 rounded-md border border-slate-100">
-              <RotateCcw className="w-5 h-5" />
+            <div className="p-3 bg-blue-50 text-[#1A94FF] rounded-md shrink-0">
+              <RotateCcw className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-800">Đổi trả trong 30 ngày</h4>
-              <p className="text-[11px] text-slate-500">Lỗi 1 đổi 1 trong 30 ngày đầu</p>
+              <h4 className="text-xs font-bold uppercase tracking-wide text-slate-800">30 Ngày Đổi Trả Miễn Phí</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5">Thủ tục nhanh gọn và tiện lợi</p>
             </div>
           </div>
-
           <div className="flex items-center gap-3">
-            <div className="bg-slate-50 text-blue-600 p-2.5 rounded-md border border-slate-100">
-              <Headphones className="w-5 h-5" />
+            <div className="p-3 bg-blue-50 text-[#1A94FF] rounded-md shrink-0">
+              <Headphones className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-800">Hỗ trợ 24/7</h4>
-              <p className="text-[11px] text-slate-500">Tư vấn nhiệt tình, chu đáo</p>
+              <h4 className="text-xs font-bold uppercase tracking-wide text-slate-800">Hỗ Trợ Khách Hàng 24/7</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5">Hotline 1900 xxxx (Miễn phí)</p>
             </div>
           </div>
         </section>
       </main>
 
-      {/* Footer - Chuẩn E-commerce */}
-      <footer className="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
+      {/* Footer */}
+      <footer className="bg-white border-t border-slate-200 mt-12 py-8 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="col-span-1 md:col-span-2">
-            <h4 className="font-bold text-slate-200 text-sm mb-3">VỀ FLSALE</h4>
-            <p className="text-slate-400 leading-relaxed max-w-sm">
-              Nền tảng mua sắm trực tuyến với hàng nghìn sản phẩm chính hãng, giá ưu đãi hấp dẫn từ các thương hiệu hàng đầu. Trải nghiệm mua sắm mượt mà, tiện lợi.
+          <div>
+            <h5 className="font-bold text-slate-800 mb-3 uppercase tracking-wider">Về Chúng Tôi</h5>
+            <p className="leading-relaxed mb-2">
+              Nền tảng thương mại điện tử chuyên cung cấp các sản phẩm công nghệ, điện tử và gia dụng chính hãng với các chương trình Flash Sale ưu đãi hàng ngày.
             </p>
           </div>
-
           <div>
-            <h4 className="font-bold text-slate-200 text-sm mb-3">HỖ TRỢ KHÁCH HÀNG</h4>
-            <ul className="space-y-2 text-slate-400">
-              <li className="hover:text-blue-400 cursor-pointer transition-colors">Hướng dẫn mua hàng</li>
-              <li className="hover:text-blue-400 cursor-pointer transition-colors">Chính sách đổi trả</li>
-              <li className="hover:text-blue-400 cursor-pointer transition-colors">Chính sách bảo hành</li>
-              <li className="hover:text-blue-400 cursor-pointer transition-colors">Câu hỏi thường gặp (FAQ)</li>
+            <h5 className="font-bold text-slate-800 mb-3 uppercase tracking-wider">Hỗ Trợ Khách Hàng</h5>
+            <ul className="space-y-1.5">
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Trung tâm trợ giúp</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Hướng dẫn mua hàng</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Chính sách vận chuyển</a></li>
+              <li><a href="#" className="hover:text-blue-600 transition-colors">Chính sách bảo hành & đổi trả</a></li>
             </ul>
           </div>
-
           <div>
-            <h4 className="font-bold text-slate-200 text-sm mb-3">LIÊN HỆ</h4>
-            <ul className="space-y-2 text-slate-400">
-              <li>Hotline: <span className="text-blue-400 font-bold">1900 6868</span></li>
-              <li>Email: support@ecommerce.vn</li>
-              <li>Thời gian làm việc: 8:00 - 22:00 hàng ngày</li>
-            </ul>
+            <h5 className="font-bold text-slate-800 mb-3 uppercase tracking-wider">Phương Thức Thanh Toán</h5>
+            <p className="leading-relaxed mb-2">Hỗ trợ đa dạng phương thức thanh toán an toàn, tiện lợi:</p>
+            <div className="flex flex-wrap gap-2 text-[11px] font-medium text-slate-700">
+              <span className="border border-slate-200 px-2 py-1 rounded bg-slate-50">COD (Tiền mặt)</span>
+              <span className="border border-slate-200 px-2 py-1 rounded bg-slate-50">VNPAY QR</span>
+              <span className="border border-slate-200 px-2 py-1 rounded bg-slate-50">Thẻ ATM / Visa</span>
+            </div>
+          </div>
+          <div>
+            <h5 className="font-bold text-slate-800 mb-3 uppercase tracking-wider">Kết Nối Với Chúng Tôi</h5>
+            <p className="leading-relaxed mb-3">Đăng ký nhận tin tức Flash Sale và khuyến mãi sớm nhất:</p>
+            <div className="flex gap-1.5">
+              <input
+                type="email"
+                placeholder="Email của bạn..."
+                className="bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-xs flex-1 focus:outline-none focus:border-blue-500"
+              />
+              <button className="bg-[#1A94FF] hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded transition-colors">
+                Gửi
+              </button>
+            </div>
           </div>
         </div>
-
-        <div className="max-w-7xl mx-auto px-4 mt-8 pt-4 border-t border-slate-800 text-center text-slate-500">
-          <p>© 2024 Ecommerce Platform. Tất cả các quyền được bảo lưu.</p>
+        <div className="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-slate-100 text-center text-slate-400">
+          <p>© 2026 Flash Sale E-Commerce Platform. All rights reserved.</p>
         </div>
       </footer>
 
-      {/* Slide-over Cart Drawer */}
-      <CartDrawer
-        onCheckout={() => setIsCheckoutOpen(true)}
-      />
+      {/* Cart Drawer */}
+      <CartDrawer onCheckout={() => setIsCheckoutOpen(true)} />
 
-      {/* Order Checkout Modal */}
+      {/* Direct Order Checkout Modal */}
       <CheckoutModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         onOrderSuccess={handleOrderSuccess}
       />
 
-      {/* Queue Waiting Room Modal */}
-      <QueueModal
-        onSuccessRedirect={handleOrderSuccess}
-      />
+      {/* Queue Modal for Flash Sale Traffic Management */}
+      <QueueModal />
 
-      {/* Product Detail Modal */}
+      {/* Product Quick View Detail Modal */}
       <ProductDetailModal
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onBuyNow={handleBuyNow}
-      />
-
-      {/* In-App Authentication Modal */}
-      <AuthModal />
-
-      {/* User Profile & Account Drawer */}
-      <UserProfileDrawer
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
       />
 
       {/* Success Order Toast Modal */}

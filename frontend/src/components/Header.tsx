@@ -1,25 +1,21 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
-import { useAuthStore } from '../store/useAuthStore';
 import keycloak from '../auth/keycloak';
 
 interface HeaderProps {
   onSearch?: (term: string) => void;
   activeCategory: string;
   onSelectCategory: (category: string) => void;
-  onOpenProfile?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onSearch,
   activeCategory,
   onSelectCategory,
-  onOpenProfile,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { toggleCart, getTotalCount } = useCartStore();
-  const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const totalCartItems = getTotalCount();
 
   const categories = [
@@ -38,22 +34,20 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  const isUserLoggedIn = isAuthenticated || keycloak.authenticated;
-  const displayName = user?.fullName || keycloak.tokenParsed?.name || keycloak.tokenParsed?.preferred_username || 'Tài khoản';
+  const isUserLoggedIn = Boolean(keycloak.authenticated);
+  const displayName =
+    keycloak.tokenParsed?.name ||
+    keycloak.tokenParsed?.preferred_username ||
+    'Tài khoản';
 
   const handleAccountClick = () => {
-    if (isUserLoggedIn) {
-      if (onOpenProfile) {
-        onOpenProfile();
-      }
-    } else {
-      openAuthModal('login');
+    if (!isUserLoggedIn) {
+      keycloak.login();
     }
   };
 
   const handleLogoutClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    logout();
     if (keycloak.authenticated) {
       keycloak.logout();
     }
@@ -100,86 +94,76 @@ export const Header: React.FC<HeaderProps> = ({
           />
           <button
             type="submit"
-            className="absolute right-1 top-1 bottom-1 px-4 bg-[#0A68FF] hover:bg-[#0055D4] text-white rounded-[4px] flex items-center justify-center transition-colors"
+            className="absolute right-1.5 bg-[#0074DA] hover:bg-blue-800 text-white px-4 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-colors"
           >
-            <Search className="w-4 h-4" />
-            <span className="ml-1.5 text-xs font-semibold hidden sm:inline">Tìm kiếm</span>
+            <Search className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Tìm kiếm</span>
           </button>
         </form>
 
-        {/* Right Actions: Auth & Cart */}
-        <div className="flex items-center gap-4 shrink-0">
-          {isUserLoggedIn ? (
-            <div
-              onClick={handleAccountClick}
-              className="flex items-center gap-2 bg-blue-600/30 px-3 py-1.5 rounded-md hover:bg-blue-600/50 transition-colors cursor-pointer"
-              title="Xem thông tin tài khoản"
-            >
-              <div className="w-6 h-6 bg-white text-[#1A94FF] rounded-full flex items-center justify-center font-bold text-xs">
-                {displayName.charAt(0).toUpperCase()}
+        {/* User Actions: Account & Cart */}
+        <div className="flex items-center gap-3">
+          {/* User Account / Keycloak Login */}
+          <div
+            onClick={handleAccountClick}
+            className="flex items-center gap-2 cursor-pointer hover:bg-blue-600/60 px-3 py-1.5 rounded-md transition-colors select-none group"
+            title={isUserLoggedIn ? 'Tài khoản của tôi' : 'Đăng nhập với Keycloak IAM'}
+          >
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white border border-white/30">
+              <User className="w-4 h-4" />
+            </div>
+            <div className="text-left hidden md:block">
+              <div className="text-[11px] text-blue-100 leading-tight">
+                {isUserLoggedIn ? 'Xin chào,' : 'Tài khoản'}
               </div>
-              <div className="flex flex-col items-start hidden sm:flex">
-                <span className="text-[11px] text-blue-100">Tài khoản</span>
-                <span className="text-sm font-semibold text-white truncate max-w-[120px] leading-tight">
-                  {displayName}
-                </span>
+              <div className="text-xs font-semibold leading-tight flex items-center gap-1">
+                <span>{displayName}</span>
               </div>
+            </div>
+            {isUserLoggedIn && (
               <button
                 onClick={handleLogoutClick}
-                title="Đăng xuất"
-                className="ml-1 text-blue-200 hover:text-white transition-colors p-1"
-                aria-label="Đăng xuất"
+                className="ml-1 p-1 hover:bg-red-500/80 rounded transition-colors text-blue-100 hover:text-white"
+                title="Đăng xuất khỏi Keycloak"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
               </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => openAuthModal('login')}
-              className="flex items-center gap-2 bg-blue-600/30 px-3 py-1.5 rounded-md hover:bg-blue-600/50 transition-colors"
-            >
-              <User className="w-5 h-5 text-white" />
-              <div className="flex flex-col items-start hidden sm:flex">
-                <span className="text-[11px] text-blue-100">Đăng nhập / Đăng ký</span>
-                <span className="text-sm font-semibold text-white leading-tight">Tài khoản</span>
-              </div>
-            </button>
-          )}
+            )}
+          </div>
 
-          {/* Cart Button with Badge */}
+          {/* Cart Icon & Badge */}
           <button
             onClick={toggleCart}
-            className="relative flex items-center gap-2 hover:bg-blue-600/50 p-2 rounded-md transition-colors"
-            aria-label="Giỏ hàng"
+            className="relative flex items-center gap-2 bg-[#0074DA] hover:bg-blue-800 px-3.5 py-2 rounded-md transition-colors shadow-sm text-xs font-semibold"
           >
             <div className="relative">
-              <ShoppingCart className="w-6 h-6 text-white" />
+              <ShoppingCart className="w-5 h-5" />
               {totalCartItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-[10px] font-extrabold w-4 h-4 rounded-[4px] flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#0074DA] animate-scale-in">
                   {totalCartItems > 99 ? '99+' : totalCartItems}
                 </span>
               )}
             </div>
-            <span className="text-sm font-semibold hidden lg:block">Giỏ hàng</span>
+            <span className="hidden sm:inline">Giỏ hàng</span>
           </button>
         </div>
       </div>
 
-      {/* Category Navigation Bar */}
-      <div className="bg-[#1A94FF] px-4 pb-2">
-        <div className="max-w-7xl mx-auto flex items-center gap-4 overflow-x-auto scrollbar-none">
-          <div className="flex items-center gap-1 text-white font-medium text-sm mr-2 shrink-0 cursor-pointer">
+      {/* Navigation Categories Bar */}
+      <div className="bg-white text-slate-700 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 flex items-center gap-6 overflow-x-auto py-2 scrollbar-none text-xs font-medium">
+          <div className="flex items-center gap-1.5 text-[#1A94FF] font-bold pr-2 border-r border-slate-200 shrink-0">
             <Menu className="w-4 h-4" />
-            <span>Danh mục sản phẩm</span>
+            <span>DANH MỤC</span>
           </div>
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => onSelectCategory(cat)}
-              className={`px-3 py-1 text-xs font-medium whitespace-nowrap transition-colors rounded-md ${
+              className={`shrink-0 transition-colors py-0.5 px-2 rounded ${
                 activeCategory === cat
-                  ? 'bg-white text-[#1A94FF] font-bold'
-                  : 'text-blue-50 hover:bg-blue-600'
+                  ? 'text-[#1A94FF] font-bold bg-blue-50'
+                  : 'text-slate-600 hover:text-[#1A94FF]'
               }`}
             >
               {cat}

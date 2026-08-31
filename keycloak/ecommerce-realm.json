@@ -1,0 +1,136 @@
+{
+  "id": "ecommerce-realm",
+  "realm": "ecommerce-realm",
+  "displayName": "Flash Sale E-Commerce Platform",
+  "displayNameHtml": "<b>Flash Sale</b> E-Commerce",
+  "enabled": true,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": false,
+  "rememberMe": true,
+  "verifyEmail": false,
+  "resetPasswordAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "sslRequired": "external",
+  "roles": {
+    "realm": [
+      {
+        "name": "ROLE_CUSTOMER",
+        "description": "Vai trò khách hàng mua sắm"
+      },
+      {
+        "name": "ROLE_ADMIN",
+        "description": "Vai trò quản trị viên hệ thống"
+      }
+    ]
+  },
+  "groups": [],
+  "defaultRoles": [
+    "offline_access",
+    "uma_authorization",
+    "ROLE_CUSTOMER"
+  ],
+  "clients": [
+    {
+      "clientId": "ecommerce-frontend",
+      "name": "E-Commerce React Frontend Client",
+      "description": "Single Page Application React + TypeScript với PKCE",
+      "rootUrl": "http://localhost:5173",
+      "baseUrl": "http://localhost:5173",
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://localhost:3000/*",
+        "http://127.0.0.1:5173/*",
+        "http://127.0.0.1:3000/*",
+        "https://*/*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "oidc.ciba.grant.enabled": "false",
+        "client.secret.creation.time": "1710000000",
+        "backchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "http://localhost:5173/*##http://localhost:3000/*##https://*/*",
+        "display.on.consent.screen": "false",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "7a3a9926-218a-4d2c-88eb-123456789001",
+      "createdTimestamp": 1710000000000,
+      "username": "customer",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Văn Khách",
+      "lastName": "Lê",
+      "email": "customer@ecommerce.vn",
+      "credentials": [
+        {
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1710000000000,
+          "secretData": "{\"value\":\"+yWpGZq4oDkI5/QGZvx9yA==\",\"salt\":\"wR6fDk6xH8U=\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}",
+          "value": "password"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "ROLE_CUSTOMER"
+      ],
+      "clientRoles": {},
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "7a3a9926-218a-4d2c-88eb-123456789002",
+      "createdTimestamp": 1710000000000,
+      "username": "admin",
+      "enabled": true,
+      "totp": false,
+      "emailVerified": true,
+      "firstName": "Trị Viên",
+      "lastName": "Quản",
+      "email": "admin@ecommerce.vn",
+      "credentials": [
+        {
+          "type": "password",
+          "userLabel": "My password",
+          "createdDate": 1710000000000,
+          "secretData": "{\"value\":\"+yWpGZq4oDkI5/QGZvx9yA==\",\"salt\":\"wR6fDk6xH8U=\",\"additionalParameters\":{}}",
+          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}",
+          "value": "adminpassword"
+        }
+      ],
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "ROLE_ADMIN",
+        "ROLE_CUSTOMER"
+      ],
+      "clientRoles": {},
+      "notBefore": 0,
+      "groups": []
+    }
+  ]
+}

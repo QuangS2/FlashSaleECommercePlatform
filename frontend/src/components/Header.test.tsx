@@ -3,9 +3,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Header } from './Header';
 import { useCartStore } from '../store/useCartStore';
-import { useAuthStore } from '../store/useAuthStore';
+import keycloak from '../auth/keycloak';
 
-// Mock Keycloak default to false for clean test
+// Mock Keycloak default for clean test
 vi.mock('../auth/keycloak', () => ({
   default: {
     authenticated: false,
@@ -17,6 +17,7 @@ vi.mock('../auth/keycloak', () => ({
 
 describe('Header Component', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     useCartStore.setState({
       items: [
         {
@@ -39,22 +40,6 @@ describe('Header Component', () => {
         },
       ],
     });
-
-    useAuthStore.setState({
-      user: {
-        id: 'usr-1',
-        username: 'khachhang',
-        fullName: 'Nguyễn Văn Test',
-        email: 'test@example.com',
-        roles: ['ROLE_CUSTOMER'],
-      },
-      isAuthenticated: true,
-    });
-  });
-
-  it('hiển thị user name khi đã đăng nhập qua useAuthStore', () => {
-    render(<Header activeCategory="Tất cả" onSelectCategory={vi.fn()} />);
-    expect(screen.getByText('Nguyễn Văn Test')).toBeInTheDocument();
   });
 
   it('hiển thị số lượng giỏ hàng đúng từ store', () => {
@@ -62,29 +47,33 @@ describe('Header Component', () => {
     expect(screen.getByText('2')).toBeInTheDocument();
   });
 
-  it('mở Auth Modal khi chưa đăng nhập và click vào Đăng nhập', () => {
-    useAuthStore.setState({ isAuthenticated: false, user: null });
+  it('gọi keycloak.login() khi chưa đăng nhập và click vào thẻ tài khoản', () => {
+    (keycloak as any).authenticated = false;
     render(<Header activeCategory="Tất cả" onSelectCategory={vi.fn()} />);
 
-    const loginBtn = screen.getByText('Đăng nhập / Đăng ký');
-    fireEvent.click(loginBtn);
-
-    expect(useAuthStore.getState().isAuthModalOpen).toBe(true);
-  });
-
-  it('gọi onOpenProfile khi đã đăng nhập và click vào thẻ tài khoản', () => {
-    const onOpenProfileSpy = vi.fn();
-    render(
-      <Header
-        activeCategory="Tất cả"
-        onSelectCategory={vi.fn()}
-        onOpenProfile={onOpenProfileSpy}
-      />
-    );
-
-    const userCard = screen.getByTitle('Xem thông tin tài khoản');
+    const userCard = screen.getByTitle('Đăng nhập với Keycloak IAM');
     fireEvent.click(userCard);
 
-    expect(onOpenProfileSpy).toHaveBeenCalled();
+    expect(keycloak.login).toHaveBeenCalled();
+  });
+
+  it('hiển thị tên người dùng khi đã đăng nhập qua Keycloak', () => {
+    (keycloak as any).authenticated = true;
+    (keycloak as any).tokenParsed = { name: 'Lê Văn Khách' };
+
+    render(<Header activeCategory="Tất cả" onSelectCategory={vi.fn()} />);
+    expect(screen.getByText('Lê Văn Khách')).toBeInTheDocument();
+  });
+
+  it('gọi keycloak.logout() khi click vào nút đăng xuất', () => {
+    (keycloak as any).authenticated = true;
+    (keycloak as any).tokenParsed = { name: 'Lê Văn Khách' };
+
+    render(<Header activeCategory="Tất cả" onSelectCategory={vi.fn()} />);
+
+    const logoutBtn = screen.getByTitle('Đăng xuất khỏi Keycloak');
+    fireEvent.click(logoutBtn);
+
+    expect(keycloak.logout).toHaveBeenCalled();
   });
 });
