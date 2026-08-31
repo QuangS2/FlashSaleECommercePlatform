@@ -1,18 +1,22 @@
 import { create } from 'zustand';
 import { FlashSaleProduct, FlashSaleSlot } from '../types';
+import { productService } from '../services/productService';
+import { inventoryService } from '../services/inventoryService';
 
 interface FlashSaleState {
   slots: FlashSaleSlot[];
   activeSlotId: string;
   products: FlashSaleProduct[];
-  
+  isLoading: boolean;
+
   // Actions
   setActiveSlot: (slotId: string) => void;
   updateProductStock: (productId: string, remainingStock: number) => void;
   setProducts: (products: FlashSaleProduct[]) => void;
+  loadLiveProducts: () => Promise<void>;
 }
 
-const MOCK_SLOTS: FlashSaleSlot[] = [
+const DEFAULT_SLOTS: FlashSaleSlot[] = [
   {
     id: 'slot-1',
     startTime: '09:00',
@@ -43,7 +47,7 @@ const MOCK_SLOTS: FlashSaleSlot[] = [
   },
 ];
 
-const MOCK_FLASH_SALE_PRODUCTS: FlashSaleProduct[] = [
+const INITIAL_FLASH_SALE_PRODUCTS: FlashSaleProduct[] = [
   {
     id: 'fs-101',
     name: 'Điện thoại iPhone 15 Pro Max 256GB - Chính hãng VN/A',
@@ -144,10 +148,11 @@ const MOCK_FLASH_SALE_PRODUCTS: FlashSaleProduct[] = [
   },
 ];
 
-export const useFlashSaleStore = create<FlashSaleState>((set) => ({
-  slots: MOCK_SLOTS,
+export const useFlashSaleStore = create<FlashSaleState>((set, get) => ({
+  slots: DEFAULT_SLOTS,
   activeSlotId: 'slot-2',
-  products: MOCK_FLASH_SALE_PRODUCTS,
+  products: INITIAL_FLASH_SALE_PRODUCTS,
+  isLoading: false,
 
   setActiveSlot: (slotId: string) => set({ activeSlotId: slotId }),
 
@@ -170,4 +175,36 @@ export const useFlashSaleStore = create<FlashSaleState>((set) => ({
   },
 
   setProducts: (products: FlashSaleProduct[]) => set({ products }),
+
+  loadLiveProducts: async () => {
+    set({ isLoading: true });
+    try {
+      const allProducts = await productService.fetchProducts();
+      const flashSaleItems = allProducts.filter((p) => p.isFlashSale);
+
+      if (flashSaleItems.length > 0) {
+        // Đồng bộ tồn kho thời gian thực cho từng sản phẩm
+        const enriched: FlashSaleProduct[] = await Promise.all(
+          flashSaleItems.map(async (item) => {
+            const liveStock = await inventoryService.fetchStock(item.id);
+            const remaining = liveStock !== null ? liveStock : item.stockCount;
+            const total = Math.max(100, remaining + item.soldCount);
+            return {
+              ...item,
+              slotId: 'slot-2',
+              totalStock: total,
+              soldStock: total - remaining,
+              remainingStock: remaining,
+              maxLimitPerUser: 1,
+            };
+          })
+        );
+        set({ products: enriched, isLoading: false });
+        return;
+      }
+    } catch {
+      // Dùng fallback mặc định
+    }
+    set({ isLoading: false });
+  },
 }));

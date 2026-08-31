@@ -58,7 +58,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 className="w-full h-full object-cover"
               />
               {product.discountPercent > 0 && (
-                <span className="absolute top-3 left-3 bg-rose-600 text-white font-bold text-xs px-2.5 py-1 rounded-md shadow-sm">
+                <span className="absolute top-3 left-3 bg-[#FF424E] text-white font-bold text-xs px-2.5 py-1 rounded-md shadow-sm">
                   -{product.discountPercent}%
                 </span>
               )}
@@ -71,7 +71,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <span>100% Chính hãng</span>
               </div>
               <div className="p-2 bg-slate-50 rounded border border-slate-200 flex flex-col items-center gap-1">
-                <Truck className="w-4 h-4 text-rose-600" />
+                <Truck className="w-4 h-4 text-[#1A94FF]" />
                 <span>Giao hàng 2H</span>
               </div>
               <div className="p-2 bg-slate-50 rounded border border-slate-200 flex flex-col items-center gap-1">
@@ -99,7 +99,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               {/* Price Display */}
               <div className="bg-slate-50 p-3 rounded-md border border-slate-200 mb-3">
                 <div className="flex items-baseline gap-3">
-                  <span className="text-2xl font-extrabold text-rose-600">
+                  <span className="text-2xl font-extrabold text-[#FF424E]">
                     {formatVND(product.salePrice > 0 ? product.salePrice : product.originalPrice)}
                   </span>
                   {product.discountPercent > 0 && (
@@ -109,7 +109,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   )}
                 </div>
                 {isFlashSale && flashSaleProduct && (
-                  <p className="text-xs text-rose-700 font-medium mt-1">
+                  <p className="text-xs text-[#FF424E] font-medium mt-1">
                     ⚡ Giá khuyến mãi Flash Sale áp dụng trong khung giờ mở bán
                   </p>
                 )}
@@ -163,9 +163,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <button
                   onClick={handleAddToCart}
                   disabled={isOutOfStock}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold py-2.5 rounded-md border border-slate-300 transition-colors flex items-center justify-center gap-1.5"
+                  className="bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold py-2.5 rounded-md border border-blue-200 transition-colors flex items-center justify-center gap-1.5"
                 >
-                  <ShoppingCart className="w-4 h-4 text-rose-600" />
+                  <ShoppingCart className="w-4 h-4 text-blue-600" />
                   <span>THÊM GIỎ HÀNG</span>
                 </button>
 
@@ -175,7 +175,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     onClose();
                   }}
                   disabled={isOutOfStock}
-                  className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2.5 rounded-md shadow transition-colors flex items-center justify-center gap-1.5 disabled:bg-slate-400"
+                  className="bg-[#1A94FF] hover:bg-[#0074DA] text-white text-xs font-bold py-2.5 rounded-md shadow transition-colors flex items-center justify-center gap-1.5 disabled:bg-slate-400"
                 >
                   <Zap className="w-4 h-4 fill-current" />
                   <span>MUA NGAY KHUNG GIỜ</span>

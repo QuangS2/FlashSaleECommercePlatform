@@ -51,6 +51,8 @@ export interface UserProfile {
   fullName: string;
   roles: string[];
   avatarUrl?: string;
+  phone?: string;
+  address?: string;
 }
 
 export interface OrderRequest {

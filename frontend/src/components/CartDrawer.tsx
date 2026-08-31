@@ -51,9 +51,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout }) => {
           {/* Header */}
           <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
             <div className="flex items-center gap-2">
-              <ShoppingBag className="w-5 h-5 text-rose-500" />
+              <ShoppingBag className="w-5 h-5 text-blue-400" />
               <h2 className="text-base font-bold">GIỎ HÀNG CỦA BẠN</h2>
-              <span className="bg-rose-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+              <span className="bg-[#1A94FF] text-white text-xs px-2 py-0.5 rounded-full font-bold">
                 {items.reduce((acc, item) => acc + item.quantity, 0)}
               </span>
             </div>
@@ -83,7 +83,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout }) => {
                       <h4 className="text-xs font-semibold text-slate-800 line-clamp-2 pr-6">
                         {item.product.name}
                       </h4>
-                      <p className="text-xs font-extrabold text-rose-600 mt-1">
+                      <p className="text-xs font-extrabold text-[#FF424E] mt-1">
                         {formatVND(item.selectedPrice)}
                       </p>
                     </div>
@@ -110,7 +110,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout }) => {
 
                       <button
                         onClick={() => removeItem(item.product.id)}
-                        className="text-slate-400 hover:text-rose-600 p-1 transition-colors"
+                        className="text-slate-400 hover:text-[#FF424E] p-1 transition-colors"
                         title="Xóa mặt hàng"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -144,7 +144,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout }) => {
                         setVoucherCodeInput(e.target.value);
                         setVoucherFeedback(null);
                       }}
-                      className="w-full text-xs pl-8 pr-2 py-2 border border-slate-300 rounded-md uppercase font-semibold focus:outline-none focus:border-rose-500"
+                      className="w-full text-xs pl-8 pr-2 py-2 border border-slate-300 rounded-md uppercase font-semibold focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <button
@@ -156,7 +156,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout }) => {
                 </form>
 
                 {voucherFeedback && (
-                  <p className={`text-[11px] font-medium mt-1.5 ${voucherFeedback.success ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  <p className={`text-[11px] font-medium mt-1.5 ${voucherFeedback.success ? 'text-emerald-600' : 'text-[#FF424E]'}`}>
                     {voucherFeedback.message}
                   </p>
                 )}
@@ -166,7 +166,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout }) => {
                     <span>Mã đã dùng: <strong>{appliedVoucher.code}</strong></span>
                     <button
                       onClick={removeVoucher}
-                      className="text-rose-600 font-bold hover:underline"
+                      className="text-[#FF424E] font-bold hover:underline"
                     >
                       Bỏ chọn
                     </button>
@@ -188,14 +188,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout }) => {
                 )}
                 <div className="flex justify-between text-sm font-extrabold text-slate-900 pt-2 border-t border-slate-200">
                   <span>Tổng tiền thanh toán:</span>
-                  <span className="text-rose-600 text-base">{formatVND(getFinalPrice())}</span>
+                  <span className="text-[#FF424E] text-base">{formatVND(getFinalPrice())}</span>
                 </div>
               </div>
 
               {/* Checkout Button */}
               <button
                 onClick={onCheckout}
-                className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm py-3 rounded-md shadow-md transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#1A94FF] hover:bg-[#0074DA] text-white font-bold text-sm py-3 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2"
               >
                 <span>TIẾN HÀNH THANH TOÁN</span>
                 <ArrowRight className="w-4 h-4" />

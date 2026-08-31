@@ -171,13 +171,19 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.1
     container_name: ecommerce-keycloak
-    command: start-dev
+    command: start-dev --import-realm
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-adminpassword}
       KC_HTTP_PORT: 8180
       KC_PROXY_HEADERS: xforwarded
-      KC_HOSTNAME: auth.flashale.quangs2.cloud
+      KC_HOSTNAME_PORT: 8180
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+    ports:
+      - "8180:8180"
+    volumes:
+      - ./keycloak/ecommerce-realm.json:/opt/keycloak/data/import/ecommerce-realm.json:ro
     networks:
       - ecommerce-net
       - shared-infra-net

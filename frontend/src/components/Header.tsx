@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag } from 'lucide-react';
+import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu, ReceiptText } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import keycloak from '../auth/keycloak';
 
@@ -7,9 +7,15 @@ interface HeaderProps {
   onSearch?: (term: string) => void;
   activeCategory: string;
   onSelectCategory: (category: string) => void;
+  onOpenOrderHistory?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onSearch, activeCategory, onSelectCategory }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onSearch,
+  activeCategory,
+  onSelectCategory,
+  onOpenOrderHistory,
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { toggleCart, getTotalCount } = useCartStore();
   const totalCartItems = getTotalCount();
@@ -30,105 +36,153 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, activeCategory, onSele
     }
   };
 
-  const username = keycloak.tokenParsed?.preferred_username || keycloak.tokenParsed?.name || 'Khách hàng';
+  const isUserLoggedIn = Boolean(keycloak.authenticated);
+  const displayName =
+    keycloak.tokenParsed?.name ||
+    keycloak.tokenParsed?.preferred_username ||
+    'Tài khoản';
+
+  const handleAccountClick = () => {
+    if (!isUserLoggedIn) {
+      keycloak.login();
+    }
+  };
+
+  const handleLogoutClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (keycloak.authenticated) {
+      keycloak.logout();
+    }
+  };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900 text-white shadow-md border-b border-slate-800">
+    <header className="sticky top-0 z-40 bg-[#1A94FF] text-white shadow-sm border-b border-blue-600">
       {/* Top Banner Bar */}
-      <div className="bg-gradient-to-r from-rose-700 via-rose-600 to-rose-700 text-xs py-1.5 px-4 text-center font-medium flex justify-between items-center max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <Flame className="w-4 h-4 text-amber-300 animate-pulse" />
+      <div className="bg-[#0074DA] text-xs py-1.5 px-4 text-center font-medium flex justify-between items-center max-w-7xl mx-auto">
+        <div className="flex items-center gap-2 text-white">
+          <Flame className="w-4 h-4 text-yellow-300 animate-pulse" />
           <span>PHIÊN FLASH SALE ĐANG MỞ BÁN - SỐ LƯỢNG CÓ HẠN</span>
         </div>
-        <div className="flex items-center gap-4 text-rose-100 hidden md:flex">
-          <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> 100% Hàng Chính Hãng</span>
-          <span className="flex items-center gap-1"><Tag className="w-3.5 h-3.5" /> Giá tốt nhất hôm nay</span>
+        <div className="flex items-center gap-4 text-blue-100 hidden md:flex">
+          <span className="flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5" /> 100% Hàng Chính Hãng
+          </span>
+          <span className="flex items-center gap-1">
+            <Tag className="w-3.5 h-3.5" /> Giá tốt nhất hôm nay
+          </span>
         </div>
       </div>
 
       {/* Main Header Content */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
         {/* Brand Logo */}
-        <div className="flex items-center gap-3 cursor-pointer select-none">
-          <div className="bg-rose-600 text-white p-2 rounded-md font-extrabold text-xl tracking-wider flex items-center gap-1.5 shadow-sm">
-            <Flame className="w-6 h-6 text-yellow-300 fill-yellow-300" />
-            <span>FLASH SALE</span>
+        <div
+          onClick={() => {
+            if (onSelectCategory) onSelectCategory('Tất cả');
+            if (onSearch) onSearch('');
+          }}
+          className="flex items-center gap-2 cursor-pointer select-none shrink-0"
+        >
+          <div className="bg-white text-[#1A94FF] p-1.5 rounded-md font-extrabold text-2xl tracking-tight flex items-center gap-1">
+            <span>FLSALE</span>
           </div>
-          <span className="text-xs text-slate-400 hidden sm:inline border-l border-slate-700 pl-3">
-            Mua sắm thông minh, giá cực sốc
+          <span className="text-xs text-blue-100 hidden sm:block border-l border-blue-400 pl-3 leading-snug">
+            Tốt & Nhanh
           </span>
         </div>
 
-        {/* Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-xl relative">
+        {/* Global Search Bar */}
+        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-2xl relative flex items-center">
           <input
             type="text"
-            placeholder="Tìm kiếm sản phẩm giá rẻ, ưu đãi Flash Sale..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-800 text-slate-100 placeholder-slate-400 text-sm px-4 py-2 pr-10 rounded-md border border-slate-700 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition-colors"
+            placeholder="Tìm sản phẩm, danh mục hay thương hiệu mong muốn..."
+            className="w-full bg-white text-slate-800 placeholder-slate-400 text-sm px-4 py-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 transition-shadow shadow-sm"
           />
           <button
             type="submit"
-            className="absolute right-1 top-1 bottom-1 px-3 bg-rose-600 hover:bg-rose-700 text-white rounded-md flex items-center justify-center transition-colors"
+            className="absolute right-1.5 bg-[#0074DA] hover:bg-blue-800 text-white px-4 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-colors"
           >
-            <Search className="w-4 h-4" />
+            <Search className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Tìm kiếm</span>
           </button>
         </form>
 
-        {/* Right Actions: Auth & Cart */}
-        <div className="flex items-center gap-3">
-          {keycloak.authenticated ? (
-            <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-md border border-slate-700">
-              <User className="w-4 h-4 text-rose-400" />
-              <span className="text-sm font-medium text-slate-200 truncate max-w-[120px]">
-                {username}
-              </span>
-              <button
-                onClick={() => keycloak.logout()}
-                title="Đăng xuất"
-                className="ml-1 text-slate-400 hover:text-rose-400 transition-colors p-1"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => keycloak.login()}
-              className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-4 py-2 rounded-md shadow-sm transition-colors flex items-center gap-1.5"
-            >
+        {/* User Account, Order History & Cart */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* User Profile / Login */}
+          <div
+            onClick={handleAccountClick}
+            className="flex items-center gap-2 cursor-pointer hover:bg-blue-600/50 px-2.5 py-1.5 rounded-md transition-colors"
+          >
+            <div className="bg-white/20 p-1.5 rounded-full">
               <User className="w-4 h-4" />
-              <span>Đăng nhập</span>
+            </div>
+            <div className="text-xs text-left hidden lg:block leading-tight">
+              <div className="text-blue-100 text-[10px]">
+                {isUserLoggedIn ? 'Xin chào' : 'Đăng nhập / Đăng ký'}
+              </div>
+              <div className="font-semibold truncate max-w-[120px]">
+                <span>{displayName}</span>
+              </div>
+            </div>
+            {isUserLoggedIn && (
+              <button
+                onClick={handleLogoutClick}
+                className="ml-1 p-1 hover:bg-red-500/80 rounded transition-colors text-blue-100 hover:text-white"
+                title="Đăng xuất khỏi Keycloak"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Order History Button */}
+          {onOpenOrderHistory && (
+            <button
+              onClick={onOpenOrderHistory}
+              className="flex items-center gap-1.5 bg-[#0074DA] hover:bg-blue-800 px-3 py-2 rounded-md transition-colors shadow-sm text-xs font-semibold"
+              title="Xem lịch sử đơn hàng của tôi"
+            >
+              <ReceiptText className="w-4 h-4 text-blue-100" />
+              <span className="hidden md:inline">Đơn mua</span>
             </button>
           )}
 
-          {/* Cart Button with Badge */}
+          {/* Cart Icon & Badge */}
           <button
             onClick={toggleCart}
-            className="relative bg-slate-800 hover:bg-slate-700 text-slate-100 p-2 rounded-md border border-slate-700 transition-colors flex items-center justify-center"
-            aria-label="Giỏ hàng"
+            className="relative flex items-center gap-2 bg-[#0074DA] hover:bg-blue-800 px-3.5 py-2 rounded-md transition-colors shadow-sm text-xs font-semibold"
           >
-            <ShoppingCart className="w-5 h-5 text-rose-400" />
-            {totalCartItems > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-rose-600 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-900 animate-bounce">
-                {totalCartItems > 99 ? '99+' : totalCartItems}
-              </span>
-            )}
+            <div className="relative">
+              <ShoppingCart className="w-5 h-5" />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-[#0074DA] animate-scale-in">
+                  {totalCartItems > 99 ? '99+' : totalCartItems}
+                </span>
+              )}
+            </div>
+            <span className="hidden sm:inline">Giỏ hàng</span>
           </button>
         </div>
       </div>
 
-      {/* Category Navigation Bar */}
-      <div className="bg-slate-950 border-t border-slate-800/80 px-4">
-        <div className="max-w-7xl mx-auto flex items-center gap-1 overflow-x-auto py-1 scrollbar-none">
+      {/* Navigation Categories Bar */}
+      <div className="bg-white text-slate-700 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 flex items-center gap-6 overflow-x-auto py-2 scrollbar-none text-xs font-medium">
+          <div className="flex items-center gap-1.5 text-[#1A94FF] font-bold pr-2 border-r border-slate-200 shrink-0">
+            <Menu className="w-4 h-4" />
+            <span>DANH MỤC</span>
+          </div>
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => onSelectCategory(cat)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
+              className={`shrink-0 transition-colors py-0.5 px-2 rounded ${
                 activeCategory === cat
-                  ? 'bg-rose-600 text-white font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  ? 'text-[#1A94FF] font-bold bg-blue-50'
+                  : 'text-slate-600 hover:text-[#1A94FF]'
               }`}
             >
               {cat}

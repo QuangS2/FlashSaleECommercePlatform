@@ -1,7 +1,7 @@
 package com.ecommerce.order.dto;
 
 import com.ecommerce.common.event.order.OrderStatus;
-import com.ecommerce.order.model.Order;
+import com.ecommerce.order.domain.entity.Order;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
