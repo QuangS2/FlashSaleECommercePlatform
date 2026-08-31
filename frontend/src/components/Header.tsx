@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu, ReceiptText } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
-import keycloak from '../auth/keycloak';
+import { useAuthStore } from '../store/useAuthStore';
 
 interface HeaderProps {
   onSearch?: (term: string) => void;
@@ -18,6 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { toggleCart, getTotalCount } = useCartStore();
+  const { isAuthenticated, user, openLoginModal, logout } = useAuthStore();
   const totalCartItems = getTotalCount();
 
   const categories = [
@@ -36,23 +37,18 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  const isUserLoggedIn = Boolean(keycloak.authenticated);
-  const displayName =
-    keycloak.tokenParsed?.name ||
-    keycloak.tokenParsed?.preferred_username ||
-    'Tài khoản';
+  const isUserLoggedIn = isAuthenticated && Boolean(user);
+  const displayName = user?.name || user?.username || 'Tài khoản';
 
   const handleAccountClick = () => {
     if (!isUserLoggedIn) {
-      keycloak.login();
+      openLoginModal();
     }
   };
 
   const handleLogoutClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (keycloak.authenticated) {
-      keycloak.logout();
-    }
+    logout();
   };
 
   return (

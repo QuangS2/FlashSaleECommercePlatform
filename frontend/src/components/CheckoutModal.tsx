@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, ShieldAlert, CreditCard, Truck, Wallet } from 'lucide-react';
+import { X, CheckCircle2, ShieldAlert, CreditCard, Truck, Wallet, Mail } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useOrderQueueStore } from '../store/useOrderQueueStore';
 import { orderService } from '../services/orderService';
-import keycloak from '../auth/keycloak';
+import { useAuthStore } from '../store/useAuthStore';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -15,11 +15,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   const { items, getSubtotalPrice, getDiscountAmount, getFinalPrice, clearCart, closeCart } = useCartStore();
   const setQueueOpen = useOrderQueueStore((state) => state.setQueueOpen);
   const setQueueStatus = useOrderQueueStore((state) => state.setQueueStatus);
+  const { isAuthenticated, user } = useAuthStore();
 
   const [formData, setFormData] = useState({
-    fullName: keycloak.tokenParsed?.name || 'Lê Văn Khách',
+    fullName: user?.name || 'Nguyễn Văn Khách',
     phone: '0987654321',
-    address: '123 Đường Nguyễn Văn Cừ, Quận 5',
+    email: user?.email || 'khachhang@ecommerce.vn',
+    address: '123 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1',
     city: 'TP. Hồ Chí Minh',
     paymentMethod: 'COD' as 'COD' | 'VNPAY' | 'KEYCLOAK_WALLET',
     note: '',
@@ -41,6 +43,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     const hasFlashSale = items.some((item) => item.product.isFlashSale);
     const primaryItem = items[0];
 
+    const currentUserId = isAuthenticated && user?.sub ? user.sub : `guest_${Date.now().toString(36)}`;
+    const currentUserEmail = user?.email || formData.email || 'customer@ecommerce.vn';
+
     try {
       // 1. Tạo đơn hàng thực tế vào Order-Service (MySQL) kích hoạt Saga qua Kafka
       const result = await orderService.createOrder({
@@ -48,8 +53,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
         productTitle: primaryItem.product.name,
         quantity: primaryItem.quantity,
         unitPrice: primaryItem.selectedPrice || primaryItem.product.salePrice,
-        userId: keycloak.tokenParsed?.sub || 'customer_demo_user',
-        userEmail: keycloak.tokenParsed?.email || 'customer@ecommerce.vn',
+        userId: currentUserId,
+        userEmail: currentUserEmail,
         shippingAddress: {
           fullName: formData.fullName,
           phone: formData.phone,
@@ -61,6 +66,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
       });
 
       const finalOrderId = result.orderId;
+
+      // Nếu là khách chưa đăng nhập -> Lưu mã đơn vào danh sách guest orders của trình duyệt
+      if (!isAuthenticated) {
+        const existing = localStorage.getItem('flsale_guest_order_ids');
+        const ids: string[] = existing ? JSON.parse(existing) : [];
+        if (!ids.includes(finalOrderId)) {
+          ids.unshift(finalOrderId);
+          localStorage.setItem('flsale_guest_order_ids', JSON.stringify(ids.slice(0, 20)));
+        }
+      }
 
       setIsSubmitting(false);
       onClose(); // Đóng form checkout

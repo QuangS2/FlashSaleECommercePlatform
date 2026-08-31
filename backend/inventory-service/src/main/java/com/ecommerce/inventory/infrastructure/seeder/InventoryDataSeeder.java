@@ -18,35 +18,49 @@ public class InventoryDataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (inventoryRepositoryPort.findByProductId("fs-101").isPresent()) {
-            log.info("[InventoryDataSeeder] MySQL đã có dữ liệu tồn kho khởi tạo, bỏ qua.");
-            return;
-        }
+        log.info("[InventoryDataSeeder] Bắt đầu đồng bộ số lượng tồn kho cho toàn bộ 24 sản phẩm vào MySQL...");
 
-        log.info("[InventoryDataSeeder] Bắt đầu tự động khởi tạo số lượng tồn kho vào MySQL...");
+        Map<String, Integer> seedStocks = Map.ofEntries(
+                // Flash sale products
+                Map.entry("fs-101", 15),
+                Map.entry("fs-102", 8),
+                Map.entry("fs-103", 5),
+                Map.entry("fs-104", 32),
 
-        Map<String, Integer> seedStocks = Map.of(
-                "fs-101", 15,
-                "fs-102", 8,
-                "fs-103", 5,
-                "fs-104", 32,
-                "cat-1", 45,
-                "cat-2", 28,
-                "cat-3", 60,
-                "cat-4", 19,
-                "cat-5", 22,
-                "cat-6", 12
+                // Catalog products
+                Map.entry("cat-1", 45),
+                Map.entry("cat-2", 28),
+                Map.entry("cat-3", 60),
+                Map.entry("cat-4", 19),
+                Map.entry("cat-5", 22),
+                Map.entry("cat-6", 12),
+                Map.entry("cat-7", 35),
+                Map.entry("cat-8", 16),
+                Map.entry("cat-9", 50),
+                Map.entry("cat-10", 18),
+                Map.entry("cat-11", 20),
+                Map.entry("cat-12", 40),
+                Map.entry("cat-13", 25),
+                Map.entry("cat-14", 14),
+                Map.entry("cat-15", 28),
+                Map.entry("cat-16", 15),
+                Map.entry("cat-17", 10),
+                Map.entry("cat-18", 45),
+                Map.entry("cat-19", 30),
+                Map.entry("cat-20", 25)
         );
 
         seedStocks.forEach((productId, stock) -> {
-            Inventory inventory = Inventory.builder()
-                    .productId(productId)
-                    .quantity(stock)
-                    .reservedQuantity(0)
-                    .build();
-            inventoryRepositoryPort.save(inventory);
+            if (inventoryRepositoryPort.findByProductId(productId).isEmpty()) {
+                Inventory inventory = Inventory.builder()
+                        .productId(productId)
+                        .quantity(stock)
+                        .reservedQuantity(0)
+                        .build();
+                inventoryRepositoryPort.save(inventory);
+            }
         });
 
-        log.info("[InventoryDataSeeder] Đã nạp thành công tồn kho cho {} sản phẩm vào MySQL!", seedStocks.size());
+        log.info("[InventoryDataSeeder] Đã đồng bộ thành công tồn kho cho {} sản phẩm vào MySQL!", seedStocks.size());
     }
 }

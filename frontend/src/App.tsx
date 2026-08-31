@@ -8,9 +8,11 @@ import { QueueModal } from './components/QueueModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { OrderHistoryDrawer } from './components/OrderHistoryDrawer';
 import { OrderDetailModal } from './components/OrderDetailModal';
+import { LoginModal } from './components/LoginModal';
 import { Product } from './types';
 import { useCartStore } from './store/useCartStore';
 import { useFlashSaleStore } from './store/useFlashSaleStore';
+import { useAuthStore } from './store/useAuthStore';
 import { orderService, OrderDetailResponse } from './services/orderService';
 import { CheckCircle2, Truck, ShieldCheck, RotateCcw, Headphones } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
@@ -26,10 +28,12 @@ export function App() {
 
   const { addItem } = useCartStore();
   const loadLiveProducts = useFlashSaleStore((state) => state.loadLiveProducts);
+  const syncKeycloakState = useAuthStore((state) => state.syncKeycloakState);
 
   useEffect(() => {
+    syncKeycloakState();
     loadLiveProducts();
-  }, [loadLiveProducts]);
+  }, [syncKeycloakState, loadLiveProducts]);
 
   const handleQuickView = (product: Product) => {
     setSelectedProduct(product);
@@ -166,6 +170,9 @@ export function App() {
         onClose={() => setIsCheckoutOpen(false)}
         onOrderSuccess={handleOrderSuccess}
       />
+
+      {/* Fast & SSO Login Modal */}
+      <LoginModal />
 
       {/* Queue Modal for Flash Sale Traffic Management */}
       <QueueModal onSuccessRedirect={handleOrderSuccess} />
