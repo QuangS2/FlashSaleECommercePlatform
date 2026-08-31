@@ -16,6 +16,15 @@ const getWebSocketUrl = (): string => {
     return import.meta.env.VITE_WS_URL;
   }
   if (typeof window !== 'undefined' && window.location && window.location.origin) {
+    const { protocol, hostname } = window.location;
+    if (hostname.includes('flashsale.quangs2.cloud')) {
+      const wsProto = protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${wsProto}//flashsale-api.quangs2.cloud/ws`;
+    }
+    if (hostname.includes('flashale.quangs2.cloud')) {
+      const wsProto = protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${wsProto}//flashale-api.quangs2.cloud/ws`;
+    }
     return `${window.location.origin}/ws`;
   }
   return 'http://localhost:8085/ws';
