@@ -26,18 +26,8 @@ public class ProductController {
         List<Product> products = productUseCase.getAllProducts();
 
         List<ProductResponse> responses = products.stream()
-                .filter(p -> {
-                    if (category != null && !category.equalsIgnoreCase("Tất cả") && !category.equalsIgnoreCase(p.getCategory())) {
-                        return false;
-                    }
-                    if (search != null && !search.trim().isEmpty()) {
-                        String s = search.toLowerCase().trim();
-                        boolean matchName = p.getName() != null && p.getName().toLowerCase().contains(s);
-                        boolean matchCat = p.getCategory() != null && p.getCategory().toLowerCase().contains(s);
-                        return matchName || matchCat;
-                    }
-                    return true;
-                })
+                .filter(p -> matchesCategory(p, category))
+                .filter(p -> matchesSearch(p, search))
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
 
@@ -71,6 +61,23 @@ public class ProductController {
 
         Product savedProduct = productUseCase.createProduct(product);
         return mapToResponse(savedProduct);
+    }
+
+    private boolean matchesCategory(Product product, String category) {
+        if (category == null || category.equalsIgnoreCase("Tất cả")) {
+            return true;
+        }
+        return category.equalsIgnoreCase(product.getCategory());
+    }
+
+    private boolean matchesSearch(Product product, String search) {
+        if (search == null || search.trim().isEmpty()) {
+            return true;
+        }
+        String s = search.toLowerCase().trim();
+        boolean matchName = product.getName() != null && product.getName().toLowerCase().contains(s);
+        boolean matchCat = product.getCategory() != null && product.getCategory().toLowerCase().contains(s);
+        return matchName || matchCat;
     }
 
     private ProductResponse mapToResponse(Product product) {

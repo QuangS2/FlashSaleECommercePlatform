@@ -29,4 +29,28 @@ class ProductTest {
         assertEquals("http://example.com/laptop.jpg", product.getImageUrl());
     }
 
+    @Test
+    void testCalculateFinalPrice_WithDiscount() {
+        Product product = Product.builder()
+                .price(BigDecimal.valueOf(1000))
+                .discountPrice(BigDecimal.valueOf(200))
+                .build();
+
+        assertEquals(BigDecimal.valueOf(800), product.calculateFinalPrice());
+    }
+
+    @Test
+    void testCalculateFinalPrice_WithoutDiscount() {
+        Product product1 = Product.builder()
+                .price(BigDecimal.valueOf(1000))
+                .discountPrice(null)
+                .build();
+        assertEquals(BigDecimal.valueOf(1000), product1.calculateFinalPrice());
+
+        Product product2 = Product.builder()
+                .price(BigDecimal.valueOf(1000))
+                .discountPrice(BigDecimal.ZERO)
+                .build();
+        assertEquals(BigDecimal.valueOf(1000), product2.calculateFinalPrice());
+    }
 }

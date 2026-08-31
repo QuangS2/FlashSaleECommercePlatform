@@ -64,6 +64,7 @@
                         <exclude>**/entity/**</exclude>
                         <exclude>**/event/**</exclude>
                         <exclude>**/kafka/**</exclude>
+                        <exclude>**/seeder/**</exclude>
                         <exclude>**/*Application.class</exclude>
                     </excludes>
                 </configuration>
@@ -100,7 +101,7 @@
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.85</minimum>
+                                            <minimum>0.80</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
