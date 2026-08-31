@@ -148,7 +148,7 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-frontend:latest
           build-args: |
-            VITE_KEYCLOAK_URL=https://auth.flashsale.quangs2.cloud
+            VITE_KEYCLOAK_URL=https://auth-flashsale.quangs2.cloud
 
   # =========================================================================
   # 4. AUTOMATED DEPLOYMENT ON UBUNTU SERVER (VIA SELF-HOSTED RUNNER)

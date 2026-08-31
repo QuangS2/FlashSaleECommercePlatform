@@ -47,7 +47,7 @@ jobs:
             context: frontend
             file: frontend/Dockerfile
             image: flashsale-frontend
-            build_args: VITE_KEYCLOAK_URL=https://auth.flashsale.quangs2.cloud
+            build_args: VITE_KEYCLOAK_URL=https://auth-flashsale.quangs2.cloud
     
     permissions:
       contents: read
