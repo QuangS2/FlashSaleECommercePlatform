@@ -33,6 +33,20 @@ jobs:
           cd backend
           mvn clean package -DskipTests
 
+      - name: Upload Backend JAR Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jars
+          path: |
+            backend/eureka-server/target/*.jar
+            backend/api-gateway/target/*.jar
+            backend/product-service/target/*.jar
+            backend/inventory-service/target/*.jar
+            backend/order-service/target/*.jar
+            backend/payment-service/target/*.jar
+            backend/notification-service/target/*.jar
+          retention-days: 1
+
   # =========================================================================
   # 2. BUILD & TEST FRONTEND CLIENT (REACT + TS)
   # =========================================================================
@@ -72,6 +86,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Download Backend JAR Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jars
+          path: backend
 
       - name: Lowercase Repository Owner Name for Docker Tag
         run: |

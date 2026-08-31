@@ -1,8 +1,10 @@
-# Stage 1: Build JAR file
+# Stage 1: Build JAR file (if not pre-built)
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY . .
-RUN mvn clean package -pl payment-service -am -DskipTests
+RUN if [ ! -f payment-service/target/*.jar ]; then \
+        mvn -s settings.xml clean package -pl payment-service -am -DskipTests; \
+    fi
 
 # Stage 2: OpenTelemetry Agent Downloader
 FROM alpine:latest AS agent-downloader
