@@ -42,7 +42,7 @@ describe('CheckoutModal', () => {
       vi.fn(() =>
         Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({}),
+          json: () => Promise.resolve({ orderId: 'ORD-TEST-123', status: 'PENDING' }),
         })
       )
     );
@@ -72,11 +72,11 @@ describe('CheckoutModal', () => {
     const submitBtn = screen.getByText('XÁC NHẬN ĐẶT HÀNG NGAY');
     fireEvent.click(submitBtn);
 
-    expect(fetch).toHaveBeenCalledWith('/api/v1/inventory/deduct?productId=p1&quantity=1', expect.any(Object));
+    expect(fetch).toHaveBeenCalledWith('/api/v1/orders', expect.any(Object));
 
     await waitFor(() => {
       expect(onCloseSpy).toHaveBeenCalled();
-      expect(onSuccessSpy).toHaveBeenCalled();
+      expect(onSuccessSpy).toHaveBeenCalledWith('ORD-TEST-123');
     });
   });
 });

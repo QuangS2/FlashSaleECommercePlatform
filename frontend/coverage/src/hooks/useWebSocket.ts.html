@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/services/inventoryService.ts</title>
+    <title>Code coverage report for src/hooks/useWebSocket.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/services</a> inventoryService.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/hooks</a> useWebSocket.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70% </span>
+                <span class="strong">48.14% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>14/20</span>
+                <span class='fraction'>13/27</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">8.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>5/10</span>
+                <span class='fraction'>1/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">55.55% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>5/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70% </span>
+                <span class="strong">54.16% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>14/20</span>
+                <span class='fraction'>13/24</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -111,101 +111,143 @@
 <a name='L46'></a><a href='#L46'>46</a>
 <a name='L47'></a><a href='#L47'>47</a>
 <a name='L48'></a><a href='#L48'>48</a>
-<a name='L49'></a><a href='#L49'>49</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export const inventoryService = {
-  /**
-   * Tra cứu thông tin tồn kho của sản phẩm từ Inventory Service (MySQL + Redis)
-   */
-  async fetchStock(productId: string): Promise&lt;number | null&gt; {
-    try {
-      const response = await fetch(`/api/v1/inventory/${productId}`);
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (!response.ok) {
-<span class="cstat-no" title="statement not covered" >        throw new Error(`HTTP error! status: ${response.status}`);</span>
-      }
-      const data = await response.json();
-      return typeof data.availableQuantity === 'number' ? data.availableQuantity : <span class="branch-1 cbranch-no" title="branch not covered" >data.quantity || 0;</span>
-    } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.warn(`[InventoryService] Không thể tải tồn kho cho ${productId}:`, error);</span>
-<span class="cstat-no" title="statement not covered" >      return null;</span>
-    }
-  },
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useRef, useState, useCallback } from 'react';
+import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 &nbsp;
-  /**
-   * Kiểm tra nhanh sản phẩm còn đủ tồn kho không
-   */
-  async checkStock(productId: string, quantity: number = 1): Promise&lt;boolean&gt; {
-    try {
-      const response = await fetch(`/api/v1/inventory/${productId}/check?quantity=${quantity}`);
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (!response.ok) {
-<span class="cstat-no" title="statement not covered" >        return false;</span>
-      }
-      const isAvailable = await response.json();
-      return Boolean(isAvailable);
-    } catch {
-<span class="cstat-no" title="statement not covered" >      return true; // Graceful default</span>
-    }
-  },
+interface WebSocketConfig {
+  url: string;
+  onConnect?: () =&gt; void;
+  onDisconnect?: () =&gt; void;
+  onError?: (error: string) =&gt; void;
+}
 &nbsp;
-  /**
-   * Khấu trừ tồn kho (Redisson Distributed Lock trên Backend)
-   */
-  async deductStock(productId: string, quantity: number = 1): Promise&lt;boolean&gt; {
-    try {
-      const response = await fetch(`/api/v1/inventory/deduct?productId=${productId}&amp;quantity=${quantity}`, {
-        method: 'POST',
-      });
-      return response.ok;
-    } catch {
-<span class="cstat-no" title="statement not covered" >      return false;</span>
+export const useWebSocket = ({ url, onConnect, onDisconnect, onError }: WebSocketConfig) =&gt; {
+  const [isConnected, setIsConnected] = useState(false);
+  const clientRef = useRef&lt;Client | null&gt;(null);
+&nbsp;
+  useEffect(() =&gt; {
+    // Vite fix for sockjs global variable issue
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof (window as any).global === 'undefined') {
+<span class="cstat-no" title="statement not covered" >        (window as any).global = window;</span>
     }
-  },
+&nbsp;
+    const client = new Client({
+      webSocketFactory: () =&gt; new SockJS(url),
+      debug: (str) =&gt; {
+        // Uncomment to debug STOMP traffic
+        // console.log('STOMP: ' + str);
+      },
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+<span class="fstat-no" title="function not covered" >      onConnect: () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        setIsConnected(true);</span>
+<span class="cstat-no" title="statement not covered" >        if (onConnect) <span class="cstat-no" title="statement not covered" >onConnect();</span></span>
+      },
+<span class="fstat-no" title="function not covered" >      onDisconnect: () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        setIsConnected(false);</span>
+<span class="cstat-no" title="statement not covered" >        if (onDisconnect) <span class="cstat-no" title="statement not covered" >onDisconnect();</span></span>
+      },
+<span class="fstat-no" title="function not covered" >      onStompError: (f</span>rame) =&gt; {
+<span class="cstat-no" title="statement not covered" >        console.error('Broker reported error: ' + frame.headers['message']);</span>
+<span class="cstat-no" title="statement not covered" >        console.error('Additional details: ' + frame.body);</span>
+<span class="cstat-no" title="statement not covered" >        if (onError) <span class="cstat-no" title="statement not covered" >onError(frame.headers['message']);</span></span>
+      },
+    });
+&nbsp;
+    client.activate();
+    clientRef.current = client;
+&nbsp;
+    return () =&gt; {
+      client.deactivate();
+    };
+  }, [url]);
+&nbsp;
+  const subscribe = <span class="fstat-no" title="function not covered" >useCallback((d</span>estination: string, callback: (message: IMessage) =&gt; void): StompSubscription | null =&gt; {
+<span class="cstat-no" title="statement not covered" >    if (clientRef.current &amp;&amp; isConnected) {</span>
+<span class="cstat-no" title="statement not covered" >      return clientRef.current.subscribe(destination, callback);</span>
+    }
+<span class="cstat-no" title="statement not covered" >    return null;</span>
+  }, [isConnected]);
+&nbsp;
+  return { isConnected, subscribe };
 };
 &nbsp;</pre></td></tr></table></pre>
 
