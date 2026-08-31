@@ -87,8 +87,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_URL:http://localhost:8180}/realms/ecommerce-realm
-          jwk-set-uri: ${KEYCLOAK_URL:http://localhost:8180}/realms/ecommerce-realm/protocol/openid-connect/certs
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:${KEYCLOAK_URL:http://localhost:8180}/realms/ecommerce-realm}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:${KEYCLOAK_URL:http://localhost:8180}/realms/ecommerce-realm/protocol/openid-connect/certs}
 
 resilience4j:
   circuitbreaker:
