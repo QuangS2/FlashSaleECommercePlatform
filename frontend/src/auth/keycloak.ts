@@ -1,7 +1,19 @@
 import Keycloak from 'keycloak-js';
 
 const getKeycloakUrl = () => {
-  return import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8180';
+  if (import.meta.env.VITE_KEYCLOAK_URL) {
+    return import.meta.env.VITE_KEYCLOAK_URL;
+  }
+  if (typeof window !== 'undefined' && window.location && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    const { protocol, hostname } = window.location;
+    if (hostname.includes('flashsale.quangs2.cloud')) {
+      return `${protocol}//auth.flashsale.quangs2.cloud`;
+    }
+    if (hostname.includes('flashale.quangs2.cloud')) {
+      return `${protocol}//auth.flashale.quangs2.cloud`;
+    }
+  }
+  return 'http://localhost:8180';
 };
 
 const keycloak = new Keycloak({
