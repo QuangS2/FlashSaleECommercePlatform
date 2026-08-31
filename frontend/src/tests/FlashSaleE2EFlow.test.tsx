@@ -1,9 +1,10 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import App from '../App';
 import { productService } from '../services/productService';
 import { inventoryService } from '../services/inventoryService';
+import { orderService } from '../services/orderService';
 import { useCartStore } from '../store/useCartStore';
 import { useOrderQueueStore } from '../store/useOrderQueueStore';
 
@@ -12,6 +13,7 @@ vi.mock('../auth/keycloak', () => ({
   default: {
     authenticated: true,
     tokenParsed: {
+      sub: 'customer_1001',
       preferred_username: 'customer',
       name: 'Lê Văn Khách',
       email: 'customer@ecommerce.vn',
@@ -19,6 +21,14 @@ vi.mock('../auth/keycloak', () => ({
     login: vi.fn(),
     logout: vi.fn(),
   },
+}));
+
+// Mock WebSocket
+vi.mock('../hooks/useWebSocket', () => ({
+  useWebSocket: () => ({
+    isConnected: true,
+    subscribe: vi.fn(),
+  }),
 }));
 
 describe('E2E Full Flow: Khách hàng mua sắm Flash Sale và Đặt hàng Saga', () => {
@@ -59,6 +69,20 @@ describe('E2E Full Flow: Khách hàng mua sắm Flash Sale và Đặt hàng Saga
     ]);
 
     vi.spyOn(inventoryService, 'fetchStock').mockResolvedValue(15);
+
+    vi.spyOn(orderService, 'getUserOrders').mockResolvedValue([
+      {
+        orderId: 'ORD-SAGA-999',
+        status: 'COMPLETED',
+        userId: 'customer_1001',
+        productId: 'fs-101',
+        productTitle: 'Điện thoại iPhone 15 Pro Max 256GB',
+        quantity: 1,
+        unitPrice: 28990000,
+        totalPrice: 28990000,
+        createdAt: new Date().toISOString(),
+      },
+    ]);
   });
 
   afterEach(() => {
@@ -157,5 +181,25 @@ describe('E2E Full Flow: Khách hàng mua sắm Flash Sale và Đặt hàng Saga
     expect(useOrderQueueStore.getState().orderId).toBe('ORD-SAGA-999');
     expect(useCartStore.getState().items.length).toBe(0);
     expect(useCartStore.getState().getTotalCount()).toBe(0);
+  });
+
+  it('USE CASE 6: Quản lý Lịch sử Đơn hàng và Tra cứu Tiến trình Saga Trace', async () => {
+    render(<App />);
+
+    // Mở Order History
+    const orderBtn = screen.getByTitle('Xem lịch sử đơn hàng của tôi');
+    fireEvent.click(orderBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('ORD-SAGA-999')).toBeInTheDocument();
+    });
+
+    // Mở Modal chi tiết để xem Saga Stepper Timeline
+    fireEvent.click(screen.getByText('ORD-SAGA-999'));
+
+    expect(screen.getByText('CHI TIẾT ĐƠN HÀNG')).toBeInTheDocument();
+    expect(screen.getByText(/Tiến trình chuỗi giao dịch phân tán/i)).toBeInTheDocument();
+    expect(screen.getByText(/1. Khởi tạo đơn hàng/i)).toBeInTheDocument();
+    expect(screen.getByText(/2. Khóa & Khấu trừ kho phân tán/i)).toBeInTheDocument();
   });
 });
