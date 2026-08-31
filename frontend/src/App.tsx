@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { FlashSaleSection } from './components/FlashSaleSection';
 import { ProductCatalog } from './components/ProductCatalog';
@@ -6,8 +6,11 @@ import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { QueueModal } from './components/QueueModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
+import { AuthModal } from './components/AuthModal';
+import { UserProfileDrawer } from './components/UserProfileDrawer';
 import { Product } from './types';
 import { useCartStore } from './store/useCartStore';
+import { useAuthStore } from './store/useAuthStore';
 import { CheckCircle2, Truck, ShieldCheck, RotateCcw, Headphones } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
@@ -16,9 +19,15 @@ export function App() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [lastCompletedOrder, setLastCompletedOrder] = useState<string | null>(null);
 
   const { addItem } = useCartStore();
+  const { initializeAuth } = useAuthStore();
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
 
   const handleQuickView = (product: Product) => {
     setSelectedProduct(product);
@@ -41,11 +50,11 @@ export function App() {
         activeCategory={activeCategory}
         onSelectCategory={(cat) => setActiveCategory(cat)}
         onSearch={(term) => setSearchTerm(term)}
+        onOpenProfile={() => setIsProfileOpen(true)}
       />
 
       {/* Main Page Body Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
-        
         {/* Flash Sale Banner & Product Grid */}
         <FlashSaleSection
           onQuickView={handleQuickView}
@@ -102,7 +111,6 @@ export function App() {
             </div>
           </div>
         </section>
-
       </main>
 
       {/* Footer - Chuẩn E-commerce */}
@@ -162,6 +170,15 @@ export function App() {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onBuyNow={handleBuyNow}
+      />
+
+      {/* In-App Authentication Modal */}
+      <AuthModal />
+
+      {/* User Profile & Account Drawer */}
+      <UserProfileDrawer
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
       />
 
       {/* Success Order Toast Modal */}

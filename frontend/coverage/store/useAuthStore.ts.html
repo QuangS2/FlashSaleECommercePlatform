@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for components/Header.tsx</title>
+    <title>Code coverage report for store/useAuthStore.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">components</a> Header.tsx</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">store</a> useAuthStore.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">62.96% </span>
+                <span class="strong">74.6% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>17/27</span>
+                <span class='fraction'>47/63</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">68.18% </span>
+                <span class="strong">69.23% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>15/22</span>
+                <span class='fraction'>27/39</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">90.9% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/8</span>
+                <span class='fraction'>10/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">62.96% </span>
+                <span class="strong">73.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/27</span>
+                <span class='fraction'>44/60</span>
             </div>
         
             
@@ -255,11 +255,255 @@
 <a name='L190'></a><a href='#L190'>190</a>
 <a name='L191'></a><a href='#L191'>191</a>
 <a name='L192'></a><a href='#L192'>192</a>
-<a name='L193'></a><a href='#L193'>193</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -272,51 +516,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -326,24 +536,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -353,85 +553,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">30x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -443,202 +569,259 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState } from 'react';
-import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu } from 'lucide-react';
-import { useCartStore } from '../store/useCartStore';
-import { useAuthStore } from '../store/useAuthStore';
-import keycloak from '../auth/keycloak';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { create } from 'zustand';
+import { UserProfile } from '../types';
 &nbsp;
-interface HeaderProps {
-  onSearch?: (term: string) =&gt; void;
-  activeCategory: string;
-  onSelectCategory: (category: string) =&gt; void;
-  onOpenProfile?: () =&gt; void;
+export interface LoginCredentials {
+  username: string;
+  password?: string;
+  rememberMe?: boolean;
 }
 &nbsp;
-export const Header: React.FC&lt;HeaderProps&gt; = ({
-  onSearch,
-  activeCategory,
-  onSelectCategory,
-  onOpenProfile,
-}) =&gt; {
-  const [searchTerm, setSearchTerm] = useState('');
-  const { toggleCart, getTotalCount } = useCartStore();
-  const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
-  const totalCartItems = getTotalCount();
+export interface RegisterData {
+  fullName: string;
+  email: string;
+  username: string;
+  password?: string;
+  phone?: string;
+  address?: string;
+}
 &nbsp;
-  const categories = [
-    'Tất cả',
-    'Điện thoại',
-    'Laptop',
-    'Phụ kiện',
-    'Đồng hồ',
-    'Đồ gia dụng',
-  ];
+interface AuthState {
+  user: UserProfile | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isAuthModalOpen: boolean;
+  authModalTab: 'login' | 'register';
+  isLoading: boolean;
+  error: string | null;
 &nbsp;
-  const <span class="fstat-no" title="function not covered" >handleSearchSubmit = (e</span>: React.FormEvent) =&gt; {
-<span class="cstat-no" title="statement not covered" >    e.preventDefault();</span>
-<span class="cstat-no" title="statement not covered" >    if (onSearch) {</span>
-<span class="cstat-no" title="statement not covered" >      onSearch(searchTerm);</span>
-    }
-  };
+  // Actions
+  openAuthModal: (tab?: 'login' | 'register') =&gt; void;
+  closeAuthModal: () =&gt; void;
+  login: (credentials: LoginCredentials) =&gt; Promise&lt;boolean&gt;;
+  register: (data: RegisterData) =&gt; Promise&lt;boolean&gt;;
+  loginAsDemo: (role: 'CUSTOMER' | 'ADMIN') =&gt; void;
+  logout: () =&gt; void;
+  initializeAuth: () =&gt; void;
+  clearError: () =&gt; void;
+}
 &nbsp;
-  const isUserLoggedIn = isAuthenticated || keycloak.authenticated;
-  const displayName = user?.fullName || keycloak.tokenParsed?.name || keycloak.tokenParsed?.preferred_username || 'Tài khoản';
-&nbsp;
-  const handleAccountClick = () =&gt; {
-    if (isUserLoggedIn) {
-      <span class="missing-if-branch" title="else path not taken" >E</span>if (onOpenProfile) {
-        onOpenProfile();
-      }
-    } else <span class="missing-if-branch" title="else path not taken" >E</span>{
-<span class="cstat-no" title="statement not covered" >      openAuthModal('login');</span>
-    }
-  };
-&nbsp;
-  const <span class="fstat-no" title="function not covered" >handleLogoutClick = (e</span>: React.MouseEvent) =&gt; {
-<span class="cstat-no" title="statement not covered" >    e.stopPropagation();</span>
-<span class="cstat-no" title="statement not covered" >    logout();</span>
-<span class="cstat-no" title="statement not covered" >    if (keycloak.authenticated) {</span>
-<span class="cstat-no" title="statement not covered" >      keycloak.logout();</span>
-    }
-  };
-&nbsp;
-  return (
-    &lt;header className="sticky top-0 z-40 bg-[#1A94FF] text-white shadow-sm border-b border-blue-600"&gt;
-      {/* Top Banner Bar */}
-      &lt;div className="bg-[#0074DA] text-xs py-1.5 px-4 text-center font-medium flex justify-between items-center max-w-7xl mx-auto"&gt;
-        &lt;div className="flex items-center gap-2 text-white"&gt;
-          &lt;Flame className="w-4 h-4 text-yellow-300 animate-pulse" /&gt;
-          &lt;span&gt;PHIÊN FLASH SALE ĐANG MỞ BÁN - SỐ LƯỢNG CÓ HẠN&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;div className="flex items-center gap-4 text-blue-100 hidden md:flex"&gt;
-          &lt;span className="flex items-center gap-1"&gt;
-            &lt;ShieldCheck className="w-3.5 h-3.5" /&gt; 100% Hàng Chính Hãng
-          &lt;/span&gt;
-          &lt;span className="flex items-center gap-1"&gt;
-            &lt;Tag className="w-3.5 h-3.5" /&gt; Giá tốt nhất hôm nay
-          &lt;/span&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-&nbsp;
-      {/* Main Header Content */}
-      &lt;div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6"&gt;
-        {/* Brand Logo */}
-        &lt;div className="flex items-center gap-2 cursor-pointer select-none shrink-0"&gt;
-          &lt;div className="bg-white text-[#1A94FF] p-1.5 rounded-md font-extrabold text-2xl tracking-tight flex items-center gap-1"&gt;
-            &lt;span&gt;FLSALE&lt;/span&gt;
-          &lt;/div&gt;
-          &lt;span className="text-xs text-blue-100 hidden sm:block border-l border-blue-400 pl-3 leading-snug"&gt;
-            Tốt &amp; Nhanh
-          &lt;/span&gt;
-        &lt;/div&gt;
-&nbsp;
-        {/* Search Bar */}
-        &lt;form onSubmit={handleSearchSubmit} className="flex-1 max-w-2xl relative flex items-center"&gt;
-          &lt;input
-            type="text"
-            placeholder="Tìm sản phẩm, danh mục hay thương hiệu mong muốn..."
-            value={searchTerm}
-<span class="fstat-no" title="function not covered" >            onChange={(e</span>) =&gt; <span class="cstat-no" title="statement not covered" >setSearchTerm(e.target.value)}</span>
-            className="w-full bg-white text-slate-800 placeholder-slate-400 text-sm px-4 py-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 transition-shadow shadow-sm"
-          /&gt;
-          &lt;button
-            type="submit"
-            className="absolute right-1 top-1 bottom-1 px-4 bg-[#0A68FF] hover:bg-[#0055D4] text-white rounded-[4px] flex items-center justify-center transition-colors"
-          &gt;
-            &lt;Search className="w-4 h-4" /&gt;
-            &lt;span className="ml-1.5 text-xs font-semibold hidden sm:inline"&gt;Tìm kiếm&lt;/span&gt;
-          &lt;/button&gt;
-        &lt;/form&gt;
-&nbsp;
-        {/* Right Actions: Auth &amp; Cart */}
-        &lt;div className="flex items-center gap-4 shrink-0"&gt;
-          {isUserLoggedIn ? (
-            &lt;div
-              onClick={handleAccountClick}
-              className="flex items-center gap-2 bg-blue-600/30 px-3 py-1.5 rounded-md hover:bg-blue-600/50 transition-colors cursor-pointer"
-              title="Xem thông tin tài khoản"
-            &gt;
-              &lt;div className="w-6 h-6 bg-white text-[#1A94FF] rounded-full flex items-center justify-center font-bold text-xs"&gt;
-                {displayName.charAt(0).toUpperCase()}
-              &lt;/div&gt;
-              &lt;div className="flex flex-col items-start hidden sm:flex"&gt;
-                &lt;span className="text-[11px] text-blue-100"&gt;Tài khoản&lt;/span&gt;
-                &lt;span className="text-sm font-semibold text-white truncate max-w-[120px] leading-tight"&gt;
-                  {displayName}
-                &lt;/span&gt;
-              &lt;/div&gt;
-              &lt;button
-                onClick={handleLogoutClick}
-                title="Đăng xuất"
-                className="ml-1 text-blue-200 hover:text-white transition-colors p-1"
-                aria-label="Đăng xuất"
-              &gt;
-                &lt;LogOut className="w-4 h-4" /&gt;
-              &lt;/button&gt;
-            &lt;/div&gt;
-          ) : (
-            &lt;button
-              onClick={() =&gt; openAuthModal('login')}
-              className="flex items-center gap-2 bg-blue-600/30 px-3 py-1.5 rounded-md hover:bg-blue-600/50 transition-colors"
-            &gt;
-              &lt;User className="w-5 h-5 text-white" /&gt;
-              &lt;div className="flex flex-col items-start hidden sm:flex"&gt;
-                &lt;span className="text-[11px] text-blue-100"&gt;Đăng nhập / Đăng ký&lt;/span&gt;
-                &lt;span className="text-sm font-semibold text-white leading-tight"&gt;Tài khoản&lt;/span&gt;
-              &lt;/div&gt;
-            &lt;/button&gt;
-          )}
-&nbsp;
-          {/* Cart Button with Badge */}
-          &lt;button
-            onClick={toggleCart}
-            className="relative flex items-center gap-2 hover:bg-blue-600/50 p-2 rounded-md transition-colors"
-            aria-label="Giỏ hàng"
-          &gt;
-            &lt;div className="relative"&gt;
-              &lt;ShoppingCart className="w-6 h-6 text-white" /&gt;
-              {totalCartItems &gt; 0 &amp;&amp; (
-                &lt;span className="absolute -top-2 -right-2 bg-yellow-400 text-slate-900 text-[10px] font-extrabold w-4 h-4 rounded-[4px] flex items-center justify-center"&gt;
-                  {totalCartItems &gt; 99 ? <span class="branch-0 cbranch-no" title="branch not covered" >'99+' : t</span>otalCartItems}
-                &lt;/span&gt;
-              )}
-            &lt;/div&gt;
-            &lt;span className="text-sm font-semibold hidden lg:block"&gt;Giỏ hàng&lt;/span&gt;
-          &lt;/button&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-&nbsp;
-      {/* Category Navigation Bar */}
-      &lt;div className="bg-[#1A94FF] px-4 pb-2"&gt;
-        &lt;div className="max-w-7xl mx-auto flex items-center gap-4 overflow-x-auto scrollbar-none"&gt;
-          &lt;div className="flex items-center gap-1 text-white font-medium text-sm mr-2 shrink-0 cursor-pointer"&gt;
-            &lt;Menu className="w-4 h-4" /&gt;
-            &lt;span&gt;Danh mục sản phẩm&lt;/span&gt;
-          &lt;/div&gt;
-          {categories.map((cat) =&gt; (
-            &lt;button
-              key={cat}
-<span class="fstat-no" title="function not covered" >              onClick={() =&gt; <span class="cstat-no" title="statement not covered" >o</span>nSelectCategory(cat)}</span>
-              className={`px-3 py-1 text-xs font-medium whitespace-nowrap transition-colors rounded-md ${
-                activeCategory === cat
-                  ? 'bg-white text-[#1A94FF] font-bold'
-                  : 'text-blue-50 hover:bg-blue-600'
-              }`}
-            &gt;
-              {cat}
-            &lt;/button&gt;
-          ))}
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/header&gt;
-  );
+const DEMO_CUSTOMER: UserProfile = {
+  id: 'user-demo-customer-01',
+  username: 'khachhang_demo',
+  fullName: 'Lê Văn Khách',
+  email: 'customer.demo@ecommerce.vn',
+  roles: ['ROLE_CUSTOMER'],
+  phone: '0987654321',
+  address: '123 Đường Nguyễn Văn Cừ, Quận 5, TP. Hồ Chí Minh',
 };
+&nbsp;
+const DEMO_ADMIN: UserProfile = {
+  id: 'user-demo-admin-01',
+  username: 'admin_system',
+  fullName: 'Quản Trị Hệ Thống',
+  email: 'admin@ecommerce.vn',
+  roles: ['ROLE_ADMIN', 'ROLE_CUSTOMER'],
+  phone: '0909123456',
+  address: 'Tòa nhà Công Nghệ, Quận 1, TP. Hồ Chí Minh',
+};
+&nbsp;
+const STORAGE_KEYS = {
+  USER: 'flsale_auth_user',
+  TOKEN: 'flsale_auth_token',
+};
+&nbsp;
+export const useAuthStore = create&lt;AuthState&gt;((set) =&gt; ({
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isAuthModalOpen: false,
+  authModalTab: 'login',
+  isLoading: false,
+  error: null,
+&nbsp;
+  openAuthModal: (tab = 'login') =&gt;
+    set({
+      isAuthModalOpen: true,
+      authModalTab: tab,
+      error: null,
+    }),
+&nbsp;
+  closeAuthModal: () =&gt;
+    set({
+      isAuthModalOpen: false,
+      error: null,
+    }),
+&nbsp;
+  clearError: () =&gt; set({ error: null }),
+&nbsp;
+  login: async (credentials: LoginCredentials): Promise&lt;boolean&gt; =&gt; {
+    set({ isLoading: true, error: null });
+&nbsp;
+    // Giả lập network delay ngắn cho trải nghiệm mượt mà
+    await new Promise((resolve) =&gt; setTimeout(resolve, 300));
+&nbsp;
+    if (!credentials.username || credentials.username.trim() === '') {
+      set({ isLoading: false, error: 'Vui lòng nhập tên đăng nhập hoặc email.' });
+      return false;
+    }
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (credentials.password !== undefined &amp;&amp; credentials.password.length &lt; 3) {
+<span class="cstat-no" title="statement not covered" >      set({ isLoading: false, error: 'Mật khẩu phải có ít nhất 3 ký tự.' });</span>
+<span class="cstat-no" title="statement not covered" >      return false;</span>
+    }
+&nbsp;
+    // Xác thực tài khoản
+    const usernameLower = credentials.username.toLowerCase().trim();
+    let authenticatedUser: UserProfile;
+    let token: string;
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (usernameLower === 'admin' || usernameLower === 'admin_system') {
+<span class="cstat-no" title="statement not covered" >      authenticatedUser = { ...DEMO_ADMIN };</span>
+<span class="cstat-no" title="statement not covered" >      token = 'mock_jwt_token_admin_' + Date.now();</span>
+    } else {
+      authenticatedUser = {
+        id: 'usr-' + Math.floor(100000 + Math.random() * 900000),
+        username: credentials.username.trim(),
+        fullName: credentials.username.includes('@')
+          ? <span class="branch-0 cbranch-no" title="branch not covered" >credentials.username.split('@')[0]</span>
+          : credentials.username,
+        email: credentials.username.includes('@')
+          ? <span class="branch-0 cbranch-no" title="branch not covered" >credentials.username</span>
+          : `${credentials.username}@ecommerce.vn`,
+        roles: ['ROLE_CUSTOMER'],
+        phone: '0987654321',
+        address: 'Địa chỉ nhận hàng mặc định',
+      };
+      token = 'mock_jwt_token_user_' + Date.now();
+    }
+&nbsp;
+    // Lưu vào LocalStorage
+    try {
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(authenticatedUser));
+      localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+    } catch {
+      // Bỏ qua nếu môi trường test không hỗ trợ localStorage
+    }
+&nbsp;
+    set({
+      user: authenticatedUser,
+      token: token,
+      isAuthenticated: true,
+      isLoading: false,
+      isAuthModalOpen: false,
+      error: null,
+    });
+&nbsp;
+    return true;
+  },
+&nbsp;
+  register: async (data: RegisterData): Promise&lt;boolean&gt; =&gt; {
+    set({ isLoading: true, error: null });
+&nbsp;
+    await new Promise((resolve) =&gt; setTimeout(resolve, 400));
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!data.fullName || data.fullName.trim() === '') {
+<span class="cstat-no" title="statement not covered" >      set({ isLoading: false, error: 'Vui lòng nhập họ và tên.' });</span>
+<span class="cstat-no" title="statement not covered" >      return false;</span>
+    }
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!data.email || !data.email.includes('@')) {
+<span class="cstat-no" title="statement not covered" >      set({ isLoading: false, error: 'Địa chỉ email không hợp lệ.' });</span>
+<span class="cstat-no" title="statement not covered" >      return false;</span>
+    }
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!data.username || data.username.trim().length &lt; 3) {
+<span class="cstat-no" title="statement not covered" >      set({ isLoading: false, error: 'Tên đăng nhập phải từ 3 ký tự trở lên.' });</span>
+<span class="cstat-no" title="statement not covered" >      return false;</span>
+    }
+&nbsp;
+    const newUser: UserProfile = {
+      id: 'usr-' + Math.floor(100000 + Math.random() * 900000),
+      username: data.username.trim(),
+      fullName: data.fullName.trim(),
+      email: data.email.trim(),
+      roles: ['ROLE_CUSTOMER'],
+      phone: data.phone?.trim() || <span class="branch-1 cbranch-no" title="branch not covered" >'0987654321',</span>
+      address: data.address?.trim() || 'Chưa cập nhật địa chỉ',
+    };
+&nbsp;
+    const token = 'mock_jwt_token_registered_' + Date.now();
+&nbsp;
+    try {
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(newUser));
+      localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+    } catch {
+      // Bỏ qua
+    }
+&nbsp;
+    set({
+      user: newUser,
+      token: token,
+      isAuthenticated: true,
+      isLoading: false,
+      isAuthModalOpen: false,
+      error: null,
+    });
+&nbsp;
+    return true;
+  },
+&nbsp;
+  loginAsDemo: (role: 'CUSTOMER' | 'ADMIN') =&gt; {
+    const demoUser = role === 'ADMIN' ? { ...DEMO_ADMIN } : { ...DEMO_CUSTOMER };
+    const token = `mock_jwt_token_${role.toLowerCase()}_${Date.now()}`;
+&nbsp;
+    try {
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(demoUser));
+      localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+    } catch {
+      // Bỏ qua
+    }
+&nbsp;
+    set({
+      user: demoUser,
+      token: token,
+      isAuthenticated: true,
+      isAuthModalOpen: false,
+      error: null,
+    });
+  },
+&nbsp;
+  logout: () =&gt; {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      localStorage.removeItem(STORAGE_KEYS.TOKEN);
+    } catch {
+      // Bỏ qua
+    }
+&nbsp;
+    set({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      error: null,
+    });
+  },
+&nbsp;
+<span class="fstat-no" title="function not covered" >  initializeAuth: () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+      const savedUserStr = <span class="cstat-no" title="statement not covered" >localStorage.getItem(STORAGE_KEYS.USER);</span>
+      const savedToken = <span class="cstat-no" title="statement not covered" >localStorage.getItem(STORAGE_KEYS.TOKEN);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (savedUserStr &amp;&amp; savedToken) {</span>
+        const savedUser: UserProfile = <span class="cstat-no" title="statement not covered" >JSON.parse(savedUserStr);</span>
+<span class="cstat-no" title="statement not covered" >        set({</span>
+          user: savedUser,
+          token: savedToken,
+          isAuthenticated: true,
+        });
+      }
+    } catch {
+      // Bỏ qua
+    }
+  },
+}));
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

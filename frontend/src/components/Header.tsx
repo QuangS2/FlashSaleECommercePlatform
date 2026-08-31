@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
+import { useAuthStore } from '../store/useAuthStore';
 import keycloak from '../auth/keycloak';
 
 interface HeaderProps {
   onSearch?: (term: string) => void;
   activeCategory: string;
   onSelectCategory: (category: string) => void;
+  onOpenProfile?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onSearch, activeCategory, onSelectCategory }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onSearch,
+  activeCategory,
+  onSelectCategory,
+  onOpenProfile,
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { toggleCart, getTotalCount } = useCartStore();
+  const { user, isAuthenticated, openAuthModal, logout } = useAuthStore();
   const totalCartItems = getTotalCount();
 
   const categories = [
@@ -30,7 +38,26 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, activeCategory, onSele
     }
   };
 
-  const username = keycloak.tokenParsed?.preferred_username || keycloak.tokenParsed?.name || 'Khách hàng';
+  const isUserLoggedIn = isAuthenticated || keycloak.authenticated;
+  const displayName = user?.fullName || keycloak.tokenParsed?.name || keycloak.tokenParsed?.preferred_username || 'Tài khoản';
+
+  const handleAccountClick = () => {
+    if (isUserLoggedIn) {
+      if (onOpenProfile) {
+        onOpenProfile();
+      }
+    } else {
+      openAuthModal('login');
+    }
+  };
+
+  const handleLogoutClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    logout();
+    if (keycloak.authenticated) {
+      keycloak.logout();
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-[#1A94FF] text-white shadow-sm border-b border-blue-600">
@@ -41,8 +68,12 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, activeCategory, onSele
           <span>PHIÊN FLASH SALE ĐANG MỞ BÁN - SỐ LƯỢNG CÓ HẠN</span>
         </div>
         <div className="flex items-center gap-4 text-blue-100 hidden md:flex">
-          <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5" /> 100% Hàng Chính Hãng</span>
-          <span className="flex items-center gap-1"><Tag className="w-3.5 h-3.5" /> Giá tốt nhất hôm nay</span>
+          <span className="flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5" /> 100% Hàng Chính Hãng
+          </span>
+          <span className="flex items-center gap-1">
+            <Tag className="w-3.5 h-3.5" /> Giá tốt nhất hôm nay
+          </span>
         </div>
       </div>
 
@@ -78,29 +109,33 @@ export const Header: React.FC<HeaderProps> = ({ onSearch, activeCategory, onSele
 
         {/* Right Actions: Auth & Cart */}
         <div className="flex items-center gap-4 shrink-0">
-          {keycloak.authenticated ? (
-            <div className="flex items-center gap-2 bg-blue-600/30 px-3 py-1.5 rounded-md hover:bg-blue-600/50 transition-colors cursor-pointer">
-              <User className="w-5 h-5 text-white" />
+          {isUserLoggedIn ? (
+            <div
+              onClick={handleAccountClick}
+              className="flex items-center gap-2 bg-blue-600/30 px-3 py-1.5 rounded-md hover:bg-blue-600/50 transition-colors cursor-pointer"
+              title="Xem thông tin tài khoản"
+            >
+              <div className="w-6 h-6 bg-white text-[#1A94FF] rounded-full flex items-center justify-center font-bold text-xs">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
               <div className="flex flex-col items-start hidden sm:flex">
                 <span className="text-[11px] text-blue-100">Tài khoản</span>
                 <span className="text-sm font-semibold text-white truncate max-w-[120px] leading-tight">
-                  {username}
+                  {displayName}
                 </span>
               </div>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  keycloak.logout();
-                }}
+                onClick={handleLogoutClick}
                 title="Đăng xuất"
                 className="ml-1 text-blue-200 hover:text-white transition-colors p-1"
+                aria-label="Đăng xuất"
               >
                 <LogOut className="w-4 h-4" />
               </button>
             </div>
           ) : (
             <button
-              onClick={() => keycloak.login()}
+              onClick={() => openAuthModal('login')}
               className="flex items-center gap-2 bg-blue-600/30 px-3 py-1.5 rounded-md hover:bg-blue-600/50 transition-colors"
             >
               <User className="w-5 h-5 text-white" />
