@@ -92,4 +92,29 @@ describe('productService', () => {
     expect(product?.id).toBe('cat-1');
     expect(product?.name).toBe('MacBook Air M2');
   });
+
+  it('cập nhật tăng số lượng đã bán (incrementSoldCount) thành công', async () => {
+    const mockUpdated = {
+      id: 'cat-1',
+      name: 'MacBook Air M2',
+      category: 'Laptop',
+      price: 28990000,
+      soldCount: 325,
+      stockCount: 45,
+    };
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockUpdated),
+        })
+      )
+    );
+
+    const result = await productService.incrementSoldCount('cat-1', 5);
+    expect(result).not.toBeNull();
+    expect(result?.soldCount).toBe(325);
+  });
 });

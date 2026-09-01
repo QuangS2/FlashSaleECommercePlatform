@@ -16,31 +16,75 @@ const keycloak = new Keycloak({
   clientId: 'ecommerce-frontend',
 });
 
-/**
- * Khởi tạo Keycloak KHÔNG chặn render giao diện.
- * Render app ngay lập tức, sau đó init Keycloak ở background.
- * Nếu Keycloak server không chạy, giao diện vẫn load bình thường.
- */
-export const initKeycloak = (onAuthenticatedCallback: () => void) => {
-  // Render app ngay lập tức - KHÔNG chờ Keycloak
-  onAuthenticatedCallback();
+type AuthListener = () => void;
+const authListeners: AuthListener[] = [];
 
-  // Init Keycloak ở background (không block UI)
+export const onAuthChange = (listener: AuthListener) => {
+  authListeners.push(listener);
+  return () => {
+    const idx = authListeners.indexOf(listener);
+    if (idx >= 0) authListeners.splice(idx, 1);
+  };
+};
+
+const notifyAuthListeners = () => {
+  authListeners.forEach((listener) => {
+    try {
+      listener();
+    } catch (e) {
+      console.error('[Keycloak] Lỗi khi thông báo auth listener:', e);
+    }
+  });
+};
+
+keycloak.onAuthSuccess = () => {
+  console.log('[Keycloak] onAuthSuccess: Đã xác thực thành công');
+  notifyAuthListeners();
+};
+
+keycloak.onAuthRefreshSuccess = () => {
+  console.log('[Keycloak] onAuthRefreshSuccess: Đã làm mới token');
+  notifyAuthListeners();
+};
+
+keycloak.onAuthLogout = () => {
+  console.log('[Keycloak] onAuthLogout: Đã đăng xuất');
+  notifyAuthListeners();
+};
+
+keycloak.onTokenExpired = () => {
+  keycloak.updateToken(30).catch(() => {
+    console.warn('[Keycloak] Không thể tự động làm mới token');
+    notifyAuthListeners();
+  });
+};
+
+/**
+ * Khởi tạo Keycloak OAuth2 / PKCE.
+ * Tự động đồng bộ trạng thái xác thực sau khi Keycloak hoàn tất xử lý Redirect / SSO.
+ */
+export const initKeycloak = (onAppReadyCallback: () => void) => {
+  // Render app ngay lập tức - KHÔNG chặn UI
+  onAppReadyCallback();
+
+  // Khởi tạo Keycloak ở background
   keycloak
     .init({
       onLoad: 'check-sso',
       pkceMethod: 'S256',
       silentCheckSsoRedirectUri:
-        window.location.origin + '/silent-check-sso.html',
+        typeof window !== 'undefined'
+          ? window.location.origin + '/silent-check-sso.html'
+          : undefined,
       enableLogging: false,
     })
     .then((authenticated) => {
-      if (authenticated) {
-        console.log('[Keycloak] Đã xác thực thành công:', keycloak.tokenParsed?.preferred_username);
-      }
+      console.log('[Keycloak] Trạng thái sau init:', authenticated ? 'ĐÃ ĐĂNG NHẬP' : 'CHƯA ĐĂNG NHẬP');
+      notifyAuthListeners();
     })
     .catch((error) => {
       console.warn('[Keycloak] Server chưa sẵn sàng, bỏ qua xác thực:', error?.message || error);
+      notifyAuthListeners();
     });
 };
 

@@ -92,6 +92,14 @@ public class OrderApplicationService implements OrderUseCase {
     }
 
     @Override
+    public List<OrderResponse> getOrdersByUserEmail(String userEmail) {
+        return orderRepositoryPort.findByUserEmailOrderByCreatedAtDesc(userEmail)
+                .stream()
+                .map(order -> OrderResponse.fromEntity(order, null))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void handleInventoryReserved(InventoryReservedEvent event) {
         log.info("[SAGA CHOREOGRAPHY] Nhận sự kiện INVENTORY_RESERVED cho đơn hàng [{}]", event.getOrderId());
         orderRepositoryPort.findByOrderId(event.getOrderId()).ifPresent(order -> {

@@ -65,7 +65,7 @@ export const QueueModal: React.FC<QueueModalProps> = ({ onSuccessRedirect }) => 
               ĐẶT HÀNG THÀNH CÔNG!
             </h3>
             <p className="text-xs text-slate-600 mb-2">
-              Chuỗi giao dịch phân tán Saga đã hoàn tất thành công!
+              Đơn hàng của bạn đã được tiếp nhận và xử lý thành công!
             </p>
             {orderId && (
               <div className="mb-5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono py-1.5 px-3 rounded">
@@ -94,7 +94,7 @@ export const QueueModal: React.FC<QueueModalProps> = ({ onSuccessRedirect }) => 
               ĐẶT HÀNG THẤT BẠI
             </h3>
             <p className="text-xs text-slate-600 mb-6">
-              Rất tiếc, sản phẩm Flash Sale đã hết hàng hoặc chuỗi giao dịch phân tán bị hủy bỏ (Compensating Rollback).
+              Rất tiếc, sản phẩm Flash Sale đã hết hàng hoặc thanh toán không thành công.
             </p>
             <button
               onClick={() => resetQueue()}
@@ -114,10 +114,10 @@ export const QueueModal: React.FC<QueueModalProps> = ({ onSuccessRedirect }) => 
               <Hourglass className="w-8 h-8 text-[#1A94FF] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2 uppercase tracking-wide">
-              ĐANG XỬ LÝ GIAO DỊCH SAGA...
+              ĐANG XỬ LÝ ĐƠN HÀNG...
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed max-w-[260px] mx-auto bg-slate-50 p-3 rounded border border-slate-100">
-              Vui lòng không đóng trình duyệt. Hệ thống đang điều phối giao dịch phân tán qua Kafka Event Queue.
+              Vui lòng không đóng trình duyệt. Hệ thống đang kiểm tra tồn kho và xác nhận thanh toán cho bạn.
             </p>
             {orderId && (
               <div className="mt-3 text-[11px] text-slate-400 font-mono">

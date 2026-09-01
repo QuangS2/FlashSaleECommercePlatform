@@ -8,4 +8,5 @@ public interface ProductUseCase {
     List<Product> getAllProducts();
     Optional<Product> getProductById(String id);
     Product createProduct(Product product);
+    Product incrementSoldCount(String id, int quantity);
 }

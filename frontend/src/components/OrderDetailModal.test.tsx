@@ -22,17 +22,17 @@ describe('OrderDetailModal Component', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('render thông tin chi tiết đơn hàng và timeline Saga', () => {
+  it('render thông tin chi tiết đơn hàng và tiến trình xử lý đơn hàng', () => {
     render(<OrderDetailModal order={mockOrder} onClose={vi.fn()} />);
 
     expect(screen.getByText('CHI TIẾT ĐƠN HÀNG')).toBeInTheDocument();
     expect(screen.getByText('ORD-999-TEST')).toBeInTheDocument();
     expect(screen.getByText(/Điện thoại iPhone 15 Pro Max/i)).toBeInTheDocument();
-    expect(screen.getByText(/Tiến trình chuỗi giao dịch phân tán/i)).toBeInTheDocument();
-    expect(screen.getByText(/1. Khởi tạo đơn hàng/i)).toBeInTheDocument();
-    expect(screen.getByText(/2. Khóa & Khấu trừ kho phân tán/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tiến trình xử lý đơn hàng/i)).toBeInTheDocument();
+    expect(screen.getByText(/1. Tiếp nhận đơn hàng/i)).toBeInTheDocument();
+    expect(screen.getByText(/2. Kiểm tra & Giữ hàng trong kho/i)).toBeInTheDocument();
     expect(screen.getByText(/3. Xác nhận thanh toán/i)).toBeInTheDocument();
-    expect(screen.getByText(/4. Đẩy thông báo thời gian thực/i)).toBeInTheDocument();
+    expect(screen.getByText(/4. Đơn hàng hoàn tất & Chuẩn bị giao/i)).toBeInTheDocument();
   });
 
   it('gọi hàm onClose khi bấm nút đóng', () => {
@@ -50,5 +50,12 @@ describe('OrderDetailModal Component', () => {
     render(<OrderDetailModal order={cancelledOrder} onClose={vi.fn()} />);
 
     expect(screen.getByText('ĐÃ HỦY')).toBeInTheDocument();
+  });
+
+  it('hiển thị badge trạng thái ĐÃ HOÀN TẤT khi status = CONFIRMED từ Saga', () => {
+    const confirmedOrder = { ...mockOrder, status: 'CONFIRMED' };
+    render(<OrderDetailModal order={confirmedOrder} onClose={vi.fn()} />);
+
+    expect(screen.getByText('ĐÃ HOÀN TẤT')).toBeInTheDocument();
   });
 });

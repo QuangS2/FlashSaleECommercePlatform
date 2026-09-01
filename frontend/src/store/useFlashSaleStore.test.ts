@@ -32,6 +32,19 @@ describe('useFlashSaleStore', () => {
     expect(updated?.remainingStock).toBe(5);
   });
 
+  it('ghi nhận mua hàng thành công và tăng số lượng đã bán (recordPurchase)', () => {
+    const beforeProduct = useFlashSaleStore.getState().products.find((p) => p.id === 'fs-101');
+    const initialSold = beforeProduct?.soldCount || beforeProduct?.soldStock || 0;
+    const initialRemaining = beforeProduct?.remainingStock || beforeProduct?.stockCount || 0;
+
+    useFlashSaleStore.getState().recordPurchase('fs-101', 2);
+    const afterProduct = useFlashSaleStore.getState().products.find((p) => p.id === 'fs-101');
+
+    expect(afterProduct?.soldCount).toBe(initialSold + 2);
+    expect(afterProduct?.soldStock).toBe(initialSold + 2);
+    expect(afterProduct?.remainingStock).toBe(Math.max(0, initialRemaining - 2));
+  });
+
   it('tải dữ liệu sản phẩm động (loadLiveProducts)', async () => {
     vi.spyOn(productService, 'fetchProducts').mockResolvedValue([
       {

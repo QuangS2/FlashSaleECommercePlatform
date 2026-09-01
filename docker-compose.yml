@@ -219,7 +219,7 @@ services:
     container_name: ecommerce-eureka
     environment:
       - OTEL_SERVICE_NAME=ecommerce-eureka-server
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
       - EUREKA_HOSTNAME=${EUREKA_HOSTNAME:-eureka-server}
@@ -238,7 +238,7 @@ services:
     container_name: ecommerce-api-gateway
     environment:
       - OTEL_SERVICE_NAME=ecommerce-api-gateway
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
@@ -261,7 +261,7 @@ services:
     container_name: ecommerce-product-service
     environment:
       - OTEL_SERVICE_NAME=ecommerce-product-service
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
@@ -275,7 +275,7 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "8081:8081"
+      - "8081:8087"
     networks:
       - ecommerce-net
     deploy:
@@ -289,7 +289,7 @@ services:
     container_name: ecommerce-inventory-service
     environment:
       - OTEL_SERVICE_NAME=ecommerce-inventory-service
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
@@ -318,7 +318,7 @@ services:
     container_name: ecommerce-order-service
     environment:
       - OTEL_SERVICE_NAME=ecommerce-order-service
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
@@ -346,7 +346,7 @@ services:
     container_name: ecommerce-payment-service
     environment:
       - OTEL_SERVICE_NAME=ecommerce-payment-service
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
@@ -372,7 +372,7 @@ services:
     container_name: ecommerce-notification-service
     environment:
       - OTEL_SERVICE_NAME=ecommerce-notification-service
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
@@ -408,6 +408,9 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:latest
     container_name: ecommerce-jaeger
+    ports:
+      - "4318:4318"
+      - "16686:16686"
     networks:
       - ecommerce-net
 

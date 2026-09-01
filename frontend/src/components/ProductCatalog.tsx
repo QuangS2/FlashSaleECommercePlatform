@@ -34,9 +34,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
     };
 
     const timer = setTimeout(loadProducts, 150); // Debounce ngắn để mượt mà
+    const unsubscribe = productService.onProductsChange(() => {
+      loadProducts();
+    });
+
     return () => {
       isMounted = false;
       clearTimeout(timer);
+      unsubscribe();
     };
   }, [activeCategory, searchTerm]);
 

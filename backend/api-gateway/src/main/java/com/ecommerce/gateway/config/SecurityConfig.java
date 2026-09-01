@@ -18,7 +18,11 @@ public class SecurityConfig {
                 .pathMatchers("/fallback/**").permitAll()
                 .pathMatchers("/actuator/**").permitAll()
                 .pathMatchers("/api/v1/products/**").permitAll()
-                .pathMatchers("/api/v1/orders/**").authenticated()
+                .pathMatchers("/api/v1/inventory/**").permitAll()
+                .pathMatchers("/api/v1/orders/**").permitAll()
+                .pathMatchers("/api/v1/payments/**").permitAll()
+                .pathMatchers("/api/v1/notifications/**").permitAll()
+                .pathMatchers("/ws-notification/**", "/ws/**").permitAll()
                 .anyExchange().permitAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {}));

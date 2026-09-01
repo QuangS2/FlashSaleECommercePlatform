@@ -22,13 +22,13 @@ describe('QueueModal Component', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('hiển thị trạng thái ĐANG XỬ LÝ GIAO DỊCH SAGA (WAITING)', () => {
+  it('hiển thị trạng thái ĐANG XỬ LÝ ĐƠN HÀNG (WAITING)', () => {
     useOrderQueueStore.getState().setQueueOpen(true);
     useOrderQueueStore.getState().setQueueStatus('WAITING', 'ORD-TEST-999');
 
     render(<QueueModal />);
 
-    expect(screen.getByText(/ĐANG XỬ LÝ GIAO DỊCH SAGA.../i)).toBeInTheDocument();
+    expect(screen.getByText(/ĐANG XỬ LÝ ĐƠN HÀNG.../i)).toBeInTheDocument();
     expect(screen.getByText(/ORD-TEST-999/i)).toBeInTheDocument();
   });
 

@@ -17,4 +17,6 @@ public interface OrderRepositoryPort {
 
     List<Order> findByUserIdOrderByCreatedAtDesc(String userId);
 
+    List<Order> findByUserEmailOrderByCreatedAtDesc(String userEmail);
+
 }

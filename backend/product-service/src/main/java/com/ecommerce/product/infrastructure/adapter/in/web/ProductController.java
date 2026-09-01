@@ -63,6 +63,14 @@ public class ProductController {
         return mapToResponse(savedProduct);
     }
 
+    @PostMapping("/{id}/increment-sold")
+    public ResponseEntity<ProductResponse> incrementSoldCount(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "1") int quantity) {
+        Product updatedProduct = productUseCase.incrementSoldCount(id, quantity);
+        return ResponseEntity.ok(mapToResponse(updatedProduct));
+    }
+
     private boolean matchesCategory(Product product, String category) {
         if (category == null || category.equalsIgnoreCase("Tất cả")) {
             return true;

@@ -12,6 +12,7 @@ interface FlashSaleState {
   // Actions
   setActiveSlot: (slotId: string) => void;
   updateProductStock: (productId: string, remainingStock: number) => void;
+  recordPurchase: (productId: string, quantity?: number) => void;
   setProducts: (products: FlashSaleProduct[]) => void;
   loadLiveProducts: () => Promise<void>;
 }
@@ -174,6 +175,27 @@ export const useFlashSaleStore = create<FlashSaleState>((set, get) => ({
     }));
   },
 
+  recordPurchase: (productId: string, quantity: number = 1) => {
+    set((state) => ({
+      products: state.products.map((p) => {
+        if (p.id === productId) {
+          const currentSold = p.soldCount || p.soldStock || 0;
+          const currentStock = p.remainingStock || p.stockCount || 0;
+          const newSold = currentSold + quantity;
+          const newRemaining = Math.max(0, currentStock - quantity);
+          return {
+            ...p,
+            soldStock: newSold,
+            soldCount: newSold,
+            remainingStock: newRemaining,
+            stockCount: newRemaining,
+          };
+        }
+        return p;
+      }),
+    }));
+  },
+
   setProducts: (products: FlashSaleProduct[]) => set({ products }),
 
   loadLiveProducts: async () => {
@@ -188,13 +210,16 @@ export const useFlashSaleStore = create<FlashSaleState>((set, get) => ({
           flashSaleItems.map(async (item) => {
             const liveStock = await inventoryService.fetchStock(item.id);
             const remaining = liveStock !== null ? liveStock : item.stockCount;
-            const total = Math.max(100, remaining + item.soldCount);
+            const sold = item.soldCount || 0;
+            const total = Math.max(100, remaining + sold);
             return {
               ...item,
               slotId: 'slot-2',
               totalStock: total,
-              soldStock: total - remaining,
+              soldStock: sold,
+              soldCount: sold,
               remainingStock: remaining,
+              stockCount: remaining,
               maxLimitPerUser: 1,
             };
           })

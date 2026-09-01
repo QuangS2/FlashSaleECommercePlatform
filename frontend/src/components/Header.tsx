@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { toggleCart, getTotalCount } = useCartStore();
-  const { isAuthenticated, user, openLoginModal, logout } = useAuthStore();
+  const { isAuthenticated, user, loginWithKeycloak, logout } = useAuthStore();
   const totalCartItems = getTotalCount();
 
   const categories = [
@@ -42,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleAccountClick = () => {
     if (!isUserLoggedIn) {
-      openLoginModal();
+      loginWithKeycloak();
     }
   };
 

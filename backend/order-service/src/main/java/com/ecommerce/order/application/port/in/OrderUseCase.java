@@ -21,6 +21,8 @@ public interface OrderUseCase {
 
     List<OrderResponse> getOrdersByUserId(String userId);
 
+    List<OrderResponse> getOrdersByUserEmail(String userEmail);
+
     void handleInventoryReserved(InventoryReservedEvent event);
 
     void handleInventoryReservationFailed(InventoryReservationFailedEvent event);

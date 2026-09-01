@@ -385,7 +385,32 @@ const FALLBACK_PRODUCTS: Product[] = [
   },
 ];
 
+const productChangeListeners = new Set<() => void>();
+
 export const productService = {
+  /**
+   * Đăng ký lắng nghe sự kiện thay đổi dữ liệu sản phẩm
+   */
+  onProductsChange(listener: () => void): () => void {
+    productChangeListeners.add(listener);
+    return () => {
+      productChangeListeners.delete(listener);
+    };
+  },
+
+  /**
+   * Bắn thông báo cập nhật dữ liệu sản phẩm trên toàn ứng dụng
+   */
+  notifyChange(): void {
+    productChangeListeners.forEach((cb) => {
+      try {
+        cb();
+      } catch (err) {
+        console.error('[ProductService] Error in listener callback:', err);
+      }
+    });
+  },
+
   /**
    * Lấy danh sách sản phẩm từ Backend Product-Service (MongoDB qua API Gateway)
    */
@@ -431,6 +456,57 @@ export const productService = {
       console.warn('[ProductService] Backend chưa sẵn sàng, sử dụng dữ liệu cục bộ:', error);
       return this.filterFallback(category, search);
     }
+  },
+
+  /**
+   * Cập nhật tăng số lượng đã bán và giảm tồn kho của sản phẩm khi hoàn tất đơn hàng
+   */
+  async incrementSoldCount(productId: string, quantity: number = 1): Promise<Product | null> {
+    try {
+      const response = await fetch(`/api/v1/products/${productId}/increment-sold?quantity=${quantity}`, {
+        method: 'POST',
+      });
+      if (response.ok) {
+        const item = await response.json();
+        const updatedProduct: Product = {
+          id: item.id,
+          name: item.name,
+          category: item.category || 'Khác',
+          description: item.description || '',
+          originalPrice: Number(item.price) || 0,
+          salePrice: item.discountPrice ? Number(item.price) - Number(item.discountPrice) : Number(item.price) || 0,
+          discountPercent: item.discountPercent || 0,
+          imageUrl: item.imageUrl || '',
+          rating: item.rating || 4.8,
+          soldCount: item.soldCount || 0,
+          stockCount: item.stockCount || 50,
+          specs: item.specs || {},
+          isFlashSale: Boolean(item.isFlashSale),
+        };
+
+        // Đồng bộ fallback cục bộ
+        const fallbackItem = FALLBACK_PRODUCTS.find((p) => p.id === productId);
+        if (fallbackItem) {
+          fallbackItem.soldCount = updatedProduct.soldCount;
+          fallbackItem.stockCount = updatedProduct.stockCount;
+        }
+
+        this.notifyChange();
+        return updatedProduct;
+      }
+    } catch (err) {
+      console.warn('[ProductService] Lỗi khi gọi API increment-sold lên backend, cập nhật fallback cục bộ:', err);
+    }
+
+    // Cập nhật fallback cục bộ nếu backend offline
+    const fallbackItem = FALLBACK_PRODUCTS.find((p) => p.id === productId);
+    if (fallbackItem) {
+      fallbackItem.soldCount = (fallbackItem.soldCount || 0) + quantity;
+      fallbackItem.stockCount = Math.max(0, (fallbackItem.stockCount || 0) - quantity);
+      this.notifyChange();
+      return fallbackItem;
+    }
+    return null;
   },
 
   /**
