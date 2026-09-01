@@ -47,7 +47,7 @@ public class KafkaProducerConsumerConfigTest {
         assertThat(props.get(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG)).isEqualTo(true);
         assertThat(props.get(ProducerConfig.ACKS_CONFIG)).isEqualTo("all");
         assertThat(props.get(ProducerConfig.RETRIES_CONFIG)).isEqualTo(3);
-        assertThat(props.get(ProducerConfig.COMPRESSION_TYPE_CONFIG)).isEqualTo("snappy");
+        assertThat(props.get(ProducerConfig.COMPRESSION_TYPE_CONFIG)).isEqualTo("none");
         assertThat(props.get(ProducerConfig.BATCH_SIZE_CONFIG)).isEqualTo(32768);
         assertThat(props.get(ProducerConfig.LINGER_MS_CONFIG)).isEqualTo(5);
         assertThat(props.get(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG)).isEqualTo(StringSerializer.class);

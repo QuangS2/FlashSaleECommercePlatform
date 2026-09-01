@@ -19,6 +19,8 @@ vi.mock('./auth/keycloak', () => ({
     login: vi.fn(),
     logout: vi.fn(),
   },
+  onAuthChange: vi.fn(() => () => {}),
+  getKeycloakUrl: vi.fn(() => 'http://localhost:8180'),
 }));
 
 // Mock WebSocket
@@ -136,7 +138,7 @@ describe('App Main Component Integration Tests', () => {
 
     // Kiểm tra OrderDetailModal xuất hiện
     expect(screen.getByText('CHI TIẾT ĐƠN HÀNG')).toBeInTheDocument();
-    expect(screen.getByText(/Tiến trình chuỗi giao dịch phân tán/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tiến trình xử lý đơn hàng/i)).toBeInTheDocument();
     expect(screen.getAllByText('ORD-APP-TEST-001').length).toBeGreaterThanOrEqual(1);
   });
 });

@@ -37,4 +37,12 @@ public class OrderJpaAdapter implements OrderRepositoryPort {
                 .map(OrderEntity::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Order> findByUserEmailOrderByCreatedAtDesc(String userEmail) {
+        return springDataOrderRepository.findByUserEmailOrderByCreatedAtDesc(userEmail)
+                .stream()
+                .map(OrderEntity::toDomain)
+                .collect(Collectors.toList());
+    }
 }

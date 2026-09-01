@@ -42,13 +42,16 @@ describe('Header Component', () => {
     expect(screen.getByText('2')).toBeInTheDocument();
   });
 
-  it('mở LoginModal khi chưa đăng nhập và click vào thẻ tài khoản', () => {
+  it('gọi loginWithKeycloak khi chưa đăng nhập và click vào thẻ tài khoản', () => {
+    const loginSpy = vi.fn();
+    useAuthStore.setState({ loginWithKeycloak: loginSpy });
+
     render(<Header activeCategory="Tất cả" onSelectCategory={vi.fn()} />);
 
     const userCard = screen.getByText('Đăng nhập / Đăng ký');
     fireEvent.click(userCard);
 
-    expect(useAuthStore.getState().isLoginModalOpen).toBe(true);
+    expect(loginSpy).toHaveBeenCalled();
   });
 
   it('hiển thị tên người dùng khi đã đăng nhập', () => {

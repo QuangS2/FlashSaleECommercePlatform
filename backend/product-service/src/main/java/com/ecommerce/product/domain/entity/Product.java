@@ -34,4 +34,12 @@ public class Product {
         }
         return price;
     }
+
+    // Domain Logic: increment sold count and reduce stock count
+    public void incrementSoldCount(int quantity) {
+        this.soldCount = (this.soldCount != null ? this.soldCount : 0) + quantity;
+        if (this.stockCount != null) {
+            this.stockCount = Math.max(0, this.stockCount - quantity);
+        }
+    }
 }

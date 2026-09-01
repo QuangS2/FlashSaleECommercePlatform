@@ -14,5 +14,7 @@ public interface SpringDataOrderRepository extends JpaRepository<OrderEntity, Lo
 
     List<OrderEntity> findByUserIdOrderByCreatedAtDesc(String userId);
 
+    List<OrderEntity> findByUserEmailOrderByCreatedAtDesc(String userEmail);
+
     boolean existsByOrderId(String orderId);
 }

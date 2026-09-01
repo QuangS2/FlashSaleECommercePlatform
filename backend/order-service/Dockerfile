@@ -11,8 +11,7 @@ RUN if [ ! -f opentelemetry-javaagent.jar ]; then \
 
 # Stage 2: Runtime JRE image
 FROM eclipse-temurin:17-jre-alpine
-WORKDIR /app
-COPY --from=build /app/order-service/target/*.jar app.jar
+COPY --from=build /app/order-service/target/order-service-1.0.0-SNAPSHOT.jar app.jar
 COPY --from=build /app/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 EXPOSE 8083
 ENTRYPOINT ["java", "-javaagent:/app/opentelemetry-javaagent.jar", "-jar", "app.jar"]

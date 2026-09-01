@@ -29,4 +29,12 @@ public class ProductApplicationService implements ProductUseCase {
     public Product createProduct(Product product) {
         return productRepositoryPort.save(product);
     }
+
+    @Override
+    public Product incrementSoldCount(String id, int quantity) {
+        Product product = productRepositoryPort.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm với id: " + id));
+        product.incrementSoldCount(quantity);
+        return productRepositoryPort.save(product);
+    }
 }

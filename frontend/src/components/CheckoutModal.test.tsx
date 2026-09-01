@@ -10,6 +10,8 @@ vi.mock('../auth/keycloak', () => ({
     authenticated: true,
     tokenParsed: { name: 'Test User' },
   },
+  onAuthChange: vi.fn(() => () => {}),
+  getKeycloakUrl: vi.fn(() => 'http://localhost:8180'),
 }));
 
 import { useAuthStore } from '../store/useAuthStore';

@@ -29,20 +29,50 @@ public class OrderController {
     }
 
     /**
-     * Truy vấn chi tiết đơn hàng theo orderId.
+     * Lấy danh sách lịch sử đơn hàng theo query param trên root /api/v1/orders?email=...
      */
-    @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrderByOrderId(@PathVariable String orderId) {
-        OrderResponse response = orderUseCase.getOrderByOrderId(orderId);
-        return ResponseEntity.ok(response);
+    @GetMapping(params = "email")
+    public ResponseEntity<List<OrderResponse>> getOrdersByEmailParamOnRoot(@RequestParam("email") String email) {
+        List<OrderResponse> orders = orderUseCase.getOrdersByUserEmail(email);
+        return ResponseEntity.ok(orders);
     }
 
     /**
-     * Lấy danh sách lịch sử đơn hàng của người dùng.
+     * Lấy danh sách lịch sử đơn hàng theo query param trên root /api/v1/orders?userId=...
+     */
+    @GetMapping(params = "userId")
+    public ResponseEntity<List<OrderResponse>> getOrdersByUserIdParamOnRoot(@RequestParam("userId") String userId) {
+        List<OrderResponse> orders = orderUseCase.getOrdersByUserId(userId);
+        return ResponseEntity.ok(orders);
+    }
+
+    /**
+     * Lấy danh sách lịch sử đơn hàng của người dùng theo User ID.
      */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<OrderResponse>> getOrdersByUserId(@PathVariable String userId) {
         List<OrderResponse> orders = orderUseCase.getOrdersByUserId(userId);
+        return ResponseEntity.ok(orders);
+    }
+
+    /**
+     * Lấy danh sách lịch sử đơn hàng của khách hàng theo Email (Query Param hoặc Path Variable).
+     */
+    @GetMapping("/email")
+    public ResponseEntity<List<OrderResponse>> getOrdersByEmailParam(@RequestParam("email") String email) {
+        List<OrderResponse> orders = orderUseCase.getOrdersByUserEmail(email);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/by-email")
+    public ResponseEntity<List<OrderResponse>> getOrdersByEmailQuery(@RequestParam("email") String email) {
+        List<OrderResponse> orders = orderUseCase.getOrdersByUserEmail(email);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/email/{userEmail:.+}")
+    public ResponseEntity<List<OrderResponse>> getOrdersByUserEmail(@PathVariable("userEmail") String userEmail) {
+        List<OrderResponse> orders = orderUseCase.getOrdersByUserEmail(userEmail);
         return ResponseEntity.ok(orders);
     }
 
@@ -57,5 +87,28 @@ public class OrderController {
                 "architecture", "Hexagonal Architecture (DDD) & Event-Driven Saga Choreography",
                 "database", "MySQL 8.0"
         ));
+    }
+
+    /**
+     * Truy vấn chi tiết đơn hàng theo orderId (Khớp mẫu ORD-...).
+     */
+    @GetMapping("/{orderId:ORD-[A-Za-z0-9-]+}")
+    public ResponseEntity<OrderResponse> getOrderByOrderIdRegex(@PathVariable("orderId") String orderId) {
+        try {
+            OrderResponse response = orderUseCase.getOrderByOrderId(orderId);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping("/detail/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderByOrderIdDetail(@PathVariable("orderId") String orderId) {
+        try {
+            OrderResponse response = orderUseCase.getOrderByOrderId(orderId);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }

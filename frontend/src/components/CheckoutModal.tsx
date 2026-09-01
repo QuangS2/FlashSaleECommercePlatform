@@ -3,6 +3,8 @@ import { X, CheckCircle2, ShieldAlert, CreditCard, Truck, Wallet, Mail } from 'l
 import { useCartStore } from '../store/useCartStore';
 import { useOrderQueueStore } from '../store/useOrderQueueStore';
 import { orderService } from '../services/orderService';
+import { productService } from '../services/productService';
+import { useFlashSaleStore } from '../store/useFlashSaleStore';
 import { useAuthStore } from '../store/useAuthStore';
 
 interface CheckoutModalProps {
@@ -43,7 +45,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     const hasFlashSale = items.some((item) => item.product.isFlashSale);
     const primaryItem = items[0];
 
-    const currentUserId = isAuthenticated && user?.sub ? user.sub : `guest_${Date.now().toString(36)}`;
+    const getGuestUserId = () => {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          let gid = window.localStorage.getItem('flsale_guest_user_id');
+          if (!gid) {
+            gid = `guest_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+            window.localStorage.setItem('flsale_guest_user_id', gid);
+          }
+          return gid;
+        }
+      } catch {
+        // fallback
+      }
+      return 'guest_demo_user';
+    };
+
+    const currentUserId = isAuthenticated && (user?.sub || user?.username) ? (user?.sub || user?.username) : getGuestUserId();
     const currentUserEmail = user?.email || formData.email || 'customer@ecommerce.vn';
 
     try {
@@ -67,15 +85,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
 
       const finalOrderId = result.orderId;
 
-      // Nếu là khách chưa đăng nhập -> Lưu mã đơn vào danh sách guest orders của trình duyệt
-      if (!isAuthenticated) {
-        const existing = localStorage.getItem('flsale_guest_order_ids');
-        const ids: string[] = existing ? JSON.parse(existing) : [];
-        if (!ids.includes(finalOrderId)) {
-          ids.unshift(finalOrderId);
-          localStorage.setItem('flsale_guest_order_ids', JSON.stringify(ids.slice(0, 20)));
+      // Lưu email khách vào localStorage để khách có thể tra cứu lại đơn hàng
+      try {
+        if (typeof window !== 'undefined' && window.localStorage && formData.email) {
+          window.localStorage.setItem('flsale_last_guest_email', formData.email.trim().toLowerCase());
         }
+      } catch {
+        // Bỏ qua lỗi storage
       }
+
+      // 2. Cập nhật tăng số lượng Đã bán và giảm tồn kho thời gian thực
+      try {
+        await productService.incrementSoldCount(primaryItem.product.id, primaryItem.quantity);
+      } catch (e) {
+        // Bỏ qua lỗi increment nếu offline
+      }
+      useFlashSaleStore.getState().recordPurchase(primaryItem.product.id, primaryItem.quantity);
+      productService.notifyChange();
 
       setIsSubmitting(false);
       onClose(); // Đóng form checkout
@@ -143,6 +169,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="Ví dụ: 0987654321"
+                  className="w-full text-xs border border-slate-300 rounded-[4px] px-3 py-2 focus:outline-none focus:border-[#1A94FF]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Email nhận thông tin đơn hàng <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="Ví dụ: email@example.com"
                   className="w-full text-xs border border-slate-300 rounded-[4px] px-3 py-2 focus:outline-none focus:border-[#1A94FF]"
                 />
               </div>

@@ -95,9 +95,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView, 
               />
             </div>
           ) : (
-            <div className="text-xs text-slate-500 mb-3 h-[18px]">
+            <div className="text-xs text-slate-500 mb-3 flex items-center justify-between h-[18px]">
+              <span>Đã bán: <strong className="text-slate-700 font-semibold">{product.soldCount || 0}</strong></span>
               {isOutOfStock ? (
-                <span className="text-slate-400 font-semibold">Tạm hết hàng</span>
+                <span className="text-red-500 font-semibold">Tạm hết hàng</span>
               ) : (
                 <span>Còn lại: <strong className="text-slate-700">{product.stockCount}</strong></span>
               )}

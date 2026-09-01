@@ -8,12 +8,12 @@ import { QueueModal } from './components/QueueModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { OrderHistoryDrawer } from './components/OrderHistoryDrawer';
 import { OrderDetailModal } from './components/OrderDetailModal';
-import { LoginModal } from './components/LoginModal';
 import { Product } from './types';
 import { useCartStore } from './store/useCartStore';
 import { useFlashSaleStore } from './store/useFlashSaleStore';
 import { useAuthStore } from './store/useAuthStore';
 import { orderService, OrderDetailResponse } from './services/orderService';
+import { productService } from './services/productService';
 import { CheckCircle2, Truck, ShieldCheck, RotateCcw, Headphones } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
@@ -48,11 +48,25 @@ export function App() {
     setIsCheckoutOpen(false);
     setLastCompletedOrder(orderId);
 
-    // Tự động tải chi tiết đơn hàng để người dùng có thể xem trực tiếp Saga trace
+    // 1. Tự động tải chi tiết đơn hàng để người dùng xem trực tiếp Saga trace
     const detail = await orderService.getOrderById(orderId);
     if (detail) {
       setSelectedOrderForDetail(detail);
     }
+
+    // 2. Đồng bộ tải lại danh mục sản phẩm và Flash Sale
+    loadLiveProducts();
+    productService.notifyChange();
+
+    // 3. Sau 1.2s, tải lại trạng thái đơn hàng đã được xác nhận (CONFIRMED)
+    setTimeout(async () => {
+      const confirmedDetail = await orderService.getOrderById(orderId);
+      if (confirmedDetail) {
+        setSelectedOrderForDetail((prev) => (prev ? confirmedDetail : null));
+      }
+      loadLiveProducts();
+      productService.notifyChange();
+    }, 1200);
   };
 
   return (
@@ -171,9 +185,6 @@ export function App() {
         onOrderSuccess={handleOrderSuccess}
       />
 
-      {/* Fast & SSO Login Modal */}
-      <LoginModal />
-
       {/* Queue Modal for Flash Sale Traffic Management */}
       <QueueModal onSuccessRedirect={handleOrderSuccess} />
 
@@ -196,7 +207,10 @@ export function App() {
       {/* Order Detail Modal with Saga Stepper Timeline */}
       <OrderDetailModal
         order={selectedOrderForDetail}
-        onClose={() => setSelectedOrderForDetail(null)}
+        onClose={() => {
+          setSelectedOrderForDetail(null);
+          setLastCompletedOrder(null);
+        }}
       />
 
       {/* Success Order Toast Modal */}
@@ -209,7 +223,7 @@ export function App() {
               Mã đơn hàng: <strong className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-mono text-base tracking-wide">{lastCompletedOrder}</strong>
             </p>
             <p className="text-xs text-slate-500 bg-slate-50 p-3 rounded-md border border-slate-200 mb-6 leading-relaxed">
-              Đơn hàng đang được xử lý qua chuỗi giao dịch Saga. Bạn có thể theo dõi trong mục Đơn mua.
+              Đơn hàng của bạn đã được tiếp nhận và đang trong tiến trình xử lý. Bạn có thể theo dõi tiến trình trong mục Đơn mua.
             </p>
             <button
               onClick={() => setLastCompletedOrder(null)}

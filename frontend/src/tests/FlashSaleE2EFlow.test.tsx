@@ -21,6 +21,8 @@ vi.mock('../auth/keycloak', () => ({
     login: vi.fn(),
     logout: vi.fn(),
   },
+  onAuthChange: vi.fn(() => () => {}),
+  getKeycloakUrl: vi.fn(() => 'http://localhost:8180'),
 }));
 
 // Mock WebSocket
@@ -183,7 +185,7 @@ describe('E2E Full Flow: Khách hàng mua sắm Flash Sale và Đặt hàng Saga
     expect(useCartStore.getState().getTotalCount()).toBe(0);
   });
 
-  it('USE CASE 6: Quản lý Lịch sử Đơn hàng và Tra cứu Tiến trình Saga Trace', async () => {
+  it('USE CASE 6: Quản lý Lịch sử Đơn hàng và Tra cứu Tiến trình Xử lý Đơn hàng', async () => {
     render(<App />);
 
     // Mở Order History
@@ -194,12 +196,12 @@ describe('E2E Full Flow: Khách hàng mua sắm Flash Sale và Đặt hàng Saga
       expect(screen.getByText('ORD-SAGA-999')).toBeInTheDocument();
     });
 
-    // Mở Modal chi tiết để xem Saga Stepper Timeline
+    // Mở Modal chi tiết để xem Tiến trình xử lý đơn hàng
     fireEvent.click(screen.getByText('ORD-SAGA-999'));
 
     expect(screen.getByText('CHI TIẾT ĐƠN HÀNG')).toBeInTheDocument();
-    expect(screen.getByText(/Tiến trình chuỗi giao dịch phân tán/i)).toBeInTheDocument();
-    expect(screen.getByText(/1. Khởi tạo đơn hàng/i)).toBeInTheDocument();
-    expect(screen.getByText(/2. Khóa & Khấu trừ kho phân tán/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tiến trình xử lý đơn hàng/i)).toBeInTheDocument();
+    expect(screen.getByText(/1. Tiếp nhận đơn hàng/i)).toBeInTheDocument();
+    expect(screen.getByText(/2. Kiểm tra & Giữ hàng trong kho/i)).toBeInTheDocument();
   });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, CheckCircle2, Clock, ShieldCheck, CreditCard, Bell, Package, AlertCircle } from 'lucide-react';
+import { X, CheckCircle2, Clock, ShieldCheck, CreditCard, Bell, Package, AlertCircle, Truck } from 'lucide-react';
 import { OrderDetailResponse } from '../services/orderService';
 
 interface OrderDetailModalProps {
@@ -14,36 +14,42 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'COMPLETED':
-      case 'SUCCESS':
-        return (
-          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded text-xs border border-emerald-200">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            ĐÃ HOÀN TẤT
-          </span>
-        );
-      case 'CANCELLED':
-      case 'FAILED':
-        return (
-          <span className="inline-flex items-center gap-1 bg-red-50 text-red-700 font-semibold px-2.5 py-1 rounded text-xs border border-red-200">
-            <AlertCircle className="w-3.5 h-3.5" />
-            ĐÃ HỦY
-          </span>
-        );
-      case 'PENDING':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 bg-blue-50 text-[#1A94FF] font-semibold px-2.5 py-1 rounded text-xs border border-blue-200">
-            <Clock className="w-3.5 h-3.5 animate-spin" />
-            ĐANG XỬ LÝ SAGA
-          </span>
-        );
-    }
+  const isOrderCompleted = (status: string) => {
+    const s = (status || '').toUpperCase();
+    return s === 'COMPLETED' || s === 'CONFIRMED' || s === 'SUCCESS';
   };
 
-  const isSuccess = order.status === 'COMPLETED' || order.status === 'SUCCESS' || order.status === 'PENDING';
+  const isOrderCancelled = (status: string) => {
+    const s = (status || '').toUpperCase();
+    return s === 'CANCELLED' || s === 'FAILED' || s === 'CANCELLED_OUT_OF_STOCK' || s === 'PAYMENT_FAILED';
+  };
+
+  const getStatusBadge = (status: string) => {
+    if (isOrderCompleted(status)) {
+      return (
+        <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded text-xs border border-emerald-200">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          ĐÃ HOÀN TẤT
+        </span>
+      );
+    }
+    if (isOrderCancelled(status)) {
+      return (
+        <span className="inline-flex items-center gap-1 bg-red-50 text-red-700 font-semibold px-2.5 py-1 rounded text-xs border border-red-200">
+          <AlertCircle className="w-3.5 h-3.5" />
+          ĐÃ HỦY
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 bg-blue-50 text-[#1A94FF] font-semibold px-2.5 py-1 rounded text-xs border border-blue-200">
+        <Clock className="w-3.5 h-3.5 animate-spin" />
+        ĐANG XỬ LÝ
+      </span>
+    );
+  };
+
+  const isSuccess = isOrderCompleted(order.status) || order.status === 'PENDING' || order.status === 'INVENTORY_RESERVED';
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-4">
@@ -74,11 +80,11 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
             </div>
           </div>
 
-          {/* Saga Stepper Timeline */}
+          {/* Customer Friendly Order Progress Stepper */}
           <div>
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-[#1A94FF]" />
-              Tiến trình chuỗi giao dịch phân tán (Saga Orchestration)
+              Tiến trình xử lý đơn hàng
             </h4>
 
             <div className="relative pl-6 border-l-2 border-blue-200 space-y-4 text-xs">
@@ -87,8 +93,8 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
                 <div className="absolute -left-[31px] top-0 bg-blue-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">
                   ✓
                 </div>
-                <div className="font-semibold text-slate-900">1. Khởi tạo đơn hàng (Order Service)</div>
-                <div className="text-slate-500 text-[11px]">Bản ghi đơn hàng lưu vào MySQL với trạng thái PENDING và phát Kafka Event.</div>
+                <div className="font-semibold text-slate-900">1. Tiếp nhận đơn hàng</div>
+                <div className="text-slate-500 text-[11px]">Đơn hàng đã được ghi nhận vào hệ thống.</div>
               </div>
 
               {/* Step 2 */}
@@ -98,9 +104,9 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
                 </div>
                 <div className="font-semibold text-slate-900 flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-                  2. Khóa & Khấu trừ kho phân tán (Inventory Service)
+                  2. Kiểm tra & Giữ hàng trong kho
                 </div>
-                <div className="text-slate-500 text-[11px]">Redisson Distributed Lock thực thi nguyên tử, chống over-selling thành công.</div>
+                <div className="text-slate-500 text-[11px]">Sản phẩm đã được xác nhận còn đủ tồn kho và sẵn sàng đóng gói.</div>
               </div>
 
               {/* Step 3 */}
@@ -110,9 +116,9 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
                 </div>
                 <div className="font-semibold text-slate-900 flex items-center gap-1">
                   <CreditCard className="w-3.5 h-3.5 text-blue-600" />
-                  3. Xác nhận thanh toán (Payment Service)
+                  3. Xác nhận thanh toán
                 </div>
-                <div className="text-slate-500 text-[11px]">Cổng thanh toán xác nhận thành công, phát PaymentCompletedEvent.</div>
+                <div className="text-slate-500 text-[11px]">Giao dịch thanh toán được ghi nhận và xử lý an toàn.</div>
               </div>
 
               {/* Step 4 */}
@@ -121,10 +127,10 @@ export const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ order, onClo
                   {isSuccess ? '✓' : '4'}
                 </div>
                 <div className="font-semibold text-slate-900 flex items-center gap-1">
-                  <Bell className="w-3.5 h-3.5 text-emerald-600" />
-                  4. Đẩy thông báo thời gian thực (Notification Service)
+                  <Truck className="w-3.5 h-3.5 text-emerald-600" />
+                  4. Đơn hàng hoàn tất & Chuẩn bị giao
                 </div>
-                <div className="text-slate-500 text-[11px]">STOMP WebSocket gửi thông báo cập nhật đơn hàng thành công đến Client.</div>
+                <div className="text-slate-500 text-[11px]">Đơn hàng được xác nhận thành công và bàn giao sang đơn vị vận chuyển.</div>
               </div>
             </div>
           </div>

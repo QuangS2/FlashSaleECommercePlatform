@@ -36,7 +36,7 @@ public class CommonKafkaProducerConfig {
         props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 5);
 
         // 4. High-Throughput Batching & Compression (Flash Sale Optimization)
-        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+        props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "none");
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, 32768); // 32 KB batch size
         props.put(ProducerConfig.LINGER_MS_CONFIG, 5);       // 5 ms linger delay
 

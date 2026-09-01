@@ -110,11 +110,8 @@
       "credentials": [
         {
           "type": "password",
-          "userLabel": "My password",
-          "createdDate": 1710000000000,
-          "secretData": "{\"value\":\"+yWpGZq4oDkI5/QGZvx9yA==\",\"salt\":\"wR6fDk6xH8U=\",\"additionalParameters\":{}}",
-          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}",
-          "value": "password"
+          "value": "password",
+          "temporary": false
         }
       ],
       "disableableCredentialTypes": [],
@@ -139,11 +136,8 @@
       "credentials": [
         {
           "type": "password",
-          "userLabel": "My password",
-          "createdDate": 1710000000000,
-          "secretData": "{\"value\":\"+yWpGZq4oDkI5/QGZvx9yA==\",\"salt\":\"wR6fDk6xH8U=\",\"additionalParameters\":{}}",
-          "credentialData": "{\"hashIterations\":5,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}",
-          "value": "adminpassword"
+          "value": "adminpassword",
+          "temporary": false
         }
       ],
       "disableableCredentialTypes": [],
