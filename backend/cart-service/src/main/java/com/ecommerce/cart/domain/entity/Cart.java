@@ -1,5 +1,7 @@
 package com.ecommerce.cart.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Cart implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -21,6 +24,7 @@ public class Cart implements Serializable {
     @Builder.Default
     private List<CartItem> items = new ArrayList<>();
 
+    @JsonProperty("totalAmount")
     public BigDecimal getTotalAmount() {
         if (items == null || items.isEmpty()) {
             return BigDecimal.ZERO;
@@ -30,6 +34,12 @@ public class Cart implements Serializable {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    @JsonProperty("totalAmount")
+    public void setTotalAmount(BigDecimal totalAmount) {
+        // No-op for Jackson deserialization compatibility
+    }
+
+    @JsonProperty("totalQuantity")
     public int getTotalQuantity() {
         if (items == null || items.isEmpty()) {
             return 0;
@@ -37,6 +47,11 @@ public class Cart implements Serializable {
         return items.stream()
                 .mapToInt(item -> item.getQuantity() != null ? item.getQuantity() : 0)
                 .sum();
+    }
+
+    @JsonProperty("totalQuantity")
+    public void setTotalQuantity(int totalQuantity) {
+        // No-op for Jackson deserialization compatibility
     }
 
     public void addItem(CartItem newItem) {
