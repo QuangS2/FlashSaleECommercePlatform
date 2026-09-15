@@ -1,4 +1,5 @@
 import { Product } from '../types';
+import { inventoryService } from './inventoryService';
 
 const FALLBACK_PRODUCTS: Product[] = [
   {
@@ -433,21 +434,29 @@ export const productService = {
 
       const data: any[] = await response.json();
       if (Array.isArray(data) && data.length > 0) {
-        return data.map((item) => ({
-          id: item.id,
-          name: item.name,
-          category: item.category || 'Khác',
-          description: item.description || '',
-          originalPrice: Number(item.price) || 0,
-          salePrice: item.discountPrice ? Number(item.price) - Number(item.discountPrice) : Number(item.price) || 0,
-          discountPercent: item.discountPercent || (item.discountPrice ? Math.round((Number(item.discountPrice) / Number(item.price)) * 100) : 0),
-          imageUrl: item.imageUrl || '',
-          rating: item.rating || 4.8,
-          soldCount: item.soldCount || 0,
-          stockCount: item.stockCount || 50,
-          specs: item.specs || {},
-          isFlashSale: Boolean(item.isFlashSale),
-        }));
+        // Đồng bộ tồn kho thời gian thực từ inventoryService (Single Source of Truth)
+        const products: Product[] = await Promise.all(
+          data.map(async (item) => {
+            const liveStock = await inventoryService.fetchStock(item.id);
+            const stock = liveStock !== null ? liveStock : (item.stockCount !== undefined ? Number(item.stockCount) : 15);
+            return {
+              id: item.id,
+              name: item.name,
+              category: item.category || 'Khác',
+              description: item.description || '',
+              originalPrice: Number(item.price) || 0,
+              salePrice: item.discountPrice ? Number(item.price) - Number(item.discountPrice) : Number(item.price) || 0,
+              discountPercent: item.discountPercent || (item.discountPrice ? Math.round((Number(item.discountPrice) / Number(item.price)) * 100) : 0),
+              imageUrl: item.imageUrl || '',
+              rating: item.rating || 4.8,
+              soldCount: item.soldCount || 0,
+              stockCount: stock,
+              specs: item.specs || {},
+              isFlashSale: Boolean(item.isFlashSale),
+            };
+          })
+        );
+        return products;
       }
 
       // Nếu database trả về mảng rỗng, áp dụng lọc trên fallback
@@ -468,6 +477,8 @@ export const productService = {
       });
       if (response.ok) {
         const item = await response.json();
+        const liveStock = await inventoryService.fetchStock(productId);
+        const stock = liveStock !== null ? liveStock : Number(item.stockCount) || 0;
         const updatedProduct: Product = {
           id: item.id,
           name: item.name,
@@ -479,7 +490,7 @@ export const productService = {
           imageUrl: item.imageUrl || '',
           rating: item.rating || 4.8,
           soldCount: item.soldCount || 0,
-          stockCount: item.stockCount || 50,
+          stockCount: stock,
           specs: item.specs || {},
           isFlashSale: Boolean(item.isFlashSale),
         };
@@ -519,6 +530,8 @@ export const productService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const item = await response.json();
+      const liveStock = await inventoryService.fetchStock(item.id);
+      const stock = liveStock !== null ? liveStock : (item.stockCount !== undefined ? Number(item.stockCount) : 15);
       return {
         id: item.id,
         name: item.name,
@@ -530,7 +543,7 @@ export const productService = {
         imageUrl: item.imageUrl || '',
         rating: item.rating || 4.8,
         soldCount: item.soldCount || 0,
-        stockCount: item.stockCount || 50,
+        stockCount: stock,
         specs: item.specs || {},
         isFlashSale: Boolean(item.isFlashSale),
       };

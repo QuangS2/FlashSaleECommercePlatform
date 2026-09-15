@@ -142,21 +142,32 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             <div className="pt-2 border-t border-slate-200 space-y-3">
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-slate-700">Số lượng:</span>
-                <div className="flex items-center border border-slate-300 rounded-md bg-white">
-                  <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="px-2.5 py-1 text-slate-600 hover:bg-slate-100 transition-colors"
-                  >
-                    -
-                  </button>
-                  <span className="px-3 text-xs font-bold text-slate-800">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="px-2.5 py-1 text-slate-600 hover:bg-slate-100 transition-colors"
-                  >
-                    +
-                  </button>
-                </div>
+                {isFlashSale ? (
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-amber-50 border border-amber-300 text-amber-800 text-xs font-bold rounded">
+                      1 chiếc (Tối đa)
+                    </span>
+                    <span className="text-[11px] text-slate-500 italic">
+                      ⚡ Giới hạn 1 sản phẩm Flash Sale / khách hàng
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center border border-slate-300 rounded-md bg-white">
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="px-2.5 py-1 text-slate-600 hover:bg-slate-100 transition-colors"
+                    >
+                      -
+                    </button>
+                    <span className="px-3 text-xs font-bold text-slate-800">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity((q) => q + 1)}
+                      className="px-2.5 py-1 text-slate-600 hover:bg-slate-100 transition-colors"
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">

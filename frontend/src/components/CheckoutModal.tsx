@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, ShieldAlert, CreditCard, Truck, Wallet, Mail } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useCartStore } from '../store/useCartStore';
 import { useOrderQueueStore } from '../store/useOrderQueueStore';
 import { orderService } from '../services/orderService';
@@ -30,6 +31,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -42,6 +44,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     if (items.length === 0) return;
 
     setIsSubmitting(true);
+    setErrorMessage(null);
     const hasFlashSale = items.some((item) => item.product.isFlashSale);
     const primaryItem = items[0];
 
@@ -65,25 +68,40 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
     const currentUserEmail = user?.email || formData.email || 'customer@ecommerce.vn';
 
     try {
-      // 1. Tạo đơn hàng thực tế vào Order-Service (MySQL) kích hoạt Saga qua Kafka
-      const result = await orderService.createOrder({
-        productId: primaryItem.product.id,
-        productTitle: primaryItem.product.name,
-        quantity: primaryItem.quantity,
-        unitPrice: primaryItem.selectedPrice || primaryItem.product.salePrice,
-        userId: currentUserId,
-        userEmail: currentUserEmail,
-        shippingAddress: {
-          fullName: formData.fullName,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          note: formData.note,
-        },
-        paymentMethod: formData.paymentMethod,
-      });
+      let finalOrderId = '';
 
-      const finalOrderId = result.orderId;
+      if (hasFlashSale) {
+        // 1. Tạo đơn hàng Flash Sale với Redis Lua Script O(1) & Chống mua 2 lần
+        const fsResult = await orderService.createFlashSaleOrder({
+          saleId: 1,
+          itemId: primaryItem.product.id,
+          quantity: 1,
+          unitPrice: primaryItem.selectedPrice || primaryItem.product.salePrice,
+          userId: currentUserId,
+          userEmail: currentUserEmail,
+          idempotencyKey: `IDEMP-${currentUserId}-${primaryItem.product.id}-${Date.now().toString(36)}`,
+        });
+        finalOrderId = fsResult.orderId;
+      } else {
+        // 1. Tạo đơn hàng thông thường vào Order-Service (MySQL) kích hoạt Saga qua Kafka
+        const result = await orderService.createOrder({
+          productId: primaryItem.product.id,
+          productTitle: primaryItem.product.name,
+          quantity: primaryItem.quantity,
+          unitPrice: primaryItem.selectedPrice || primaryItem.product.salePrice,
+          userId: currentUserId,
+          userEmail: currentUserEmail,
+          shippingAddress: {
+            fullName: formData.fullName,
+            phone: formData.phone,
+            address: formData.address,
+            city: formData.city,
+            note: formData.note,
+          },
+          paymentMethod: formData.paymentMethod,
+        });
+        finalOrderId = result.orderId;
+      }
 
       // Lưu email khách vào localStorage để khách có thể tra cứu lại đơn hàng
       try {
@@ -117,7 +135,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
       }
     } catch (error: any) {
       setIsSubmitting(false);
-      alert(error.message || 'Có lỗi xảy ra trong quá trình đặt hàng!');
+      const msg = error.message || 'Có lỗi xảy ra trong quá trình đặt hàng!';
+      setErrorMessage(msg);
+      toast.error(msg, { duration: 6000 });
     }
   };
 
@@ -134,6 +154,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, o
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Anti-greedy / Flash Sale Lua Script rejection banner */}
+        {errorMessage && (
+          <div className="mx-6 mt-4 p-3.5 bg-rose-50 border border-rose-300 rounded-md flex items-start gap-2.5 text-rose-800 text-xs shadow-xs">
+            <ShieldAlert className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+            <div className="flex-1 font-medium leading-relaxed">
+              <strong className="font-bold">Từ chối giao dịch:</strong> {errorMessage}
+            </div>
+          </div>
+        )}
 
         {/* Content Form */}
         <form onSubmit={handleSubmitOrder} className="p-6 space-y-6">
