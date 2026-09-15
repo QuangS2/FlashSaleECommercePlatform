@@ -315,6 +315,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
     ports:
       - "8083:8083"
     networks:
@@ -377,6 +379,8 @@ services:
       eureka-server:
         condition: service_started
       mysql-db:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
     ports:
       - "8084:8084"
