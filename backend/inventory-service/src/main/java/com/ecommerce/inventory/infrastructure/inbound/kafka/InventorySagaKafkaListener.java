@@ -22,6 +22,7 @@ public class InventorySagaKafkaListener {
 
     private final InventoryUseCase inventoryUseCase;
     private final ObjectMapper objectMapper;
+    private final com.ecommerce.inventory.infrastructure.inbox.InboxService inboxService;
 
     @KafkaListener(
             topics = KafkaTopicConstants.TOPIC_ORDER_EVENTS,
@@ -31,8 +32,18 @@ public class InventorySagaKafkaListener {
     public void onOrderEvent(String message, Acknowledgment ack) {
         try {
             JsonNode root = objectMapper.readTree(message);
+            String eventId = root.path("eventId").asText();
+            if (eventId == null || eventId.isBlank()) {
+                eventId = root.path("correlationId").asText();
+            }
             String eventTypeStr = root.path("eventType").asText();
             JsonNode payloadNode = root.path("payload");
+
+            String messageId = (eventId != null && !eventId.isBlank()) ? eventId : "msg-" + System.currentTimeMillis();
+            if (inboxService != null && inboxService.isAlreadyProcessed(messageId, KafkaTopicConstants.INVENTORY_SERVICE_GROUP)) {
+                log.info("[INBOX DEDUP] Message [{}] đã được xử lý trước đó, bỏ qua", messageId);
+                return;
+            }
 
             if (EventType.ORDER_CREATED.name().equals(eventTypeStr)) {
                 OrderCreatedEvent event = objectMapper.treeToValue(payloadNode, OrderCreatedEvent.class);

@@ -97,4 +97,16 @@ class OrderJpaAdapterTest {
         assertEquals("ORD-123", result.get(0).getOrderId());
         verify(springDataOrderRepository, times(1)).findByUserIdOrderByCreatedAtDesc("user_1");
     }
+
+    @Test
+    void testFindByUserEmailOrderByCreatedAtDesc() {
+        when(springDataOrderRepository.findByUserEmailOrderByCreatedAtDesc("user@test.com")).thenReturn(Arrays.asList(mockEntity));
+
+        List<Order> result = orderJpaAdapter.findByUserEmailOrderByCreatedAtDesc("user@test.com");
+
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals("ORD-123", result.get(0).getOrderId());
+        verify(springDataOrderRepository, times(1)).findByUserEmailOrderByCreatedAtDesc("user@test.com");
+    }
 }

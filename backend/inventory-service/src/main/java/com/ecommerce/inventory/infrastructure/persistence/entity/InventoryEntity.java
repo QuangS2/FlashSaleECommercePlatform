@@ -24,12 +24,21 @@ public class InventoryEntity {
     @Column(name = "product_id", nullable = false, unique = true, length = 64)
     private String productId;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    @Builder.Default
+    @Column(name = "total_stock", nullable = false)
+    private Integer totalStock = 0;
 
     @Builder.Default
-    @Column(name = "reserved_quantity", nullable = false)
-    private Integer reservedQuantity = 0;
+    @Column(name = "available_stock", nullable = false)
+    private Integer availableStock = 0;
+
+    @Builder.Default
+    @Column(name = "reserved_stock", nullable = false)
+    private Integer reservedStock = 0;
+
+    @Builder.Default
+    @Column(name = "sold_stock", nullable = false)
+    private Integer soldStock = 0;
 
     @Version
     @Column(name = "version")
@@ -42,14 +51,39 @@ public class InventoryEntity {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = Instant.now();
+        if (this.totalStock == null || this.totalStock == 0) {
+            int avail = this.availableStock != null ? this.availableStock : 0;
+            int res = this.reservedStock != null ? this.reservedStock : 0;
+            int sold = this.soldStock != null ? this.soldStock : 0;
+            this.totalStock = avail + res + sold;
+        }
+    }
+
+    // Tương thích ngược với quantity / reservedQuantity
+    public Integer getQuantity() {
+        return availableStock;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.availableStock = quantity;
+    }
+
+    public Integer getReservedQuantity() {
+        return reservedStock;
+    }
+
+    public void setReservedQuantity(Integer reservedQuantity) {
+        this.reservedStock = reservedQuantity;
     }
 
     public static InventoryEntity fromDomain(Inventory inventory) {
         return InventoryEntity.builder()
                 .id(inventory.getId())
                 .productId(inventory.getProductId())
-                .quantity(inventory.getQuantity())
-                .reservedQuantity(inventory.getReservedQuantity())
+                .totalStock(inventory.getTotalStock())
+                .availableStock(inventory.getAvailableStock())
+                .reservedStock(inventory.getReservedStock())
+                .soldStock(inventory.getSoldStock())
                 .version(inventory.getVersion())
                 .updatedAt(inventory.getUpdatedAt())
                 .build();
@@ -59,8 +93,10 @@ public class InventoryEntity {
         return Inventory.builder()
                 .id(this.id)
                 .productId(this.productId)
-                .quantity(this.quantity)
-                .reservedQuantity(this.reservedQuantity)
+                .totalStock(this.totalStock)
+                .availableStock(this.availableStock)
+                .reservedStock(this.reservedStock)
+                .soldStock(this.soldStock)
                 .version(this.version)
                 .updatedAt(this.updatedAt)
                 .build();

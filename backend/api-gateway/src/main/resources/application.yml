@@ -78,6 +78,11 @@ spring:
                 name: paymentCircuitBreaker
                 fallbackUri: forward:/fallback/payments
 
+        - id: cart-service
+          uri: lb://CART-SERVICE
+          predicates:
+            - Path=/api/v1/cart/**
+
         - id: notification-service
           uri: lb://NOTIFICATION-SERVICE
           predicates:

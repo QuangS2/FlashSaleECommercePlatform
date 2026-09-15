@@ -29,6 +29,30 @@ public class OrderController {
     }
 
     /**
+     * Tiếp nhận đơn đặt hàng Flash Sale nhanh với Redis Lua Script O(1) & Transactional Outbox (Bảng 17 & Đoạn mã 2)
+     */
+    @PostMapping("/flash-sale")
+    public ResponseEntity<?> createFlashSaleOrder(
+            @Valid @RequestBody com.ecommerce.order.dto.FlashSaleOrderRequest request,
+            @RequestHeader(value = "X-User-Id", required = false) String headerUserId,
+            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey
+    ) {
+        String customerId = (headerUserId != null && !headerUserId.isBlank()) ? headerUserId : "anonymous-user";
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            request.setIdempotencyKey(idempotencyKey);
+        }
+        try {
+            OrderResponse response = orderUseCase.createFlashSaleOrder(request, customerId);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+        } catch (com.ecommerce.order.domain.exception.StockReservationException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                    "error", "Conflict",
+                    "message", ex.getMessage()
+            ));
+        }
+    }
+
+    /**
      * Lấy danh sách lịch sử đơn hàng theo query param trên root /api/v1/orders?email=...
      */
     @GetMapping(params = "email")

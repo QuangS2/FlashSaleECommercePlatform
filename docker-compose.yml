@@ -304,7 +304,7 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "8082:8082"
+      - "8083:8083"
     networks:
       - ecommerce-net
     deploy:
@@ -312,7 +312,7 @@ services:
         limits:
           memory: 512M
 
-  # 10. Order Service (Port 8083)
+  # 10. Order Service (Port 8082)
   order-service:
     image: ${IMAGE_PREFIX:-ghcr.io/quangs2/flashsale}-order-service:latest
     container_name: ecommerce-order-service
@@ -324,6 +324,7 @@ services:
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/ecommerce_db?useSSL=false&allowPublicKeyRetrieval=true
       - KAFKA_HOST=kafka:29092
+      - REDIS_HOST=redis
     depends_on:
       eureka-server:
         condition: service_started
@@ -331,8 +332,10 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
-      - "8083:8083"
+      - "8082:8082"
     networks:
       - ecommerce-net
     deploy:
@@ -366,7 +369,36 @@ services:
         limits:
           memory: 512M
 
-  # 12. Notification Service (Port 8085)
+  # 11. Cart Service (Port 8085)
+  cart-service:
+    image: ${IMAGE_PREFIX:-ghcr.io/quangs2/flashsale}-cart-service:latest
+    container_name: ecommerce-cart-service
+    build:
+      context: ./backend
+      dockerfile: cart-service/Dockerfile
+    environment:
+      - OTEL_SERVICE_NAME=ecommerce-cart-service
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_SDK_DISABLED=${OTEL_SDK_DISABLED:-false}
+      - EUREKA_SERVER=http://eureka-server:8761/eureka/
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      eureka-server:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # 12. Notification Service (Port 8086)
   notification-service:
     image: ${IMAGE_PREFIX:-ghcr.io/quangs2/flashsale}-notification-service:latest
     container_name: ecommerce-notification-service
@@ -383,7 +415,7 @@ services:
       kafka:
         condition: service_healthy
     ports:
-      - "8085:8085"
+      - "8086:8086"
     networks:
       - ecommerce-net
     deploy:
@@ -433,6 +465,43 @@ services:
       resources:
         limits:
           memory: 128M
+
+  # 16. Prometheus (Observability & Metrics)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ecommerce-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # 17. Grafana (Dashboard & Visualizations)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ecommerce-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - ecommerce-net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
 volumes:
   mysql_data:

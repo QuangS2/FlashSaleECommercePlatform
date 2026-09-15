@@ -14,6 +14,8 @@ import java.util.Optional;
 public class ProductApplicationService implements ProductUseCase {
 
     private final ProductRepositoryPort productRepositoryPort;
+    private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
     @Override
     public List<Product> getAllProducts() {
@@ -22,7 +24,27 @@ public class ProductApplicationService implements ProductUseCase {
 
     @Override
     public Optional<Product> getProductById(String id) {
-        return productRepositoryPort.findById(id);
+        String cacheKey = "product:detail:" + id;
+        try {
+            String cachedJson = redisTemplate.opsForValue().get(cacheKey);
+            if (cachedJson != null && !cachedJson.isBlank()) {
+                Product product = objectMapper.readValue(cachedJson, Product.class);
+                return Optional.ofNullable(product);
+            }
+        } catch (Exception ex) {
+            // Fallback to database on cache error
+        }
+
+        Optional<Product> productOpt = productRepositoryPort.findById(id);
+        if (productOpt.isPresent()) {
+            try {
+                String json = objectMapper.writeValueAsString(productOpt.get());
+                redisTemplate.opsForValue().set(cacheKey, json, java.time.Duration.ofHours(1));
+            } catch (Exception ex) {
+                // Ignore cache write error
+            }
+        }
+        return productOpt;
     }
 
     @Override

@@ -48,6 +48,19 @@ class RedissonLockAdapterTest {
     }
 
     @Test
+    void testExecuteWithLock_NotHeldByCurrentThread() throws Exception {
+        when(rLock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(true);
+        when(rLock.isHeldByCurrentThread()).thenReturn(false);
+
+        Callable<String> task = () -> "Success";
+
+        String result = redissonLockAdapter.executeWithLock("myLock", 5, 5, task);
+
+        assertEquals("Success", result);
+        verify(rLock, never()).unlock();
+    }
+
+    @Test
     void testExecuteWithLock_FailedToAcquire() throws Exception {
         when(rLock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).thenReturn(false);
         
