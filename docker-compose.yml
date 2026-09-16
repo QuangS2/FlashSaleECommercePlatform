@@ -516,7 +516,7 @@ services:
     ports:
       - "3001:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123456
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
@@ -526,10 +526,23 @@ services:
       - prometheus
     networks:
       - ecommerce-net
+  # 18. Actuator Prometheus Exporter Bridge (24/7 Realtime Metrics)
+  metrics-exporter:
+    image: node:20-alpine
+    container_name: ecommerce-metrics-exporter
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./monitoring/prometheus/metrics_exporter.mjs:/app/metrics_exporter.mjs:ro
+    command: ["node", "metrics_exporter.mjs"]
+    ports:
+      - "9102:9102"
+    networks:
+      - ecommerce-net
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 128M
 
 volumes:
   mysql_data:

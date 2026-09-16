@@ -1,0 +1,303 @@
+{
+  "info": {
+    "_postman_id": "e4b52df3-9a3d-4c81-81f9-8f3e5c4a71d0",
+    "name": "Flash Sale E-Commerce Microservices API",
+    "description": "Bộ sưu tập kiểm thử API toàn diện cho Hệ Thống Thương Mại Điện Tử Flash Sale Chịu Tải Cao.\nBao gồm đầy đủ các phân hệ: Identity/OAuth2, Products, Flash Sales, Cart, Orders (Saga), Inventory, Payments.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "keycloak_url",
+      "value": "http://localhost:8180",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "customer-user-uuid-101",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication (Keycloak OIDC)",
+      "item": [
+        {
+          "name": "Get Customer Access Token (Resource Owner Password)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+                  "    console.log('Access token saved successfully');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "client_id",
+                  "value": "ecommerce-frontend",
+                  "type": "text"
+                },
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "customer",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "password",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{keycloak_url}}/realms/ecommerce-realm/protocol/openid-connect/token",
+              "host": ["{{keycloak_url}}"],
+              "path": ["realms", "ecommerce-realm", "protocol", "openid-connect", "token"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Product Catalog Service",
+      "item": [
+        {
+          "name": "Get All Products (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/products?page=0&size=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Product Detail by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/products/PROD-101",
+              "host": ["{{base_url}}"],
+              "path": ["api", "products", "PROD-101"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Flash Sale & Inventory",
+      "item": [
+        {
+          "name": "Get Active Flash Sale Sessions & Items",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/flash-sales/active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "flash-sales", "active"]
+            }
+          }
+        },
+        {
+          "name": "Get Live Inventory Stock",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/inventory/PROD-101",
+              "host": ["{{base_url}}"],
+              "path": ["api", "inventory", "PROD-101"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Cart Service (Redis O(1))",
+      "item": [
+        {
+          "name": "Get User Cart",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user_id}}"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/cart",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart"]
+            }
+          }
+        },
+        {
+          "name": "Add Item to Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-Id",
+                "value": "{{user_id}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"PROD-101\",\n  \"quantity\": 1,\n  \"unitPrice\": 199.00,\n  \"productName\": \"iPhone 15 Pro Max 256GB\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/cart/items",
+              "host": ["{{base_url}}"],
+              "path": ["api", "cart", "items"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Order Service & Saga Choreography",
+      "item": [
+        {
+          "name": "Place Flash Sale Order (Saga Trigger)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-User-Id",
+                "value": "{{user_id}}"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "idemp-test-{{$timestamp}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"flashSaleId\": 1,\n  \"itemId\": 101,\n  \"productId\": \"PROD-101\",\n  \"quantity\": 1,\n  \"unitPrice\": 199.00\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/flash-sale",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "orders", "flash-sale"]
+            }
+          }
+        },
+        {
+          "name": "Get User Order History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{user_id}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/orders/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "orders", "user", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Actuator & Health Checks",
+      "item": [
+        {
+          "name": "API Gateway Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/health",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "health"]
+            }
+          }
+        },
+        {
+          "name": "Prometheus Metrics Exporter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/actuator/prometheus",
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "prometheus"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
