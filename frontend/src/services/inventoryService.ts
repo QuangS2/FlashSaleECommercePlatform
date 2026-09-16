@@ -45,4 +45,18 @@ export const inventoryService = {
       return false;
     }
   },
+
+  /**
+   * Khôi phục toàn bộ tồn kho và hạn mức mua cho phiên Demo
+   */
+  async resetDemoData(): Promise<boolean> {
+    try {
+      const response = await fetch('/api/v1/inventory/reset-demo', {
+        method: 'POST',
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  },
 };

@@ -28,6 +28,7 @@ public class AdminInventoryController {
 
     private final SpringDataFlashSaleItemRepository flashSaleItemRepository;
     private final StringRedisTemplate stringRedisTemplate;
+    private final com.ecommerce.inventory.domain.port.out.InventoryRepositoryPort inventoryRepositoryPort;
 
     /**
      * Cấu hình phiên Flash Sale và danh sách sản phẩm mở bán (Bảng 17).
@@ -115,6 +116,100 @@ public class AdminInventoryController {
                 "invariantPassed", validCount,
                 "reconciledCount", repairedCount,
                 "status", "RECONCILED"
+        ));
+    }
+
+    /**
+     * API Khôi phục toàn diện dữ liệu Demo:
+     * - Khôi phục tồn kho 24 sản phẩm trong MySQL
+     * - Đưa available_stock = allocated_stock trong FlashSaleItem
+     * - Xóa toàn bộ cache Redis (flashsale stock, hạn mức cá nhân user, cart, locks)
+     */
+    @PostMapping({"/api/admin/inventory/reset-demo", "/api/v1/admin/inventory/reset-demo", "/api/v1/inventory/reset-demo", "/api/v1/inventory/admin/reset-demo"})
+    public ResponseEntity<Map<String, Object>> resetDemoData() {
+        Map<String, Integer> seedStocks = Map.ofEntries(
+                Map.entry("fs-101", 15),
+                Map.entry("fs-102", 8),
+                Map.entry("fs-103", 5),
+                Map.entry("fs-104", 32),
+                Map.entry("cat-1", 45),
+                Map.entry("cat-2", 28),
+                Map.entry("cat-3", 60),
+                Map.entry("cat-4", 19),
+                Map.entry("cat-5", 22),
+                Map.entry("cat-6", 12),
+                Map.entry("cat-7", 35),
+                Map.entry("cat-8", 16),
+                Map.entry("cat-9", 50),
+                Map.entry("cat-10", 18),
+                Map.entry("cat-11", 20),
+                Map.entry("cat-12", 40),
+                Map.entry("cat-13", 25),
+                Map.entry("cat-14", 14),
+                Map.entry("cat-15", 28),
+                Map.entry("cat-16", 15),
+                Map.entry("cat-17", 10),
+                Map.entry("cat-18", 45),
+                Map.entry("cat-19", 30),
+                Map.entry("cat-20", 25)
+        );
+
+        seedStocks.forEach((productId, stock) -> {
+            inventoryRepositoryPort.findByProductId(productId).ifPresentOrElse(existing -> {
+                existing.updateStock(stock);
+                inventoryRepositoryPort.save(existing);
+            }, () -> {
+                inventoryRepositoryPort.save(com.ecommerce.inventory.domain.entity.Inventory.builder()
+                        .productId(productId)
+                        .quantity(stock)
+                        .reservedQuantity(0)
+                        .soldStock(0)
+                        .build());
+            });
+        });
+
+        List<FlashSaleItemEntity> items = flashSaleItemRepository.findAll();
+        for (FlashSaleItemEntity entity : items) {
+            entity.setAvailableStock(entity.getAllocatedStock());
+            entity.setReservedStock(0);
+            entity.setSoldStock(0);
+            flashSaleItemRepository.save(entity);
+        }
+
+        int redisKeysCleared = 0;
+        try {
+            Set<String> flashSaleKeys = stringRedisTemplate.keys("flashsale:*");
+            if (flashSaleKeys != null && !flashSaleKeys.isEmpty()) {
+                stringRedisTemplate.delete(flashSaleKeys);
+                redisKeysCleared += flashSaleKeys.size();
+            }
+            Set<String> userKeys = stringRedisTemplate.keys("user:purchased:*");
+            if (userKeys != null && !userKeys.isEmpty()) {
+                stringRedisTemplate.delete(userKeys);
+                redisKeysCleared += userKeys.size();
+            }
+            Set<String> cartKeys = stringRedisTemplate.keys("cart:*");
+            if (cartKeys != null && !cartKeys.isEmpty()) {
+                stringRedisTemplate.delete(cartKeys);
+                redisKeysCleared += cartKeys.size();
+            }
+            Set<String> lockKeys = stringRedisTemplate.keys("lock:*");
+            if (lockKeys != null && !lockKeys.isEmpty()) {
+                stringRedisTemplate.delete(lockKeys);
+                redisKeysCleared += lockKeys.size();
+            }
+        } catch (Exception e) {
+            log.warn("[RESET-DEMO] Lỗi dọn dẹp Redis keys: {}", e.getMessage());
+        }
+
+        log.info("[ADMIN RESET-DEMO] Đã khôi phục tồn kho 24 sản phẩm và dọn sạch {} Redis keys", redisKeysCleared);
+
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Đã khôi phục hoàn toàn tồn kho và hạn mức mua cho phiên Demo!",
+                "productsReset", seedStocks.size(),
+                "flashSaleItemsReset", items.size(),
+                "redisKeysCleared", redisKeysCleared
         ));
     }
 }

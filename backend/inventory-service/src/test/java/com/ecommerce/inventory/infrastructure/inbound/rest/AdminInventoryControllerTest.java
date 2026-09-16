@@ -34,6 +34,9 @@ class AdminInventoryControllerTest {
     private StringRedisTemplate stringRedisTemplate;
 
     @Mock
+    private com.ecommerce.inventory.domain.port.out.InventoryRepositoryPort inventoryRepositoryPort;
+
+    @Mock
     private ValueOperations<String, String> valueOperations;
 
     @InjectMocks
@@ -132,5 +135,27 @@ class AdminInventoryControllerTest {
         assertEquals(2, response.getBody().get("totalItemsChecked"));
         assertEquals(1, response.getBody().get("invariantPassed"));
         assertEquals(1, response.getBody().get("reconciledCount"));
+    }
+
+    @Test
+    void testResetDemoDataSuccess() {
+        FlashSaleItemEntity item = FlashSaleItemEntity.builder()
+                .id(1L)
+                .allocatedStock(50)
+                .availableStock(10)
+                .reservedStock(20)
+                .soldStock(20)
+                .build();
+        when(flashSaleItemRepository.findAll()).thenReturn(List.of(item));
+        when(inventoryRepositoryPort.findByProductId(anyString())).thenReturn(java.util.Optional.empty());
+
+        ResponseEntity<Map<String, Object>> response = adminInventoryController.resetDemoData();
+
+        assertNotNull(response.getBody());
+        assertEquals(true, response.getBody().get("success"));
+        assertEquals(24, response.getBody().get("productsReset"));
+        assertEquals(1, response.getBody().get("flashSaleItemsReset"));
+        verify(flashSaleItemRepository, atLeastOnce()).save(any(FlashSaleItemEntity.class));
+        verify(inventoryRepositoryPort, times(24)).save(any());
     }
 }

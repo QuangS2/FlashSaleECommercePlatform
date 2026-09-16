@@ -1,6 +1,7 @@
 import http from 'http';
 import https from 'https';
 import { execSync } from 'child_process';
+import { resetDemoData } from './reset_demo_data.mjs';
 
 console.log('================================================================================');
 console.log('🚀 BẮT ĐẦU TỰ ĐỘNG KIỂM TRA TOÀN DIỆN CÁC KỊCH BẢN DEMO ĐỒ ÁN TỐT NGHIỆP');
@@ -51,6 +52,13 @@ function assert(condition, message) {
 }
 
 async function runAudit() {
+  console.log('🔄 Đang tự động làm mới tồn kho và phiên test để đảm bảo kho đầy đủ 100%...');
+  try {
+    await resetDemoData();
+  } catch (e) {
+    console.log('  ⚠️ Bỏ qua reset tự động:', e.message);
+  }
+
   // ---------------------------------------------------------------------------
   // PHẦN 1: KIỂM TRA SỨC KHỎE CÁC CỔNG MẠNG & ENDPOINTS THEO BẢNG ĐIỀU HƯỚNG
   // ---------------------------------------------------------------------------

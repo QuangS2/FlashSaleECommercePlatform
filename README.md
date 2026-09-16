@@ -238,6 +238,15 @@ cd backend && mvn clean test
 cd frontend && npm test
 ```
 
+### 5. Khôi Phục & Làm Mới Tồn Kho Demo (Reset Demo Data):
+Tránh trường hợp lần demo trước mua hết hàng khiến lần demo sau bị hết hàng hoặc vượt hạn mức:
+* **Cách 1 (Ngay trên Web UI):** Bấm nút **"🔄 Làm mới Demo"** trên thanh thông báo đầu trang (Top Banner).
+* **Cách 2 (Dòng lệnh CLI 1 giây):**
+  ```bash
+  node scripts/reset_demo_data.mjs
+  ```
+* *Bảo đảm an toàn tuyệt đối:* Toàn bộ tài khoản Keycloak (`customer`, `admin`) được **bảo lưu nguyên vẹn 100%**, chỉ khôi phục tồn kho 24 sản phẩm và xóa sạch hạn mức mua cá nhân / giỏ hàng.
+
 ---
 
 ## 📚 TÀI LIỆU CHUYÊN SÂU ĐÍNH KÈM (DOCUMENTATION SUITE)

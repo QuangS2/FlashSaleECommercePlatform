@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu, ReceiptText } from 'lucide-react';
+import { ShoppingCart, Search, User, LogOut, Flame, ShieldCheck, Tag, Menu, ReceiptText, RotateCcw } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
+import { inventoryService } from '../services/inventoryService';
 
 interface HeaderProps {
   onSearch?: (term: string) => void;
@@ -51,6 +53,28 @@ export const Header: React.FC<HeaderProps> = ({
     logout();
   };
 
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handleResetDemoData = async () => {
+    if (isResetting) return;
+    setIsResetting(true);
+    try {
+      const ok = await inventoryService.resetDemoData();
+      if (ok) {
+        toast.success('Đã khôi phục tồn kho & hạn mức mua về trạng thái ban đầu!', { duration: 3000 });
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+      } else {
+        toast.error('Không thể kích hoạt làm mới tự động. Bạn có thể chạy "node scripts/reset_demo_data.mjs".');
+      }
+    } catch {
+      toast.error('Lỗi kết nối khi làm mới dữ liệu demo.');
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-40 bg-[#1A94FF] text-white shadow-sm border-b border-blue-600">
       {/* Top Banner Bar */}
@@ -59,13 +83,19 @@ export const Header: React.FC<HeaderProps> = ({
           <Flame className="w-4 h-4 text-yellow-300 animate-pulse" />
           <span>PHIÊN FLASH SALE ĐANG MỞ BÁN - SỐ LƯỢNG CÓ HẠN</span>
         </div>
-        <div className="flex items-center gap-4 text-blue-100 hidden md:flex">
-          <span className="flex items-center gap-1">
+        <div className="flex items-center gap-3 text-blue-100">
+          <span className="flex items-center gap-1 hidden md:flex">
             <ShieldCheck className="w-3.5 h-3.5" /> 100% Hàng Chính Hãng
           </span>
-          <span className="flex items-center gap-1">
-            <Tag className="w-3.5 h-3.5" /> Giá tốt nhất hôm nay
-          </span>
+          <button
+            onClick={handleResetDemoData}
+            disabled={isResetting}
+            className="flex items-center gap-1 bg-white/15 hover:bg-white/25 active:scale-95 text-white px-2.5 py-0.5 rounded text-xs font-semibold transition border border-white/20 shadow-xs cursor-pointer disabled:opacity-50"
+            title="Khôi phục tồn kho 24 sản phẩm và hạn mức mua về trạng thái ban đầu để demo lại"
+          >
+            <RotateCcw className={`w-3 h-3 ${isResetting ? 'animate-spin text-yellow-300' : ''}`} />
+            <span>{isResetting ? 'Đang làm mới...' : 'Làm mới Demo'}</span>
+          </button>
         </div>
       </div>
 

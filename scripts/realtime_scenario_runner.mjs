@@ -2,6 +2,7 @@ import http from 'http';
 import https from 'https';
 import { execSync } from 'child_process';
 import readline from 'readline';
+import { resetDemoData } from './reset_demo_data.mjs';
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -243,6 +244,11 @@ async function runScenario3(auth) {
 // MAIN CONTROLLER
 // -----------------------------------------------------------------------------
 async function main() {
+  try {
+    await resetDemoData();
+  } catch (e) {
+    console.log('  ⚠️ Bỏ qua reset tự động:', e.message);
+  }
   const auth = await getKeycloakToken();
   const arg = process.argv[2];
 

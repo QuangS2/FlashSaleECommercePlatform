@@ -17,6 +17,24 @@ Cẩm nang chuẩn bị cho buổi thuyết minh và bảo vệ đồ án trư�
 
 ---
 
+## 🔄 0. CƠ CHẾ LÀM MỚI TỒN KHO DEMO (RESET DEMO DATA)
+
+> [!TIP]
+> **Bí quyết thuận tiện nhất khi Demo trước Hội đồng:**  
+> Sau khi bạn thực hiện mua hàng hoặc test tải ở lượt demo trước, số lượng tồn kho có thể bị giảm về 0 hoặc tài khoản khách hàng đạt hạn mức mua tối đa (Max 2 sản phẩm). Để sẵn sàng cho lượt demo tiếp theo ngay lập tức mà **KHÔNG CẦN khởi động lại Docker** và **KHÔNG LÀM MẤT TÀI KHOẢN NGƯỜI DÙNG**:
+> 
+> * **Cách 1 (Nhanh nhất - Thao tác ngay trên Web):**  
+>   Bấm nút **"🔄 Làm mới Demo"** ở góc phải thanh thông báo đầu trang (Top Banner) trên Web `http://localhost:3000`. Hệ thống sẽ tự động khôi phục tồn kho 24 sản phẩm, dọn sạch giỏ hàng và reset hạn mức mua cá nhân trong 1 giây!
+> * **Cách 2 (Qua dòng lệnh CLI):**  
+>   Mở PowerShell và chạy:
+>   ```bash
+>   node scripts/reset_demo_data.mjs
+>   # Hoặc: powershell -ExecutionPolicy Bypass -File .\scripts\reset_demo_data.ps1
+>   ```
+> * **Đặc điểm bảo vệ:** Toàn bộ tài khoản Keycloak (`customer` / `password`, `admin` / `adminpassword`) được **bảo lưu nguyên vẹn 100%**, người dùng không phải cấu hình hay đăng ký lại!
+
+---
+
 ## 🎯 2. KỊCH BẢN DEMO 1: KHÁCH HÀNG SĂN FLASH SALE THÀNH CÔNG (HAPPY PATH)
 
 ### Lời mở đầu gợi ý:
