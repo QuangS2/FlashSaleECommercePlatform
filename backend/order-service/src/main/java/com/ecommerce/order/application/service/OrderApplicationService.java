@@ -27,6 +27,20 @@ import java.util.stream.Collectors;
  * Application Service.
  * Orchestrates use cases using the Domain Entity and Outbound Ports.
  */
+import com.ecommerce.order.domain.exception.StockReservationException;
+import com.ecommerce.order.dto.FlashSaleOrderRequest;
+import com.ecommerce.order.infrastructure.persistence.entity.OutboxEventEntity;
+import com.ecommerce.order.infrastructure.persistence.repository.SpringDataOutboxEventRepository;
+import com.ecommerce.order.infrastructure.redis.RedisLuaService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class OrderApplicationService implements OrderUseCase {
@@ -35,6 +49,9 @@ public class OrderApplicationService implements OrderUseCase {
 
     private final OrderRepositoryPort orderRepositoryPort;
     private final EventPublisherPort eventPublisherPort;
+    private final SpringDataOutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
+    private final RedisLuaService redisLuaService;
 
     @Override
     public OrderResponse createOrder(CreateOrderRequest request) {
@@ -71,9 +88,29 @@ public class OrderApplicationService implements OrderUseCase {
                 payload
         );
 
+        // Ghi nhận bản ghi OutboxEvent đồng thời (Transactional Outbox Pattern - Bảng 14)
+        if (outboxEventRepository != null && objectMapper != null) {
+            try {
+                String payloadJson = objectMapper.writeValueAsString(event);
+                OutboxEventEntity outboxEvent = OutboxEventEntity.builder()
+                        .id(UUID.randomUUID().toString())
+                        .aggregateType("ORDER")
+                        .aggregateId(savedOrder.getOrderId())
+                        .eventType("OrderCreatedEvent")
+                        .payload(payloadJson)
+                        .status("PENDING")
+                        .retryCount(0)
+                        .build();
+                outboxEventRepository.save(outboxEvent);
+                log.info("[OUTBOX RECORDED] Đã lưu sự kiện Outbox [{}] cho đơn [{}]", outboxEvent.getId(), savedOrder.getOrderId());
+            } catch (Exception ex) {
+                log.error("[OUTBOX ERROR] Lỗi khi ghi nhận sự kiện Outbox: {}", ex.getMessage());
+            }
+        }
+
         eventPublisherPort.publishOrderCreatedEvent(savedOrder.getOrderId(), event);
 
-        return OrderResponse.fromEntity(savedOrder, "Đơn hàng đã được tiếp nhận và đang được điều phối qua Saga Choreography.");
+        return OrderResponse.fromEntity(savedOrder, "Đơn hàng đã được tiếp nhận và đang được điều phối qua Transactional Outbox & Saga Choreography.");
     }
 
     @Override
@@ -177,5 +214,81 @@ public class OrderApplicationService implements OrderUseCase {
 
             eventPublisherPort.publishOrderCancelledEvent(updatedOrder.getOrderId(), cancelledEvent);
         });
+    }
+
+    @Override
+    public OrderResponse createFlashSaleOrder(FlashSaleOrderRequest request, String customerId) {
+        // 1. Giữ chỗ đồng bộ O(1) trên Redis Lua Script
+        boolean reserved = redisLuaService.reserveStock(
+                request.getSaleId(), request.getItemId(), customerId, request.getQuantity(), 300);
+        if (!reserved) {
+            throw new StockReservationException("Hết hàng hoặc vượt quá giới hạn mua");
+        }
+
+        try {
+            // 2. Giao dịch cục bộ MySQL: Lưu Order và OutboxEvent đồng thời
+            BigDecimal unitPrice = request.getUnitPrice() != null ? request.getUnitPrice() : BigDecimal.ZERO;
+            BigDecimal totalAmount = unitPrice.multiply(BigDecimal.valueOf(request.getQuantity()));
+            String email = request.getUserEmail() != null ? request.getUserEmail() : customerId + "@ecommerce.local";
+
+            Order order = Order.builder()
+                    .orderId(UUID.randomUUID().toString())
+                    .userId(customerId)
+                    .userEmail(email)
+                    .productId(String.valueOf(request.getItemId()))
+                    .productTitle("Flash Sale Item #" + request.getItemId())
+                    .quantity(request.getQuantity())
+                    .unitPrice(unitPrice)
+                    .totalAmount(totalAmount)
+                    .status(com.ecommerce.common.event.order.OrderStatus.PENDING)
+                    .createdAt(Instant.now())
+                    .updatedAt(Instant.now())
+                    .build();
+
+            Order savedOrder = orderRepositoryPort.save(order);
+
+            try {
+                OrderCreatedEvent payload = OrderCreatedEvent.builder()
+                        .orderId(savedOrder.getOrderId())
+                        .userId(savedOrder.getUserId())
+                        .userEmail(savedOrder.getUserEmail())
+                        .productId(savedOrder.getProductId())
+                        .productTitle(savedOrder.getProductTitle())
+                        .quantity(savedOrder.getQuantity())
+                        .unitPrice(savedOrder.getUnitPrice())
+                        .totalAmount(savedOrder.getTotalAmount())
+                        .status(savedOrder.getStatus())
+                        .createdAt(savedOrder.getCreatedAt())
+                        .build();
+
+                BaseEvent<OrderCreatedEvent> event = BaseEvent.of(
+                        EventType.ORDER_CREATED,
+                        "CORR-" + savedOrder.getOrderId(),
+                        "order-service",
+                        payload
+                );
+
+                OutboxEventEntity outboxEvent = OutboxEventEntity.builder()
+                        .id(UUID.randomUUID().toString())
+                        .aggregateType("ORDER")
+                        .aggregateId(savedOrder.getOrderId())
+                        .eventType("OrderCreatedEvent")
+                        .payload(objectMapper.writeValueAsString(event))
+                        .status("PENDING")
+                        .retryCount(0)
+                        .createdAt(Instant.now())
+                        .build();
+                outboxEventRepository.save(outboxEvent);
+            } catch (Exception ex) {
+                log.error("[OUTBOX ERROR] Flash Sale outbox serialization error: {}", ex.getMessage());
+            }
+
+            return OrderResponse.fromEntity(savedOrder, "Đơn hàng Flash Sale đã được tiếp nhận và xử lý");
+        } catch (Exception ex) {
+            // Bù trừ cục bộ nếu MySQL lỗi: Hoàn kho Redis ngay lập tức (Chống giữ chỗ ảo)
+            redisLuaService.releaseReservation(
+                    request.getSaleId(), request.getItemId(), customerId, request.getQuantity());
+            throw ex;
+        }
     }
 }

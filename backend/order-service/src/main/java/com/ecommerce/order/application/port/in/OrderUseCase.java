@@ -17,6 +17,8 @@ public interface OrderUseCase {
 
     OrderResponse createOrder(CreateOrderRequest request);
 
+    OrderResponse createFlashSaleOrder(com.ecommerce.order.dto.FlashSaleOrderRequest request, String customerId);
+
     OrderResponse getOrderByOrderId(String orderId);
 
     List<OrderResponse> getOrdersByUserId(String userId);

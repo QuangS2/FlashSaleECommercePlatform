@@ -33,8 +33,10 @@ class InventoryJpaAdapterTest {
         mockEntity = InventoryEntity.builder()
                 .id(1L)
                 .productId("prod_1")
-                .quantity(100)
-                .reservedQuantity(10)
+                .totalStock(110)
+                .availableStock(100)
+                .reservedStock(10)
+                .soldStock(0)
                 .build();
 
         mockDomain = Inventory.builder()

@@ -125,4 +125,50 @@ class InventoryTest {
         assertEquals(2L, inventory.getVersion());
         assertEquals(now, inventory.getUpdatedAt());
     }
+
+    @Test
+    void testValidateInvariant_Success() {
+        Inventory inventory = Inventory.builder()
+                .productId("PROD_INV")
+                .totalStock(100)
+                .availableStock(70)
+                .reservedStock(20)
+                .soldStock(10)
+                .build();
+
+        assertTrue(inventory.validateInvariant());
+    }
+
+    @Test
+    void testValidateInvariant_Failure() {
+        Inventory inventory = Inventory.builder()
+                .productId("PROD_INV")
+                .totalStock(100)
+                .availableStock(70)
+                .reservedStock(20)
+                .soldStock(20) // 70 + 20 + 20 = 110 != 100
+                .build();
+
+        assertFalse(inventory.validateInvariant());
+    }
+
+    @Test
+    void testConfirmSold() {
+        Inventory inventory = Inventory.builder()
+                .productId("PROD_SOLD")
+                .availableStock(50)
+                .reservedStock(20)
+                .soldStock(10)
+                .totalStock(80)
+                .build();
+
+        boolean result = inventory.confirmSold(10);
+        assertTrue(result);
+        assertEquals(10, inventory.getReservedStock());
+        assertEquals(20, inventory.getSoldStock());
+        assertTrue(inventory.validateInvariant());
+
+        assertFalse(inventory.confirmSold(50));
+        assertThrows(IllegalArgumentException.class, () -> inventory.confirmSold(0));
+    }
 }

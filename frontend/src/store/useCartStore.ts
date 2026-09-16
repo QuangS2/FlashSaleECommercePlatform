@@ -60,12 +60,18 @@ export const useCartStore = create<CartState>((set, get) => ({
 
       if (existingIndex > -1) {
         const updated = [...state.items];
-        updated[existingIndex].quantity += quantity;
+        // Nếu là Flash Sale, quy định giới hạn tối đa 1 chiếc/khách hàng
+        if (product.isFlashSale) {
+          updated[existingIndex].quantity = 1;
+        } else {
+          updated[existingIndex].quantity += quantity;
+        }
         return { items: updated, isOpen: true };
       }
 
+      const initialQty = product.isFlashSale ? 1 : quantity;
       return {
-        items: [...state.items, { product, quantity, selectedPrice: priceToUse }],
+        items: [...state.items, { product, quantity: initialQty, selectedPrice: priceToUse }],
         isOpen: true,
       };
     });
@@ -83,9 +89,14 @@ export const useCartStore = create<CartState>((set, get) => ({
       return;
     }
     set((state) => ({
-      items: state.items.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      ),
+      items: state.items.map((item) => {
+        if (item.product.id === productId) {
+          // Sản phẩm Flash Sale chỉ được mua tối đa 1
+          const allowedQty = item.product.isFlashSale ? 1 : quantity;
+          return { ...item, quantity: allowedQty };
+        }
+        return item;
+      }),
     }));
   },
 

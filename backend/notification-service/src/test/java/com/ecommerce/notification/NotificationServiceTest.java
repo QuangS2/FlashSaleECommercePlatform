@@ -77,4 +77,36 @@ public class NotificationServiceTest {
 
         verify(messagingTemplate).convertAndSend(eq("/topic/orders/" + orderId), eq(message));
     }
+
+    @Test
+    @DisplayName("Test 4: sendNotificationToUser with null/blank userId defaults to broadcast-user")
+    public void testSendNotificationWithNullOrBlankUserId() {
+        NotificationMessage message = NotificationMessage.of(null, "ORD-NULL", "INFO", "Broadcast", "Global alert");
+
+        notificationService.sendNotificationToUser(null, message);
+
+        verify(messagingTemplate).convertAndSend(eq("/topic/notifications/broadcast-user"), eq(message));
+        List<NotificationMessage> list = notificationService.getUserNotifications("broadcast-user");
+        assertThat(list).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("Test 5: getUserNotifications returns empty list for unknown user")
+    public void testGetUserNotificationsEmpty() {
+        List<NotificationMessage> list = notificationService.getUserNotifications("unknown_user");
+        assertThat(list).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Test 6: buffer size limit caps at MAX_BUFFER_SIZE_PER_USER (50)")
+    public void testNotificationBufferCap() {
+        String userId = "heavy_user";
+        for (int i = 0; i < 55; i++) {
+            NotificationMessage msg = NotificationMessage.of(userId, "ORD-" + i, "INFO", "Title " + i, "Body");
+            notificationService.sendNotificationToUser(userId, msg);
+        }
+
+        List<NotificationMessage> list = notificationService.getUserNotifications(userId);
+        assertThat(list).hasSize(50);
+    }
 }

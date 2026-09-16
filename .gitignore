@@ -91,3 +91,16 @@ Desktop.ini
 **/mysql_data/
 **/mongo_data/
 **/redis_data/
+
+# -------------------------------------------------------------------------
+# Load Testing Tools, Test Results & Temporary Evidence
+# -------------------------------------------------------------------------
+**/apache-jmeter-*/
+**/jmeter_results.jtl
+**/jmeter_html_report/
+*.jtl
+jmeter.log
+**/test-results/
+**/playwright-report/
+**/blob-report/
+

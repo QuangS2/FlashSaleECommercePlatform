@@ -89,6 +89,12 @@ public class Order {
         this.updatedAt = Instant.now();
     }
 
+    public void cancel(String reason) {
+        this.status = OrderStatus.CANCELLED;
+        this.cancelReason = reason;
+        this.updatedAt = Instant.now();
+    }
+
     // Getters only, to protect internal state
     public Long getId() { return id; }
     public String getOrderId() { return orderId; }

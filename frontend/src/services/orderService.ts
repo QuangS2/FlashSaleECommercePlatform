@@ -176,6 +176,84 @@ export const orderService = {
   },
 
   /**
+   * Tạo đơn hàng Flash Sale nguyên tử O(1) qua Redis Lua Script (Bảng 17 & Đoạn mã 2)
+   * Chặn đầu cơ: Mỗi khách hàng chỉ được mua tối đa 1 sản phẩm Flash Sale / phiên
+   */
+  async createFlashSaleOrder(payload: {
+    saleId: number;
+    itemId: number | string;
+    quantity: number;
+    unitPrice: number;
+    userId?: string;
+    userEmail?: string;
+    idempotencyKey?: string;
+  }): Promise<{ orderId: string; status: string }> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (keycloak.authenticated && keycloak.token) {
+      headers['Authorization'] = `Bearer ${keycloak.token}`;
+    }
+    if (payload.idempotencyKey) {
+      headers['Idempotency-Key'] = payload.idempotencyKey;
+    }
+    if (payload.userId) {
+      headers['X-User-Id'] = payload.userId;
+    }
+
+    const itemIdNumeric = typeof payload.itemId === 'string'
+      ? (parseInt(payload.itemId.replace(/\D/g, ''), 10) || 100)
+      : payload.itemId;
+
+    const response = await fetch('/api/v1/orders/flash-sale', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        saleId: payload.saleId || 1,
+        itemId: itemIdNumeric,
+        quantity: payload.quantity || 1,
+        unitPrice: payload.unitPrice,
+        userEmail: payload.userEmail || keycloak.tokenParsed?.email || 'customer@ecommerce.vn',
+        idempotencyKey: payload.idempotencyKey || `IDEMP-${Date.now()}`,
+      }),
+    });
+
+    if (response.status === 409) {
+      const err = await response.json();
+      throw new Error(err.message || 'Hết hàng hoặc bạn đã vượt quá giới hạn 1 sản phẩm/khách hàng trong phiên Flash Sale này!');
+    }
+
+    if (!response.ok) {
+      throw new Error(`Đặt hàng Flash Sale thất bại, mã lỗi HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const finalOrderId = data.orderId || `ORD-FS-${Date.now()}`;
+    const finalStatus = data.status || 'PENDING';
+
+    const scope = keycloak.authenticated && payload.userId ? `user_${payload.userId}` : `email_${payload.userEmail || 'guest'}`;
+    this.saveCachedOrder({
+      orderId: finalOrderId,
+      status: finalStatus,
+      userId: payload.userId || 'guest_demo_user',
+      userEmail: payload.userEmail || 'customer@ecommerce.vn',
+      productId: String(payload.itemId),
+      productTitle: `Flash Sale Item #${payload.itemId}`,
+      quantity: payload.quantity,
+      unitPrice: payload.unitPrice,
+      totalPrice: payload.unitPrice * payload.quantity,
+      totalAmount: payload.unitPrice * payload.quantity,
+      createdAt: new Date().toISOString(),
+    }, scope);
+
+    return {
+      orderId: finalOrderId,
+      status: finalStatus,
+    };
+  },
+
+  /**
    * Lấy chi tiết đơn hàng theo orderId
    */
   async getOrderById(orderId: string): Promise<OrderDetailResponse | null> {

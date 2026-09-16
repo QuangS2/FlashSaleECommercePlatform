@@ -51,14 +51,18 @@ public class InventoryDataSeeder implements CommandLineRunner {
         );
 
         seedStocks.forEach((productId, stock) -> {
-            if (inventoryRepositoryPort.findByProductId(productId).isEmpty()) {
+            inventoryRepositoryPort.findByProductId(productId).ifPresentOrElse(existing -> {
+                existing.updateStock(stock);
+                inventoryRepositoryPort.save(existing);
+            }, () -> {
                 Inventory inventory = Inventory.builder()
                         .productId(productId)
                         .quantity(stock)
                         .reservedQuantity(0)
+                        .soldStock(0)
                         .build();
                 inventoryRepositoryPort.save(inventory);
-            }
+            });
         });
 
         log.info("[InventoryDataSeeder] Đã đồng bộ thành công tồn kho cho {} sản phẩm vào MySQL!", seedStocks.size());

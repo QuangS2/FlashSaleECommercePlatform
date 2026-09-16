@@ -20,13 +20,7 @@ public class ProductDataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        long currentCount = productRepositoryPort.findAll().size();
-        if (currentCount >= 20) {
-            log.info("[ProductDataSeeder] MongoDB đã có sẵn {} sản phẩm phong phú, bỏ qua nạp mẫu.", currentCount);
-            return;
-        }
-
-        log.info("[ProductDataSeeder] Bắt đầu tự động khởi tạo 24 sản phẩm phong phú thực tế vào MongoDB...");
+        log.info("[ProductDataSeeder] Bắt đầu đồng bộ và khôi phục tồn kho 24 sản phẩm phong phú thực tế vào MongoDB...");
 
         List<Product> seedProducts = List.of(
                 // ==========================================
@@ -520,7 +514,13 @@ public class ProductDataSeeder implements CommandLineRunner {
                         .build()
         );
 
-        seedProducts.forEach(productRepositoryPort::save);
-        log.info("[ProductDataSeeder] Đã nạp thành công {} sản phẩm phong phú thực tế vào MongoDB!", seedProducts.size());
+        seedProducts.forEach(seed -> {
+            productRepositoryPort.findById(seed.getId()).ifPresentOrElse(existing -> {
+                existing.setStockCount(seed.getStockCount());
+                existing.setSoldCount(seed.getSoldCount());
+                productRepositoryPort.save(existing);
+            }, () -> productRepositoryPort.save(seed));
+        });
+        log.info("[ProductDataSeeder] Đã đồng bộ thành công {} sản phẩm phong phú thực tế vào MongoDB!", seedProducts.size());
     }
 }
