@@ -1,32 +1,32 @@
-# 📖 TÀI LIỆU TRA CỨU API HỆ THỐNG (API REFERENCE)
+# TÀI LIỆU ĐẶC TẢ API HỆ THỐNG (API REFERENCE)
 
-Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng dụng (RESTful APIs & WebSocket) được định tuyến thông qua **Spring Cloud API Gateway** (Port `8080`).
+Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng dụng (RESTful APIs và WebSocket STOMP) được định tuyến thông qua **Spring Cloud API Gateway** (Port `8080`).
 
 ---
 
-## 🌐 1. CƠ CHẾ ĐỊNH TUYẾN & XÁC THỰC
+## 1. CƠ CHẾ ĐỊNH TUYẾN VÀ XÁC THỰC
 
 * **Base URL:** `http://localhost:8080`
-* **Cơ chế Bảo mật:** OAuth2 / OpenID Connect (Keycloak). Các API yêu cầu xác thực nhận Header `Authorization: Bearer <JWT_ACCESS_TOKEN>`.
-* **Định danh Người dùng:** Header `X-User-Id` được API Gateway tự động giải mã từ JWT Claims hoặc truyền trực tiếp trong các tình huống nội bộ.
-* **Chống Gửi Đơn Trùng Lặp (Idempotency):** Các lệnh ghi đơn hàng nhận Header `Idempotency-Key: <UUID>` để đảm bảo tính duy nhất.
+* **Cơ chế bảo mật:** OAuth2 / OpenID Connect (Keycloak). Các API yêu cầu xác thực cần kèm Header `Authorization: Bearer <JWT_ACCESS_TOKEN>`.
+* **Định danh người dùng:** Header `X-User-Id` được API Gateway tự động giải mã từ JWT Claims hoặc chuyển tiếp trực tiếp trong các lời gọi nội bộ.
+* **Đảm bảo tính Idempotency:** Các yêu cầu khởi tạo đơn hàng cần gửi kèm Header `Idempotency-Key: <UUID>` để ngăn chặn việc xử lý trùng lặp giao dịch.
 
 ---
 
-## 🔐 2. ĐỊNH DANH & XÁC THỰC (KEYCLOAK OIDC)
+## 2. DỊCH VỤ ĐỊNH DANH VÀ XÁC THỰC (KEYCLOAK OIDC)
 
-### 2.1 Lấy Token Đăng Nhập Khách Hàng (Resource Owner Password Credentials)
+### 2.1 Yêu cầu cấp Token xác thực người dùng (Resource Owner Password Credentials)
 * **Endpoint:** `POST http://localhost:8180/realms/ecommerce-realm/protocol/openid-connect/token`
 * **Content-Type:** `application/x-www-form-urlencoded`
-* **Body Parameters:**
+* **Tham số Body:**
   | Tham số | Giá trị mẫu | Mô tả |
   | :--- | :--- | :--- |
-  | `client_id` | `ecommerce-frontend` | Client ID đã cấu hình OIDC PKCE |
-  | `grant_type` | `password` | Luồng cấp phép mật khẩu |
+  | `client_id` | `ecommerce-frontend` | Client ID cấu hình phương thức OIDC PKCE |
+  | `grant_type` | `password` | Luồng cấp phép xác thực mật khẩu |
   | `username` | `customer` | Tên đăng nhập người dùng mẫu |
-  | `password` | `password` | Mật khẩu người dùng |
+  | `password` | `password` | Mật khẩu tài khoản |
 
-* **Response (200 OK):**
+* **Phản hồi mẫu (200 OK):**
 ```json
 {
   "access_token": "eyJhbGciOiJSUzI1NiIsIn...",
@@ -38,12 +38,12 @@ Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng d
 
 ---
 
-## 📦 3. PRODUCT CATALOG SERVICE (PORT 8081)
+## 3. PRODUCT CATALOG SERVICE (PORT 8081)
 
-### 3.1 Danh Sách Sản Phẩm (Phân Trang)
+### 3.1 Truy vấn danh sách sản phẩm (Phân trang)
 * **Endpoint:** `GET /api/products`
-* **Query Parameters:** `page=0&size=20&sort=createdAt,desc`
-* **Response (200 OK):**
+* **Tham số truy vấn:** `page=0&size=20&sort=createdAt,desc`
+* **Phản hồi mẫu (200 OK):**
 ```json
 {
   "content": [
@@ -62,17 +62,17 @@ Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng d
 }
 ```
 
-### 3.2 Chi Tiết Sản Phẩm
+### 3.2 Truy vấn thông tin chi tiết sản phẩm
 * **Endpoint:** `GET /api/products/{id}`
-* **Response (200 OK):** Đối tượng sản phẩm đầy đủ mô tả kỹ thuật và thông số.
+* **Phản hồi mẫu (200 OK):** Đối tượng thông tin chi tiết sản phẩm bao gồm đặc tả kỹ thuật và phân loại.
 
 ---
 
-## ⚡ 4. FLASH SALE & INVENTORY SERVICE (PORT 8083)
+## 4. FLASH SALE & INVENTORY SERVICE (PORT 8083)
 
-### 4.1 Lấy Danh Sách Phiên Flash Sale Đang Kích Hoạt
+### 4.1 Truy vấn danh sách phiên Flash Sale đang diễn ra
 * **Endpoint:** `GET /api/flash-sales/active`
-* **Response (200 OK):**
+* **Phản hồi mẫu (200 OK):**
 ```json
 [
   {
@@ -95,9 +95,9 @@ Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng d
 ]
 ```
 
-### 4.2 Kiểm Tra Tồn Kho Thực Tế
+### 4.2 Truy vấn trạng thái tồn kho thực tế
 * **Endpoint:** `GET /api/inventory/{productId}`
-* **Response (200 OK):**
+* **Phản hồi mẫu (200 OK):**
 ```json
 {
   "productId": "PROD-101",
@@ -109,12 +109,12 @@ Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng d
 
 ---
 
-## 🛒 5. CART SERVICE (PORT 8085 - REDIS O(1))
+## 5. CART SERVICE (PORT 8085)
 
-### 5.1 Lấy Giỏ Hàng Người Dùng
+### 5.1 Lấy dữ liệu giỏ hàng người dùng
 * **Endpoint:** `GET /api/cart`
 * **Headers:** `X-User-Id: <user-id>`
-* **Response (200 OK):**
+* **Phản hồi mẫu (200 OK):**
 ```json
 {
   "userId": "customer-user-uuid-101",
@@ -130,7 +130,7 @@ Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng d
 }
 ```
 
-### 5.2 Thêm / Cập Nhật Sản Phẩm Vào Giỏ
+### 5.2 Thêm hoặc cập nhật mặt hàng trong giỏ
 * **Endpoint:** `POST /api/cart/items`
 * **Headers:** `X-User-Id: <user-id>`
 * **Request Body:**
@@ -142,13 +142,13 @@ Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng d
   "unitPrice": 29990000.0
 }
 ```
-* **Response (200 OK):** Cập nhật nguyên tử trên Redis Hash Key `cart:{userId}` với thời gian phản hồi < 2ms.
+* **Phản hồi mẫu (200 OK):** Cập nhật dữ liệu trên cấu trúc Redis Hash Key `cart:{userId}` với thời gian phản hồi dưới 2ms.
 
 ---
 
-## 📑 6. ORDER SERVICE & SAGA CHOREOGRAPHY (PORT 8082)
+## 6. ORDER SERVICE & SAGA CHOREOGRAPHY (PORT 8082)
 
-### 6.1 Đặt Hàng Flash Sale (Kích Hoạt Chuỗi Phân Tán Saga)
+### 6.1 Khởi tạo đơn hàng Flash Sale (Kích hoạt chuỗi Saga)
 * **Endpoint:** `POST /api/v1/orders/flash-sale`
 * **Headers:**
   * `Content-Type: application/json`
@@ -168,25 +168,25 @@ Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng d
 }
 ```
 
-* **Mã Trạng Thái Trả Về:**
-  * **`202 Accepted`:** Đơn hàng được tiếp nhận thành công vào Transactional Outbox, sinh mã đơn hàng `ORD-XXXXXX` trạng thái `PENDING`. Chuỗi Saga được đẩy lên Kafka bất đồng bộ.
-  * **`409 Conflict`:** Bán âm kho hoặc vượt quá hạn mức tối đa cho phép của người dùng trong phiên Flash Sale.
-  * **`429 Too Many Requests`:** Bị chặn bởi Rate Limiter của API Gateway khi số lượng request vượt ngưỡng cho phép.
+* **Các mã phản hồi:**
+  * **`202 Accepted`:** Yêu cầu đặt hàng được tiếp nhận vào bảng Transactional Outbox, tạo mã đơn hàng `ORD-XXXXXX` với trạng thái ban đầu `PENDING`. Chuỗi Saga được kích hoạt bất đồng bộ qua Kafka.
+  * **`409 Conflict`:** Từ chối yêu cầu do hết tồn kho hoặc vượt quá hạn mức mua quy định trên mỗi tài khoản trong phiên Flash Sale.
+  * **`429 Too Many Requests`:** Yêu cầu bị giới hạn bởi bộ điều phối lưu lượng (Rate Limiter) tại API Gateway.
 
-* **Response (202 Accepted):**
+* **Phản hồi mẫu (202 Accepted):**
 ```json
 {
   "orderId": "ORD-7A9B1C",
   "userId": "customer-user-uuid-101",
   "status": "PENDING",
   "totalAmount": 29990000.0,
-  "message": "Đơn hàng đã được tiếp nhận và đưa vào hàng đợi Saga xử lý bất đồng bộ."
+  "message": "Đơn hàng đã được tiếp nhận và chuyển vào hàng đợi xử lý phân tán."
 }
 ```
 
-### 6.2 Tra Cứu Tiến Độ Saga & Chi Tiết Đơn Hàng
+### 6.2 Truy vấn chi tiết đơn hàng và trạng thái Saga
 * **Endpoint:** `GET /api/v1/orders/{orderId}`
-* **Response (200 OK):**
+* **Phản hồi mẫu (200 OK):**
 ```json
 {
   "orderId": "ORD-7A9B1C",
@@ -207,20 +207,20 @@ Tài liệu mô tả chi tiết danh mục các giao diện lập trình ứng d
 
 ---
 
-## 🔔 7. WEBSOCKET REALTIME NOTIFICATION (PORT 8085 / 8086)
+## 7. WEBSOCKET REALTIME NOTIFICATION (PORT 8085 / 8086)
 
-* **Giao thức:** STOMP qua WebSocket (SockJS Fallback)
-* **Kết nối URL:** `ws://localhost:8085/ws` hoặc `http://localhost:8085/ws`
-* **User Queue cá nhân:** `/user/{userId}/queue/orders`
-* **Topic công khai:** `/topic/flashsale-stock` (đồng bộ tồn kho thời gian thực tới tất cả client trên giao diện)
+* **Giao thức:** STOMP qua WebSocket (hỗ trợ SockJS Fallback)
+* **URL kết nối:** `ws://localhost:8085/ws` hoặc `http://localhost:8085/ws`
+* **Kênh riêng người dùng (User Queue):** `/user/{userId}/queue/orders`
+* **Kênh công khai (Public Topic):** `/topic/flashsale-stock` (đồng bộ trạng thái tồn kho thời gian thực tới toàn bộ các máy khách kết nối)
 
 ---
 
-## 📊 8. HẠ TẦNG GIÁM SÁT & OBSERVABILITY
+## 8. HẠ TẦNG GIÁM SÁT VÀ TRUY VẾT PHÂN TÁN
 
-| Dịch vụ | URL | Mô tả chức năng |
+| Phân hệ / Dịch vụ | URL | Chức năng giám sát |
 | :--- | :--- | :--- |
-| **Prometheus Metrics** | `http://localhost:9090` | Thu thập chỉ số phân tích RPS, JVM, Connection Pool |
-| **Grafana Dashboards** | `http://localhost:3001` | Dashboard đo tải thời gian thực (User: `admin` / Pass: `admin123456`) |
-| **Jaeger Tracing** | `http://localhost:16686` | Truy vết đường đi của Request xuyên qua các vi dịch vụ |
-| **Eureka Registry** | `http://localhost:8761` | Đăng ký dịch vụ và giám sát nhịp tim (Heartbeat) |
+| **Prometheus Metrics** | `http://localhost:9090` | Thu thập chỉ số phân tích: Thông lượng RPS, trạng thái JVM, Connection Pool |
+| **Grafana Dashboards** | `http://localhost:3001` | Trực quan hóa dữ liệu đo tải thời gian thực (Tài khoản: `admin` / `admin123456`) |
+| **Jaeger Tracing** | `http://localhost:16686` | Truy vết chuỗi thực thi của các yêu cầu xuyên suốt các vi dịch vụ |
+| **Eureka Registry** | `http://localhost:8761` | Giám sát trạng thái đăng ký dịch vụ và cơ chế kiểm tra nhịp tim (Heartbeat) |
